@@ -16,7 +16,8 @@ function formatFecha(fecha: string) {
 }
 
 export default async function Blog() {
-  const posts = await client.fetch(query)
+const posts = await client.fetch(query)
+console.log('BLOG POSTS:', posts)
 
   return (
     <main style={{ backgroundColor: '#fff', color: '#141210', fontFamily: 'DM Sans, sans-serif', minHeight: '100vh' }}>
