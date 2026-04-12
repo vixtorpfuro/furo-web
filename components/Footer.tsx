@@ -14,158 +14,89 @@ export default function Footer() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
       })
-      if (res.ok) {
-        setStatus('ok')
-        setEmail('')
-      } else {
-        setStatus('error')
-      }
-    } catch {
-      setStatus('error')
-    }
+      if (res.ok) { setStatus('ok'); setEmail('') } else { setStatus('error') }
+    } catch { setStatus('error') }
   }
 
   return (
     <footer style={{ backgroundColor: '#141210', color: '#f5f3ee' }}>
+      <style>{`
+        .footer-newsletter-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 80px; align-items: center; }
+        .footer-links-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 48px; }
+        @media (max-width: 768px) {
+          .footer-newsletter-grid { grid-template-columns: 1fr; gap: 32px; }
+          .footer-links-grid { grid-template-columns: 1fr 1fr; gap: 36px 24px; }
+          .footer-pad { padding-left: 24px !important; padding-right: 24px !important; }
+        }
+        @media (max-width: 480px) {
+          .footer-links-grid { grid-template-columns: 1fr; gap: 28px; }
+        }
+      `}</style>
 
-      {/* ── NEWSLETTER ──────────────────────────────────── */}
-      <div style={{ padding: '72px 56px 64px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 80px', alignItems: 'center' }}>
+      <div className="footer-pad" style={{ padding: '72px 56px 64px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+        <div className="footer-newsletter-grid">
           <div>
-            <p style={{ fontSize: 11, fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.22)', marginBottom: 16 }}>
-              Novedades
-            </p>
-            <p style={{ fontSize: 'clamp(20px,2.5vw,30px)', fontWeight: 300, lineHeight: 1.2, color: '#f5f3ee', marginBottom: 16 }}>
-              Mantente al día con FURŌ
-            </p>
-            <p style={{ fontSize: 14, fontWeight: 300, lineHeight: 1.75, color: 'rgba(255,255,255,0.4)', maxWidth: 420 }}>
-              Recibe catálogos, detalles constructivos, proyectos recientes y novedades sobre construcción en madera laminada. Sin ruido, solo lo que importa.
-            </p>
+            <p style={{ fontSize: 11, fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.22)', marginBottom: 16 }}>Novedades</p>
+            <p style={{ fontSize: 'clamp(20px,2.5vw,30px)', fontWeight: 300, lineHeight: 1.2, color: '#f5f3ee', marginBottom: 16 }}>Mantente al día con FURŌ</p>
+            <p style={{ fontSize: 14, fontWeight: 300, lineHeight: 1.75, color: 'rgba(255,255,255,0.4)', maxWidth: 420 }}>Recibe catálogos, detalles constructivos, proyectos recientes y novedades sobre construcción en madera laminada. Sin ruido, solo lo que importa.</p>
           </div>
           <div>
             {status === 'ok' ? (
-              <p style={{ fontSize: 14, fontWeight: 300, color: 'rgba(255,255,255,0.5)' }}>
-                ¡Listo! Te avisamos cuando haya novedades.
-              </p>
+              <p style={{ fontSize: 14, fontWeight: 300, color: 'rgba(255,255,255,0.5)' }}>¡Listo! Te avisamos cuando haya novedades.</p>
             ) : (
               <>
                 <div style={{ position: 'relative', borderBottom: '1px solid rgba(255,255,255,0.2)', paddingBottom: 14, display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <input
-                    type="email"
-                    placeholder="Tu email"
-                    value={email}
-                    onChange={e => setEmail(e.target.value)}
-                    onKeyDown={e => e.key === 'Enter' && handleSubscribe()}
-                    style={{
-                      flex: 1,
-                      background: 'none',
-                      border: 'none',
-                      outline: 'none',
-                      fontSize: 15,
-                      fontWeight: 300,
-                      color: '#f5f3ee',
-                      fontFamily: 'DM Sans, sans-serif',
-                    }}
-                  />
-                  <button
-                    onClick={handleSubscribe}
-                    disabled={status === 'loading'}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      cursor: 'pointer',
-                      padding: 0,
-                      color: status === 'loading' ? 'rgba(255,255,255,0.2)' : '#f5f3ee',
-                      fontSize: 20,
-                      lineHeight: 1,
-                      flexShrink: 0,
-                      transition: 'opacity 0.2s',
-                    }}
-                  >
-                    →
-                  </button>
+                  <input type="email" placeholder="Tu email" value={email} onChange={e => setEmail(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleSubscribe()}
+                    style={{ flex: 1, background: 'none', border: 'none', outline: 'none', fontSize: 15, fontWeight: 300, color: '#f5f3ee', fontFamily: 'DM Sans, sans-serif' }} />
+                  <button onClick={handleSubscribe} disabled={status === 'loading'}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, color: status === 'loading' ? 'rgba(255,255,255,0.2)' : '#f5f3ee', fontSize: 20, lineHeight: 1, flexShrink: 0, transition: 'opacity 0.2s' }}>→</button>
                 </div>
-                {status === 'error' && (
-                  <p style={{ fontSize: 11, color: 'rgba(255,100,100,0.7)', marginTop: 8, fontWeight: 300 }}>
-                    Algo salió mal. Intenta nuevamente.
-                  </p>
-                )}
+                {status === 'error' && <p style={{ fontSize: 11, color: 'rgba(255,100,100,0.7)', marginTop: 8, fontWeight: 300 }}>Algo salió mal. Intenta nuevamente.</p>}
               </>
             )}
           </div>
         </div>
       </div>
 
-      {/* ── LINKS ───────────────────────────────────────── */}
-      <div style={{ padding: '64px 56px 48px', display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr 1fr', gap: 48 }}>
-        <div>
-          <img
-            src="https://cdn.prod.website-files.com/69c9b2d67436dcea96fc3636/69c9b9f30560bd793310acfd_Logo-Furo-Blanco_web_medium.png"
-            alt="FURŌ"
-            style={{ height: 30, filter: 'brightness(0) invert(1)', opacity: 0.9, marginBottom: 12, display: 'block' }}
-          />
-          <p style={{ fontSize: 14, fontWeight: 300, color: 'rgba(255,255,255,0.3)' }}>es fluir en la construcción</p>
-        </div>
-
-        <div>
-          <span style={{ fontSize: 10, fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.22)', display: 'block', marginBottom: 18 }}>
-            FURŌ
-          </span>
-          <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-            {[
-              { label: 'Nosotros',  href: '/nosotros' },
-              { label: 'Blog',      href: '/blog' },
-              { label: 'Noki',      href: '/noki' },
-            ].map(({ label, href }) => (
-              <li key={label} style={{ marginBottom: 10 }}>
-                <a href={href} style={{ fontSize: 13, fontWeight: 300, color: 'rgba(255,255,255,0.5)', textDecoration: 'none' }}>{label}</a>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div>
-          <span style={{ fontSize: 10, fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.22)', display: 'block', marginBottom: 18 }}>
-            Conecta
-          </span>
-          <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-            {[
-              { label: 'Preguntas frecuentes', href: '/preguntas-frecuentes' },
-              { label: 'Instagram',            href: 'https://instagram.com/furo.company' },
-              { label: 'LinkedIn',             href: 'https://www.linkedin.com/company/furōcompany/' },
-            ].map(({ label, href }) => (
-              <li key={label} style={{ marginBottom: 10 }}>
-                <a href={href} style={{ fontSize: 13, fontWeight: 300, color: 'rgba(255,255,255,0.5)', textDecoration: 'none' }}>{label}</a>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div>
-          <span style={{ fontSize: 10, fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.22)', display: 'block', marginBottom: 18 }}>
-            Contacto
-          </span>
-          <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-            {[
-              { label: 'Comienza tu proyecto',      href: '/contacto' },
-              { label: 'contacto@furo.company',     href: 'mailto:contacto@furo.company' },
-              { label: 'WhatsApp',                  href: 'https://wa.me/56977441963' },
-            ].map(({ label, href }) => (
-              <li key={label} style={{ marginBottom: 10 }}>
-                <a href={href} style={{ fontSize: 13, fontWeight: 300, color: 'rgba(255,255,255,0.5)', textDecoration: 'none' }}>{label}</a>
-              </li>
-            ))}
-          </ul>
+      <div className="footer-pad" style={{ padding: '64px 56px 48px' }}>
+        <div className="footer-links-grid">
+          <div>
+            <img src="https://cdn.prod.website-files.com/69c9b2d67436dcea96fc3636/69c9b9f30560bd793310acfd_Logo-Furo-Blanco_web_medium.png" alt="FURŌ"
+              style={{ height: 30, filter: 'brightness(0) invert(1)', opacity: 0.9, marginBottom: 12, display: 'block' }} />
+            <p style={{ fontSize: 14, fontWeight: 300, color: 'rgba(255,255,255,0.3)' }}>es fluir en la construcción</p>
+          </div>
+          <div>
+            <span style={{ fontSize: 10, fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.22)', display: 'block', marginBottom: 18 }}>FURŌ</span>
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+              {[{ label: 'Nosotros', href: '/nosotros' }, { label: 'Blog', href: '/blog' }, { label: 'Noki', href: '/noki' }].map(({ label, href }) => (
+                <li key={label} style={{ marginBottom: 10 }}><a href={href} style={{ fontSize: 13, fontWeight: 300, color: 'rgba(255,255,255,0.5)', textDecoration: 'none' }}>{label}</a></li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <span style={{ fontSize: 10, fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.22)', display: 'block', marginBottom: 18 }}>Conecta</span>
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+              {[{ label: 'Preguntas frecuentes', href: '/preguntas-frecuentes' }, { label: 'Instagram', href: 'https://instagram.com/furo.company' }, { label: 'LinkedIn', href: 'https://www.linkedin.com/company/furōcompany/' }].map(({ label, href }) => (
+                <li key={label} style={{ marginBottom: 10 }}><a href={href} style={{ fontSize: 13, fontWeight: 300, color: 'rgba(255,255,255,0.5)', textDecoration: 'none' }}>{label}</a></li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <span style={{ fontSize: 10, fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.22)', display: 'block', marginBottom: 18 }}>Contacto</span>
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+              {[{ label: 'Comienza tu proyecto', href: '/contacto' }, { label: 'contacto@furo.company', href: 'mailto:contacto@furo.company' }, { label: 'WhatsApp', href: 'https://wa.me/56977441963' }].map(({ label, href }) => (
+                <li key={label} style={{ marginBottom: 10 }}><a href={href} style={{ fontSize: 13, fontWeight: 300, color: 'rgba(255,255,255,0.5)', textDecoration: 'none' }}>{label}</a></li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
 
-      {/* ── COPYRIGHT ───────────────────────────────────── */}
-      <div style={{ padding: '22px 56px', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+      <div className="footer-pad" style={{ padding: '22px 56px', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
         <p style={{ fontSize: 11, fontWeight: 300, color: 'rgba(255,255,255,0.18)', margin: 0 }}>
           © {new Date().getFullYear()} FURŌ — Todos los derechos reservados
         </p>
       </div>
-
     </footer>
   )
 }
