@@ -127,12 +127,13 @@ export default async function ObraPage({ params }: { params: Promise<{ slug: str
           )}
 
           {/* Primero texto completo */}
+{/* Primero texto completo */}
           {descripcionParrafos.map((parrafo: string, i: number) => (
             <p key={i} style={{ fontSize: 16, fontWeight: 300, lineHeight: 1.85, color: '#5e5850', marginBottom: 24, maxWidth: 640 }}>
               {parrafo}
             </p>
           ))}
-
+          
           {/* Luego galería */}
           {galeria.length > 0 && (
             <div style={{ marginTop: 56 }}>
