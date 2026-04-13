@@ -126,9 +126,13 @@ export default function Home() {
         .he { animation: heroFade 1s both cubic-bezier(0.16,1,0.3,1); }
         .d1{animation-delay:0.3s}.d2{animation-delay:0.5s}.d3{animation-delay:0.7s}
         .home-cf-grid { display: grid; grid-template-columns: 1fr 1fr; min-height: 90vh; }
-        .home-stats-grid { display: block; }      
+.home-stats-grid { display: grid; grid-template-columns: 1fr 1fr; }
         .home-stat-cell { padding: 80px 64px; }
-        .home-ben-header { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: end; padding-bottom: 72px; border-bottom: 1px solid rgba(20,18,16,0.08); margin-bottom: 72px; }
+        .s1{order:1}.s2{order:2}.s3{order:4}.s4{order:3}.s5{order:5}.s6{order:6}
+        @media (max-width: 900px) {
+          .home-stats-grid { display: block; }
+          .home-stat-cell { padding: 48px 24px; }
+        }        .home-ben-header { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: end; padding-bottom: 72px; border-bottom: 1px solid rgba(20,18,16,0.08); margin-bottom: 72px; }
         .home-ben-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 2px; }
         .home-test-grid { display: grid; grid-template-columns: 1fr 1fr; }
         .home-obras-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 2px; margin-bottom: 40px; }
@@ -197,30 +201,29 @@ export default function Home() {
       </section>
 
 <section className="home-stats-grid">
-        {/* Desktop: grid 2 cols. Mobile: block en orden correcto */}
-        <div className="home-stat-cell" style={{ background: '#e8e5df', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
+        <div className="home-stat-cell s1" style={{ background: '#e8e5df', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
           <span style={{ fontSize: 'clamp(52px,7vw,96px)', fontWeight: 300, lineHeight: 1, color: '#141210', display: 'block', marginBottom: 12 }}>+<CountUp target={80} /></span>
           <span style={{ fontSize: 'clamp(14px,2vw,20px)', fontWeight: 300, color: '#8a8278' }}>proyectos modelados y solucionados</span>
         </div>
-        <div style={{ position: 'relative', minHeight: 280, overflow: 'hidden' }}>
+        <div className="s2" style={{ position: 'relative', minHeight: 280, overflow: 'hidden' }}>
           <RevealImage src="/home/obra_furo.jpg" alt="Obra" />
         </div>
-        <div style={{ position: 'relative', minHeight: 280, overflow: 'hidden' }}>
-          <RevealImage src="/home/planta_furo.jpg" alt="Planta" delay={0.1} />
-        </div>
-        <div className="home-stat-cell" style={{ background: '#3a2d5e', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
+        <div className="home-stat-cell s3" style={{ background: '#3a2d5e', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
           <span style={{ fontSize: 'clamp(52px,7vw,96px)', fontWeight: 300, lineHeight: 1, color: '#fff', display: 'block', marginBottom: 12 }}>+<CountUp target={2500} suffix=" m2" delay={0.1} /></span>
           <span style={{ fontSize: 'clamp(14px,2vw,20px)', fontWeight: 300, color: 'rgba(255,255,255,0.55)' }}>planta central</span>
         </div>
-        <div className="home-stat-cell" style={{ background: '#c5cdd8', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
+        <div className="s4" style={{ position: 'relative', minHeight: 280, overflow: 'hidden' }}>
+          <RevealImage src="/home/planta_furo.jpg" alt="Planta" delay={0.1} />
+        </div>
+        <div className="home-stat-cell s5" style={{ background: '#c5cdd8', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
           <span style={{ fontSize: 'clamp(52px,7vw,96px)', fontWeight: 300, lineHeight: 1, color: '#141210', display: 'block', marginBottom: 12 }}>+<CountUp target={200} delay={0.2} /></span>
           <span style={{ fontSize: 'clamp(14px,2vw,20px)', fontWeight: 300, color: '#8a8278' }}>soluciones en obras</span>
         </div>
-        <div style={{ position: 'relative', minHeight: 280, overflow: 'hidden' }}>
+        <div className="s6" style={{ position: 'relative', minHeight: 280, overflow: 'hidden' }}>
           <RevealImage src="/home/solucion_furo.jpg" alt="Soluciones" delay={0.2} />
         </div>
       </section>
-      
+
       <section className="home-ben-pad" style={{ background: '#fff' }} id="beneficios">
         <div className="home-ben-header">
           <div>
