@@ -46,7 +46,6 @@ export default async function ObraPage({ params }: { params: Promise<{ slug: str
 
   const imagenUrl = obra.imagen_principal ? urlFor(obra.imagen_principal) : null
 
-  // Construir bloques de contenido: párrafos intercalados con imágenes
   const descripcionParrafos = obra.descripcion
     ? obra.descripcion.split('\n').filter((p: string) => p.trim())
     : []
@@ -58,18 +57,34 @@ export default async function ObraPage({ params }: { params: Promise<{ slug: str
     isVertical: (img.asset?.metadata?.dimensions?.height || 800) > (img.asset?.metadata?.dimensions?.width || 1200),
   })).filter((img: any) => img.url)
 
-  // Intercalar: imagen, párrafo, imagen, párrafo...
-  const bloques: { type: 'image' | 'text', content: any }[] = []
-  const maxLen = Math.max(galeria.length, descripcionParrafos.length)
-  for (let i = 0; i < maxLen; i++) {
-    if (galeria[i]) bloques.push({ type: 'image', content: galeria[i] })
-    if (descripcionParrafos[i]) bloques.push({ type: 'text', content: descripcionParrafos[i] })
-  }
-
   return (
     <main style={{ backgroundColor: '#f5f3ee', fontFamily: 'DM Sans, sans-serif', minHeight: '100vh' }}>
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap');*{margin:0;padding:0;box-sizing:border-box;}a{text-decoration:none;}`}</style>
-      <Nav  />
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap');
+        *{margin:0;padding:0;box-sizing:border-box;}a{text-decoration:none;}
+
+        .obra-hero-text { padding: 0 56px 64px; }
+        .obra-meta { display: grid; grid-template-columns: repeat(4,1fr); background: #fff; border-bottom: 1px solid rgba(20,18,16,0.08); }
+        .obra-meta-item { padding: 28px 32px; border-right: 1px solid rgba(20,18,16,0.08); }
+        .obra-meta-item:last-child { border-right: none; }
+        .obra-body { display: grid; grid-template-columns: 1fr 340px; align-items: start; }
+        .obra-content { padding: 72px 56px 100px 56px; border-right: 1px solid rgba(20,18,16,0.08); }
+        .obra-sidebar { padding: 72px 40px; position: sticky; top: 0; background: #f5f3ee; }
+
+        @media (max-width: 900px) {
+          .obra-hero-text { padding: 0 24px 48px !important; }
+          .obra-meta { grid-template-columns: 1fr 1fr !important; }
+          .obra-meta-item { border-right: none !important; border-bottom: 1px solid rgba(20,18,16,0.08); }
+          .obra-body { grid-template-columns: 1fr !important; }
+          .obra-content { padding: 48px 24px 64px !important; border-right: none !important; }
+          .obra-sidebar { padding: 40px 24px !important; position: static !important; border-top: 1px solid rgba(20,18,16,0.08); }
+        }
+
+        @media (max-width: 480px) {
+          .obra-meta { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
+      <Nav />
 
       {/* HERO */}
       <section style={{ position: 'relative', height: '90vh', minHeight: 520, overflow: 'hidden', background: '#1a1816' }}>
@@ -79,68 +94,63 @@ export default async function ObraPage({ params }: { params: Promise<{ slug: str
           <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg,#1a1816,#2a2420)' }} />
         )}
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(12,10,8,0.75) 0%, rgba(12,10,8,0.1) 60%)' }} />
-        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '0 56px 64px' }}>
+        <div className="obra-hero-text" style={{ position: 'absolute', bottom: 0, left: 0, right: 0 }}>
           <span style={{ fontSize: 10, fontWeight: 500, letterSpacing: '0.22em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', display: 'block', marginBottom: 14 }}>{obra.categoria}</span>
-          <h1 style={{ fontSize: 'clamp(40px,6vw,76px)', fontWeight: 300, lineHeight: 1.05, color: '#fff', margin: 0 }}>{obra.titulo}</h1>
+          <h1 style={{ fontSize: 'clamp(32px,6vw,76px)', fontWeight: 300, lineHeight: 1.05, color: '#fff', margin: 0 }}>{obra.titulo}</h1>
         </div>
       </section>
 
       {/* METADATA BAR */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', background: '#fff', borderBottom: '1px solid rgba(20,18,16,0.08)' }}>
+      <div className="obra-meta">
         {[
           { label: 'Cliente', val: obra.cliente },
           { label: 'Arquitecto', val: obra.arquitecto },
           { label: 'Superficie', val: obra.superficie },
           { label: 'Ubicacion', val: obra.ubicacion },
-        ].filter(m => m.val).map((m, i, arr) => (
-          <div key={m.label} style={{ padding: '28px 32px', borderRight: i < arr.length - 1 ? '1px solid rgba(20,18,16,0.08)' : 'none' }}>
+        ].filter(m => m.val).map((m) => (
+          <div key={m.label} className="obra-meta-item">
             <span style={{ fontSize: 9, fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#8a8278', display: 'block', marginBottom: 6 }}>{m.label}</span>
             <span style={{ fontSize: 15, fontWeight: 400, color: '#141210' }}>{m.val}</span>
           </div>
         ))}
       </div>
 
-      {/* CUERPO — estilo Kinland */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', alignItems: 'start' }}>
+      {/* CUERPO */}
+      <div className="obra-body">
 
-        {/* CONTENIDO IZQUIERDA */}
-        <div style={{ padding: '72px 56px 100px 56px', borderRight: '1px solid rgba(20,18,16,0.08)' }}>
-
-          {/* Resumen */}
+        {/* CONTENIDO */}
+        <div className="obra-content">
           {obra.resumen && (
-            <p style={{ fontSize: 'clamp(18px,2vw,24px)', fontWeight: 300, lineHeight: 1.65, color: '#141210', marginBottom: 56, paddingBottom: 56, borderBottom: '1px solid rgba(20,18,16,0.08)' }}>
+            <p style={{ fontSize: 'clamp(17px,2vw,24px)', fontWeight: 300, lineHeight: 1.65, color: '#141210', marginBottom: 56, paddingBottom: 56, borderBottom: '1px solid rgba(20,18,16,0.08)' }}>
               {obra.resumen}
             </p>
           )}
 
-          {/* Bloques intercalados */}
-          {bloques.map((bloque, i) => {
-            if (bloque.type === 'image') {
-              const img = bloque.content
-              const aspectRatio = `${img.width}/${img.height}`
-              return (
+          {/* Primero texto completo */}
+          {descripcionParrafos.map((parrafo: string, i: number) => (
+            <p key={i} style={{ fontSize: 16, fontWeight: 300, lineHeight: 1.85, color: '#5e5850', marginBottom: 24, maxWidth: 640 }}>
+              {parrafo}
+            </p>
+          ))}
+
+          {/* Luego galería */}
+          {galeria.length > 0 && (
+            <div style={{ marginTop: 56 }}>
+              {galeria.map((img: any, i: number) => (
                 <div key={i} style={{ marginBottom: 4, overflow: 'hidden', background: '#e8e5df' }}>
                   <img
                     src={img.url}
                     alt=""
-                    style={{ width: '100%', display: 'block', aspectRatio, objectFit: 'cover' }}
+                    style={{ width: '100%', display: 'block', aspectRatio: `${img.width}/${img.height}`, objectFit: 'cover' }}
                   />
                 </div>
-              )
-            } else {
-              return (
-                <p key={i} style={{ fontSize: 16, fontWeight: 300, lineHeight: 1.85, color: '#5e5850', margin: '48px 0', maxWidth: 640 }}>
-                  {bloque.content}
-                </p>
-              )
-            }
-          })}
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* SIDEBAR DERECHA */}
-        <div style={{ padding: '72px 40px', position: 'sticky', top: 0, background: '#f5f3ee' }}>
-
-          {/* Detalles */}
+        {/* SIDEBAR */}
+        <div className="obra-sidebar">
           <Link href="/obras" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 11, fontWeight: 500, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#52448a', marginBottom: 48 }}>
             ← Volver a proyectos
           </Link>
@@ -159,29 +169,26 @@ export default async function ObraPage({ params }: { params: Promise<{ slug: str
             </div>
           ))}
 
-          {/* Botón Seamos Partners */}
           <Link href="/contacto" style={{ display: 'block', background: '#141210', color: '#fff', textAlign: 'center', padding: '14px 20px', fontSize: 11, fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', marginTop: 40 }}>
             Seamos Partners
           </Link>
 
-          {/* Navegacion */}
           <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
             {anterior && (
               <Link href={`/obras/${anterior.slug?.current}`}
-                style={{ display: 'flex', flexDirection: 'column', padding: '14px 16px', border: '1px solid rgba(20,18,16,0.12)', background: '#fff', textDecoration: 'none' }}>
+                style={{ display: 'flex', flexDirection: 'column', padding: '14px 16px', border: '1px solid rgba(20,18,16,0.12)', background: '#fff' }}>
                 <span style={{ fontSize: 9, fontWeight: 500, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#8a8278', marginBottom: 4 }}>← Proyecto anterior</span>
                 <span style={{ fontSize: 12, fontWeight: 400, color: '#141210', lineHeight: 1.3 }}>{anterior.titulo}</span>
               </Link>
             )}
             {siguiente && (
               <Link href={`/obras/${siguiente.slug?.current}`}
-                style={{ display: 'flex', flexDirection: 'column', padding: '14px 16px', border: '1px solid rgba(20,18,16,0.12)', background: '#fff', textDecoration: 'none' }}>
+                style={{ display: 'flex', flexDirection: 'column', padding: '14px 16px', border: '1px solid rgba(20,18,16,0.12)', background: '#fff' }}>
                 <span style={{ fontSize: 9, fontWeight: 500, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#8a8278', marginBottom: 4 }}>Siguiente proyecto →</span>
                 <span style={{ fontSize: 12, fontWeight: 400, color: '#141210', lineHeight: 1.3 }}>{siguiente.titulo}</span>
               </Link>
             )}
           </div>
-
         </div>
       </div>
 
