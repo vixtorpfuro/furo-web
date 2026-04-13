@@ -31,8 +31,7 @@ export default function Nav({ dark = false }: { dark?: boolean }) {
         @media (max-width: 768px) {
           .nav-pill { display: none !important; }
           .nav-hamburger { display: flex !important; }
-          .nav-logo { opacity: 1 !important; transform: none !important; pointer-events: auto !important; }
-        }
+.nav-logo { opacity: 1 !important; transform: none !important; pointer-events: auto !important; }        }
         @media (min-width: 769px) {
           .nav-hamburger { display: none !important; }
           .nav-mobile-menu { display: none !important; }
