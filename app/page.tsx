@@ -158,8 +158,12 @@ export default function Home() {
           .stat-2 { order: 4; }
           .stat-3 { order: 5; }
           .stat-img-3 { order: 6; }
-          .home-stats-grid { grid-template-columns: 1fr; }
-        }
+.home-stats-grid { display: grid; grid-template-columns: 1fr 1fr; }
+        .home-stat-cell { padding: 80px 64px; }
+        @media (max-width: 900px) {
+          .home-stats-grid { display: block; }
+          .home-stat-cell { padding: 48px 24px; }
+        }        }
         @media (max-width: 560px) {
           .home-obras-grid { grid-template-columns: 1fr 1fr; }
         }
@@ -193,6 +197,7 @@ export default function Home() {
       </section>
 
 <section className="home-stats-grid">
+        {/* Desktop: grid 2 cols. Mobile: block en orden correcto */}
         <div className="home-stat-cell" style={{ background: '#e8e5df', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
           <span style={{ fontSize: 'clamp(52px,7vw,96px)', fontWeight: 300, lineHeight: 1, color: '#141210', display: 'block', marginBottom: 12 }}>+<CountUp target={80} /></span>
           <span style={{ fontSize: 'clamp(14px,2vw,20px)', fontWeight: 300, color: '#8a8278' }}>proyectos modelados y solucionados</span>
@@ -200,12 +205,12 @@ export default function Home() {
         <div style={{ position: 'relative', minHeight: 280, overflow: 'hidden' }}>
           <RevealImage src="/home/obra_furo.jpg" alt="Obra" />
         </div>
+        <div style={{ position: 'relative', minHeight: 280, overflow: 'hidden' }}>
+          <RevealImage src="/home/planta_furo.jpg" alt="Planta" delay={0.1} />
+        </div>
         <div className="home-stat-cell" style={{ background: '#3a2d5e', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
           <span style={{ fontSize: 'clamp(52px,7vw,96px)', fontWeight: 300, lineHeight: 1, color: '#fff', display: 'block', marginBottom: 12 }}>+<CountUp target={2500} suffix=" m2" delay={0.1} /></span>
           <span style={{ fontSize: 'clamp(14px,2vw,20px)', fontWeight: 300, color: 'rgba(255,255,255,0.55)' }}>planta central</span>
-        </div>
-        <div style={{ position: 'relative', minHeight: 280, overflow: 'hidden' }}>
-          <RevealImage src="/home/planta_furo.jpg" alt="Planta" delay={0.1} />
         </div>
         <div className="home-stat-cell" style={{ background: '#c5cdd8', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
           <span style={{ fontSize: 'clamp(52px,7vw,96px)', fontWeight: 300, lineHeight: 1, color: '#141210', display: 'block', marginBottom: 12 }}>+<CountUp target={200} delay={0.2} /></span>
