@@ -7,16 +7,16 @@ export default function Nav({ dark = false }: { dark?: boolean }) {
   const [menuOpen, setMenuOpen] = useState(false)
 
 useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 80)
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
+    const hero = document.querySelector('section')
+    if (!hero) return
+    const obs = new IntersectionObserver(
+      ([e]) => setScrolled(!e.isIntersecting),
+      { threshold: 0.1 }
+    )
+    obs.observe(hero)
+    return () => obs.disconnect()
   }, [])
   
-  useEffect(() => {
-    document.body.style.overflow = menuOpen ? 'hidden' : ''
-    return () => { document.body.style.overflow = '' }
-  }, [menuOpen])
-
   const links = [
     { label: 'Como funciona', href: '/como-funciona' },
     { label: 'Beneficios', href: '/beneficios' },
