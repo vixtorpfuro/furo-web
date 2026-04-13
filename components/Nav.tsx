@@ -6,12 +6,12 @@ export default function Nav({ dark = false }: { dark?: boolean }) {
   const [hovered, setHovered] = useState('')
   const [menuOpen, setMenuOpen] = useState(false)
 
-  useEffect(() => {
+useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 80)
-    window.addEventListener('scroll', onScroll)
+    window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
-
+  
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : ''
     return () => { document.body.style.overflow = '' }
