@@ -24,38 +24,6 @@ function FadeUp({ children, delay = 0, style = {} }: { children: React.ReactNode
   )
 }
 
-function ObraDestacada({ obra, reverse }: { obra: any, reverse: boolean }) {
-  const { ref, inView } = useInView()
-  return (
-    <div ref={ref} style={{
-      display: 'grid', gridTemplateColumns: reverse ? '1fr 1fr' : '1fr 1fr',
-      minHeight: '80vh',
-      opacity: inView ? 1 : 0, transform: inView ? 'none' : 'translateY(40px)',
-      transition: 'opacity 1s cubic-bezier(0.16,1,0.3,1), transform 1s cubic-bezier(0.16,1,0.3,1)',
-    }}>
-      {reverse ? (
-        <>
-          <div style={{ background: '#fff', padding: '80px 72px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-            <ContenidoObra obra={obra} />
-          </div>
-          <div style={{ position: 'relative', overflow: 'hidden' }}>
-            <ImagenObra obra={obra} />
-          </div>
-        </>
-      ) : (
-        <>
-          <div style={{ position: 'relative', overflow: 'hidden' }}>
-            <ImagenObra obra={obra} />
-          </div>
-          <div style={{ background: '#fff', padding: '80px 72px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-            <ContenidoObra obra={obra} />
-          </div>
-        </>
-      )}
-    </div>
-  )
-}
-
 function ImagenObra({ obra }: { obra: any }) {
   return obra.imagen_url ? (
     <img src={obra.imagen_url} alt={obra.titulo} style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', inset: 0 }} />
@@ -68,7 +36,7 @@ function ContenidoObra({ obra }: { obra: any }) {
   return (
     <>
       <span style={{ fontSize: 10, fontWeight: 500, letterSpacing: '0.22em', textTransform: 'uppercase', color: '#52448a', display: 'block', marginBottom: 16 }}>{obra.categoria}</span>
-      <h2 style={{ fontSize: 'clamp(28px,4vw,48px)', fontWeight: 300, lineHeight: 1.1, color: '#141210', marginBottom: 24 }}>{obra.titulo}</h2>
+      <h2 style={{ fontSize: 'clamp(26px,4vw,48px)', fontWeight: 300, lineHeight: 1.1, color: '#141210', marginBottom: 24 }}>{obra.titulo}</h2>
       {obra.resumen && <p style={{ fontSize: 16, fontWeight: 300, lineHeight: 1.8, color: '#5e5850', marginBottom: 32 }}>{obra.resumen}</p>}
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px 40px', marginBottom: 40 }}>
         {obra.cliente && <div><p style={{ fontSize: 10, fontWeight: 500, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#8a8278', marginBottom: 4 }}>Cliente</p><p style={{ fontSize: 14, color: '#141210' }}>{obra.cliente}</p></div>}
@@ -80,6 +48,32 @@ function ContenidoObra({ obra }: { obra: any }) {
       <Link href={`/obras/${obra.slug?.current || obra._id}`} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 12, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#141210', borderBottom: '1px solid rgba(20,18,16,0.3)', paddingBottom: 2, width: 'fit-content' }}>
         Ver proyecto →
       </Link>
+    </>
+  )
+}
+
+function ObraDestacada({ obra, reverse }: { obra: any, reverse: boolean }) {
+  const { ref, inView } = useInView()
+  return (
+    <>
+      <style>{`
+        .obra-dest { display: grid; grid-template-columns: 1fr 1fr; min-height: 80vh; }
+        .obra-dest-img { position: relative; overflow: hidden; min-height: 300px; }
+        .obra-dest-text { background: #fff; padding: 80px 72px; display: flex; flex-direction: column; justify-content: center; }
+        @media (max-width: 900px) {
+          .obra-dest { grid-template-columns: 1fr; min-height: auto; }
+          .obra-dest-img { min-height: 60vw; order: 0 !important; }
+          .obra-dest-text { padding: 48px 24px !important; order: 1 !important; }
+        }
+      `}</style>
+      <div ref={ref} className="obra-dest" style={{ opacity: inView ? 1 : 0, transform: inView ? 'none' : 'translateY(40px)', transition: 'opacity 1s cubic-bezier(0.16,1,0.3,1), transform 1s cubic-bezier(0.16,1,0.3,1)' }}>
+        <div className="obra-dest-img" style={{ order: reverse ? 1 : 0 }}>
+          <ImagenObra obra={obra} />
+        </div>
+        <div className="obra-dest-text" style={{ order: reverse ? 0 : 1 }}>
+          <ContenidoObra obra={obra} />
+        </div>
+      </div>
     </>
   )
 }
@@ -115,10 +109,25 @@ export default function ObrasClient({ obras = [] }: { obras: any[] }) {
 
   return (
     <>
-      <div style={{ paddingTop: 140, padding: '140px 56px 80px' }}>
+      <style>{`
+        .obras-header { padding: 140px 56px 80px; }
+        .obras-grid-pad { padding: 100px 56px; }
+        .obras-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 2px; }
+        .obras-filtros { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 56px; padding-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,0.07); }
+        @media (max-width: 900px) {
+          .obras-header { padding: 100px 24px 48px !important; }
+          .obras-grid-pad { padding: 60px 24px !important; }
+          .obras-grid { grid-template-columns: repeat(2,1fr) !important; }
+        }
+        @media (max-width: 480px) {
+          .obras-grid { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
+
+      <div className="obras-header">
         <FadeUp>
           <span style={{ fontSize: 14, fontWeight: 500, letterSpacing: '0.22em', textTransform: 'uppercase', color: '#52448a', display: 'block', marginBottom: 20 }}>Portafolio</span>
-          <h1 style={{ fontSize: 'clamp(42px,6vw,40px)', fontWeight: 300, lineHeight: 1.05, color: '#141210', marginBottom: 20 }}>Descubre nuestro trabajo</h1>
+          <h1 style={{ fontSize: 'clamp(36px,6vw,56px)', fontWeight: 300, lineHeight: 1.05, color: '#141210', marginBottom: 20 }}>Descubre nuestro trabajo</h1>
           <p style={{ fontSize: 16, fontWeight: 300, lineHeight: 1.8, color: '#5e5850', maxWidth: 560 }}>Proyectos de construccion industrializada en madera laminada a lo largo de Chile.</p>
         </FadeUp>
       </div>
@@ -133,9 +142,9 @@ export default function ObrasClient({ obras = [] }: { obras: any[] }) {
         </div>
       )}
 
-      <div style={{ padding: '100px 56px', background: '#141210' }}>
+      <div className="obras-grid-pad" style={{ background: '#141210' }}>
         <FadeUp>
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 56, paddingBottom: 40, borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
+          <div className="obras-filtros">
             {CATEGORIAS.map(cat => (
               <button key={cat} onClick={() => setFiltro(cat)} style={{
                 padding: '8px 20px', fontSize: 12, fontWeight: 500, letterSpacing: '0.08em',
@@ -153,7 +162,7 @@ export default function ObrasClient({ obras = [] }: { obras: any[] }) {
         {obras.length === 0 ? (
           <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 14, textAlign: 'center', padding: '60px 0' }}>Cargando proyectos...</p>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 2 }}>
+          <div className="obras-grid">
             {filtradas.map(obra => <ObraCard key={obra._id} obra={obra} />)}
           </div>
         )}
