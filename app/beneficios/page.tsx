@@ -193,7 +193,8 @@ export default function Beneficios() {
             Pensamos diferente: menos madera, mas limpio, mas liviano, asset light.
           </RevealText>
           <FadeUp delay={0.2}>
-            <p style={{ fontSize: 16, fontWeight: 300, lineHeight: 1.8, color: '#5e5850', marginBottom: 40 }}>Entendemos los desafios del negocio, de cada proyecto y nos adaptamos a cada uno, combinando una fabricacion on-site y off-site lo que nos permite ser mas eficientes y priorizar la agilidad, el crecimiento y reducir la inversion directa en activos fijos.</p>
+            <p style={{ fontSize: 16, fontWeight: 300, lineHeight: 1.8, color: '#5e5850', marginBottom: 40 }}>Entendemos los desafíos del negocio, de cada proyecto y nos adaptamos a cada uno, combinando una fabricación on-site y off-site lo que nos permite ser más eficientes y priorizar la agilidad, el crecimiento y reducir la inversión directa en activos fijos.
+</p>
             <a href="/nosotros" style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#141210', borderBottom: '1px solid rgba(20,18,16,0.3)', paddingBottom: 2 }}>Nosotros →</a>
           </FadeUp>
         </div>

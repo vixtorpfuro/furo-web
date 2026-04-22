@@ -158,30 +158,30 @@ export default function Noki() {
       </div>
 
       {/* NAV — transparente sobre hero */}
-      <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, padding: '22px 44px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Link href="/"><img src="/noki/logo_noki_blanco.png" alt="Noki" style={{ height: 22 }} /></Link>
-        <button onClick={() => setFormOpen(true)} style={{ fontSize: 13, fontWeight: 400, color: C.dark, background: 'rgba(247,245,240,0.95)', padding: '10px 22px', border: 'none', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", borderRadius: 2 }}>
-          Unirse a la lista de espera
-        </button>
-      </nav>
-
+<nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, padding: '14px 44px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+  <Link href="/"><img src="/noki/logo_noki_negro.png" alt="Noki" style={{ height: 84 }} /></Link>
+  <button onClick={() => setFormOpen(true)} style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#fff', background: '#1a1714', padding: '12px 24px', border: 'none', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", borderRadius: 2 }}>
+    Lista de espera
+  </button>
+</nav>
       {/* HERO — foto full screen, headline abajo izq */}
       <section style={{ position: 'relative', height: '100svh', overflow: 'hidden' }}>
-        <img src="/noki/hero.jpg" alt="Noki" style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', inset: 0 }} />
+        <img src="/noki/noki1_hero.jpg" alt="Noki" style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', inset: 0 }} />
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.1) 40%, transparent 70%)' }} />
-        <div style={{ position: 'absolute', bottom: 48, left: 48 }}>
-          <h1 style={{ fontFamily: serif, fontSize: 'clamp(42px,5.5vw,80px)', fontWeight: 400, lineHeight: 1.02, color: '#fff', maxWidth: '10ch' }}>
-            Tu lugar en cualquier parte.
-          </h1>
-        </div>
+<div style={{ position: 'absolute', bottom: 48, left: 48 }}>
+  <p style={{ fontSize: 'clamp(13px,1.2vw,40px)', fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgb(255, 255, 255)', marginBottom: 1 }}>Casas Noki</p>
+  <h1 style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 'clamp(36px,5vw,62px)', fontWeight: 400, lineHeight: 1.05, color: '#fff', maxWidth: '14ch' }}>
+    Una nueva forma de diseñar y construir.
+  </h1>
+</div>
       </section>
 
       {/* WHAT WE DO */}
       <section style={{ padding: '80px 48px 0', background: C.cream }}>
         <FadeUp>
-          <p style={{ fontSize: 11, fontWeight: 500, letterSpacing: '0.22em', textTransform: 'uppercase', color: C.muted, marginBottom: 24, textAlign: 'center' }}>Lo que hacemos</p>
-          <h2 style={{ fontFamily: serif, fontSize: 'clamp(32px,4.5vw,60px)', fontWeight: 400, lineHeight: 1.1, color: C.dark, maxWidth: 700, margin: '0 auto 20px', textAlign: 'center' }}>
-            Casas en madera laminada para vivir bien, <em>en cualquier entorno.</em>
+          <p style={{ fontSize: 14, fontWeight: 500, letterSpacing: '0.22em', textTransform: 'uppercase', color: C.muted, marginBottom: 24, textAlign: 'center' }}>Lo que hacemos</p>
+          <h2 style={{ fontFamily: serif, fontSize: 'clamp(32px,4.5vw,40px)', fontWeight: 300, lineHeight: 1.1, color: C.dark, maxWidth: 700, margin: '0 auto 20px', textAlign: 'center' }}>
+            Combinamos paneles estructurales FURŌ con diseño modular y construcción industrializada para que puedas sacar el máximo potencial de tu espacio. <em>en cualquier entorno.</em>
           </h2>
           <p style={{ fontSize: 16, fontWeight: 300, color: C.mid, maxWidth: 420, margin: '0 auto 48px', lineHeight: 1.8, textAlign: 'center' }}>
             Prefabricadas en Santiago y montadas en tu terreno en semanas. Para la playa, el campo, el sur o la patagonia.

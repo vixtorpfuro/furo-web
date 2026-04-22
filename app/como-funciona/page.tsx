@@ -38,9 +38,9 @@ function RevealText({ children, delay = 0, tag = 'div', style = {} }: { children
 const pasos = [
   { num: '01', titulo: 'Integracion temprana, una mejor toma de decisiones', texto: 'Nos involucramos desde el anteproyecto, entregando ingenieria, modelacion y analisis de costos, lo que permite una toma de decisiones mas certera desde el origen de cada proyecto.' },
   { num: '02', titulo: 'Modelacion y calculo para optimizar la ejecucion desde el origen', texto: 'Utilizamos tecnologia BIM modelando los proyectos en Revit, con detalles para la fabricacion de cada pieza y calculo estructural preciso, de esta manera optimizamos la ejecucion desde la etapa de diseno.' },
-  { num: '03', titulo: 'Fabricacion precisa de componentes estructurales', texto: 'Contamos con una planta central de mas de 2.500 m², donde fabricamos con precision los componentes estructurales para cada proyecto. Estos elementos versatiles permiten soluciones en muros, pisos ventilados, entrepisos y cubiertas, alcanzando longitudes de hasta 12 metros sin uniones intermedias.' },
+  { num: '03', titulo: 'Fabricacion precisa de componentes estructurales', texto: 'Contamos con una planta central de mas de 2.500 m², donde fabricamos con precision los componentes estructurales para cada proyecto. Estos elementos versatiles permiten soluciones en muros, pisos ventilados, entrepisos y cubiertas, alcanzando longitudes de hasta 12 metros sin uniones intermedias. Nuestra solución de componentes estructurales incorporan la aislación, los emplacados y todos los herrajes y fijaciones necesarios para su montaje.' },
   { num: '04', titulo: 'Eficientes y flexibles en la logistica', texto: 'Desarrollamos una logistica eficiente y flexible. Las piezas estan optimizadas para su transporte despiezado, incluso en zonas remotas, gracias a su ligereza y modularidad.' },
-  { num: '05', titulo: 'Montaje agil y organico y acompanamiento en todo el proceso', texto: 'Nuestra metodologia de montaje es un proceso agil y organico, lo que nos permite reducir los tiempos en obra en un 40%, incluso en ubicaciones aisladas.' },
+  { num: '05', titulo: 'Montaje agil y organico y acompanamiento en todo el proceso', texto: 'Nuestra metodologia de montaje es un proceso agil y organico, lo que nos permite reducir los tiempos en obra en un 40%, incluso en ubicaciones aisladas.Permite precisión, disminuyendo imprevistos y el uso de mano de obra no especializada, lo que garantiza su escalabilidad y asequibilidad.' },
 ]
 
 const componentes = [
@@ -48,7 +48,7 @@ const componentes = [
   { label: 'Componentes TECHO', img: '/como-funciona/techo.jpg' },
   { label: 'Componentes MUROS', img: '/como-funciona/muro.jpg' },
   { label: 'Componentes PISO', img: '/como-funciona/piso.jpg' },
-  { label: 'Vigas y pilares', img: '/como-funciona/herrajes.jpg' },
+  { label: 'Vigas y pilares', img: '/como-funciona/pilares.jpg' },
   { label: 'Herrajes y Fijaciones', img: '/como-funciona/herrajes.jpg' },
 ]
 
@@ -123,8 +123,6 @@ export default function ComoFunciona() {
             Un enfoque inteligente a la manera de construir, smart timber.
           </RevealText>
           <FadeUp delay={0.2}>
-            <p style={{ fontSize: 16, fontWeight: 300, lineHeight: 1.8, color: '#5e5850', marginBottom: 24 }}>Analizamos y modelamos los proyectos de manera precisa, fabricamos y construimos estructuras para desarrollos inmobiliarios, proyectos comerciales, colegios y volumenes que necesitan espacialidad, habitabilidad y eficiencia estructural.</p>
-            <p style={{ fontSize: 16, fontWeight: 300, lineHeight: 1.8, color: '#5e5850', marginBottom: 40 }}>En un montaje agil — una construccion tipo lego o mecano — se ensamblan los componentes constituyendo una obra gruesa con menores imprevistos, tiempos de construccion y costos, y una mayor libertad en los espacios.</p>
             <a href="/contacto" style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#141210', borderBottom: '1px solid rgba(20,18,16,0.3)', paddingBottom: 2 }}>Seamos Partners →</a>
           </FadeUp>
         </div>

@@ -96,7 +96,7 @@ export default function Nosotros() {
 
       {/* IMAGEN FULL */}
       <div style={{ background: '#e8e4de' }}>
-        <div className="nos-img-full-tall" style={{ backgroundImage: 'url(/nosotros/terreno1.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }} />
+        <div className="nos-img-full-tall" style={{ backgroundImage: 'url(/nosotros/nosotros1.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }} />
       </div>
 
       {/* STATS */}
@@ -124,20 +124,21 @@ export default function Nosotros() {
               Un equipo multidisciplinario comprometido con la construcción del futuro.
             </h2>
             <p style={{ fontSize: 16, fontWeight: 300, lineHeight: 1.85, color: '#5e5850', marginBottom: 20 }}>
-              Somos más de 30 profesionales — ingenieros, arquitectos, diseñadores y constructores — unidos bajo el techo FURŌ.
+              Somos un equipo multidisciplinario de más de 30 profesionales que reúne a ingenieros, arquitectos, diseñadores, constructores, todos bajo el techo FURŌ.
             </p>
             <p style={{ fontSize: 16, fontWeight: 300, lineHeight: 1.85, color: '#5e5850' }}>
-              Nos apasiona enfrentar desafíos reales. Confiados en nuestros conocimientos técnicos y en los de nuestros clientes, asumimos el compromiso de ejecutar y resolver proyectos de construcción en madera laminada para todo uso, tamaño y en cualquier lugar.
+              Nuestra experiencia y pasión, y el respaldo de la tecnología, son nuestro motor para seguir trabajando con el foco de mejorar la manera de construir.
+
             </p>
           </div>
-          <div style={{ background: '#e8e4de', aspectRatio: '4/5', backgroundImage: 'url(/nosotros/terreno2.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }} />
+          <div style={{ background: '#e8e4de', aspectRatio: '4/5', backgroundImage: 'url(/nosotros/nosotros2.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }} />
         </div>
       </section>
 
       {/* DOS IMÁGENES */}
       <div className="nos-two-col">
-        <div style={{ background: '#ddd8d0', backgroundImage: 'url(/nosotros/terreno3.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }} className="nos-two-col-img" />
-        <div style={{ background: '#e8e4de', backgroundImage: 'url(/nosotros/terreno4.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }} className="nos-two-col-img" />
+        <div style={{ background: '#ddd8d0', backgroundImage: 'url(/nosotros/nosotros3.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }} className="nos-two-col-img" />
+        <div style={{ background: '#e8e4de', backgroundImage: 'url(/nosotros/nosotros4.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }} className="nos-two-col-img" />
       </div>
 
       {/* QUOTE */}
@@ -160,13 +161,13 @@ export default function Nosotros() {
 
       {/* IMAGEN FULL 2 */}
       <div style={{ background: '#e8e4de' }}>
-        <div className="nos-img-full-tall" style={{ backgroundImage: 'url(/nosotros/terreno5.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }} />
+        <div className="nos-img-full-tall" style={{ backgroundImage: 'url(/nosotros/nosotros3.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }} />
       </div>
 
       {/* TEXTO + IMAGEN REVERSE */}
       <section className="nos-section-pad-sm" style={{ background: '#fff' }}>
         <div className="nos-text-img-reverse">
-          <div style={{ background: '#e8e4de', aspectRatio: '4/5', backgroundImage: 'url(/nosotros/terreno6.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }} />
+          <div style={{ background: '#e8e4de', aspectRatio: '4/5', backgroundImage: 'url(/nosotros/nosotros4.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }} />
           <div>
             <p style={{ fontSize: 11, fontWeight: 500, letterSpacing: '0.22em', textTransform: 'uppercase', color: '#52448a', marginBottom: 24 }}>Nuestro propósito</p>
             <h2 style={{ fontSize: 'clamp(28px,3.5vw,44px)', fontWeight: 300, lineHeight: 1.15, color: '#141210', marginBottom: 28 }}>

@@ -128,7 +128,14 @@ export default function ObrasClient({ obras = [] }: { obras: any[] }) {
         <FadeUp>
           <span style={{ fontSize: 14, fontWeight: 500, letterSpacing: '0.22em', textTransform: 'uppercase', color: '#52448a', display: 'block', marginBottom: 20 }}>Portafolio</span>
           <h1 style={{ fontSize: 'clamp(36px,6vw,56px)', fontWeight: 300, lineHeight: 1.05, color: '#141210', marginBottom: 20 }}>Descubre nuestro trabajo</h1>
-          <p style={{ fontSize: 16, fontWeight: 300, lineHeight: 1.8, color: '#5e5850', maxWidth: 560 }}>Proyectos de construccion industrializada en madera laminada a lo largo de Chile.</p>
+          <p style={{ fontSize: 16, fontWeight: 300, lineHeight: 1.8, color: '#5e5850', maxWidth: 560 }}>En FURŌ asumimos un compromiso con una construcción que se centra en mejorar la calidad de vida, entregando espacios únicos que fomenten el bienestar y la integración social.
+
+Participamos en proyectos para desarrollos inmobiliarios, proyectos comerciales, colegios, escuelas y volúmenes que necesiten espacialidad, habitabilidad y eficiencia estructural. 
+
+Apoyamos la evolución industrial de la vivienda económica y trabajamos para transformar el déficit habitacional en una oportunidad, con un estándar superior de vivienda económica. 
+
+Nuestro sistema constructivo, basado en componentes modulares de fácil armado, hace posible que todo proyecto e iniciativas de ayuda social -como Capilla País- sean más eficientes y replicables, fomentando la colaboración, el sentido de comunidad y la transformación social a través de la construcción.
+</p>
         </FadeUp>
       </div>
 
