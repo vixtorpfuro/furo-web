@@ -4,7 +4,7 @@ import Nav from '../components/Nav'
 import Footer from '../components/Footer'
 
 const testimonios = [
-  { quote: '"Con FURŌ reemplazamos la cercha tradicional por paneles estructurales de techo. Queríamos buscar eficiencia en la construccion, la sorpresa fue lograr este nivel de espacialidad en vivienda económica, se cambió completamente la percepción del espacio."', autor: 'Fernando Garcia Huidobro', rol: 'Gerente gestión y desarrollo INARCO S.A.', proyecto: 'Altos de Santa Cruz', desc: 'Vivienda economica / + de 5.000 m2' },
+  { quote: '"Con FURŌ reemplazamos la cercha tradicional por paneles estructurales de techo. Queríamos buscar eficiencia en la construcción, la sorpresa fue lograr este nivel de espacialidad en vivienda económica, se cambió completamente la percepción del espacio."', autor: 'Fernando Garcia Huidobro', rol: 'Gerente gestión y desarrollo INARCO S.A.', proyecto: 'Altos de Santa Cruz', desc: 'Vivienda economica / + de 5.000 m2' },
   { quote: '"Trabajar con FURO nos permitio reducir los tiempos de obra significativamente. La precision del sistema es notable"', autor: 'Arturo', rol: 'Cliente', proyecto: 'Casas Lago Bertand', desc: 'Vivienda / 500 m2' },
   { quote: '"El proyecto ya había sido licitado sin éxito por la complejidad logística. FURŌ esta logrando hacerlo viable, reduciendo maquinaria, especialización y traslado de materiales y manteniendo el diseño de Arquitectura."', autor: 'Nicolas del Rio', rol: 'Arquitecto, DRAA', proyecto: 'Colegio Insular Juan Fernadez', desc: 'Colegio / 3.000 m2' },
 ]
@@ -182,21 +182,21 @@ export default function Home() {
           <h1 className="he d2" style={{ fontSize: 'clamp(30px,5vw,48px)', fontWeight: 300, lineHeight: 1.1, color: '#fff', marginBottom: 44 }}>Soluciones constructivas<br />eficientes en madera laminada</h1>
           <div className="he d3" style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
             <a href="/contacto" style={{ fontSize: 12, fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#141210', background: '#fff', padding: '14px 30px' }}>Seamos Partners</a>
-            <a href="/como-funciona" style={{ fontSize: 12, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.65)', borderBottom: '1px solid rgba(255,255,255,0.3)', paddingBottom: 1 }}>Como Funciona</a>
+            <a href="/como-funciona" style={{ fontSize: 12, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.65)', borderBottom: '1px solid rgba(255,255,255,0.3)', paddingBottom: 1 }}>Cómo Funciona</a>
           </div>
         </div>
       </section>
 
       <section className="home-cf-grid">
         <div className="home-cf-text" style={{ background: '#f5f3ee', padding: '100px 72px 100px 56px', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 28 }}>
-          <RevealText delay={0} style={{ fontSize: 14, fontWeight: 500, letterSpacing: '0.22em', textTransform: 'uppercase', color: '#52448a' }}>Como funciona</RevealText>
+          <RevealText delay={0} style={{ fontSize: 14, fontWeight: 500, letterSpacing: '0.22em', textTransform: 'uppercase', color: '#52448a' }}>Cómo funciona</RevealText>
           <RevealText delay={0.1} tag="h2" style={{ fontSize: 'clamp(32px,5vw,44px)', fontWeight: 300, lineHeight: 1.05, color: '#141210' }}>Construimos de manera óptima, eficiente y con libertad.
 </RevealText>
           <FadeUp delay={0.2}><p style={{ fontSize: 16, fontWeight: 300, lineHeight: 1.8, color: '#5e5850' }}>FURŌ es fluir en la construcción. </p></FadeUp>
-<FadeUp delay={0.2}><p style={{ fontSize: 16, fontWeight: 300, lineHeight: 1.8, color: '#5e5850' }}>Mediante soluciones prefabricadas en madera laminada y la metodología FURŌ, integramos la estructura con la envolvente térmica para optimizar el uso de la madera, permitir libertad espacial en el diseño y a través de un montaje ágil y liviano logramos abarcar obras de diferentes tamaños, usos y emplazados en cualquier lugar.
+<FadeUp delay={0.2}><p style={{ fontSize: 16, fontWeight: 300, lineHeight: 1.8, color: '#5e5850' }}>Mediante soluciones prefabricadas en madera laminada, y la metodología FURŌ, integramos la estructura con la envolvente térmica para optimizar el uso de la madera, permitir libertad espacial en el diseño y a través de un montaje ágil y liviano logramos abarcar obras de diferentes tamaños, usos y emplazados en cualquier lugar.
 
 </p></FadeUp>
-          <FadeUp delay={0.4}><a href="/como-funciona" style={{ fontSize: 14, fontWeight: 500, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#52448a' }}>Como funciona →</a></FadeUp>
+          <FadeUp delay={0.4}><a href="/como-funciona" style={{ fontSize: 14, fontWeight: 500, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#52448a' }}>Cómo funciona →</a></FadeUp>
         </div>
         <div className="home-cf-img" style={{ background: '#141210', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', minHeight: 400 }}>
           <FadeUp delay={0.2}><img src="/home/dibujo.webp" alt="Componente" style={{ width: '100%', aspectRatio: '1/1', objectFit: 'cover' }} /></FadeUp>
@@ -229,16 +229,17 @@ export default function Home() {
 
       <section className="home-cf-grid">
         <div className="home-cf-text" style={{ background: '#f5f3ee', padding: '100px 72px 100px 46px', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 28 }}>
-          <RevealText delay={0} style={{ fontSize: 14, fontWeight: 500, letterSpacing: '0.22em', textTransform: 'uppercase', color: '#52448a' }}>Como funciona</RevealText>
+          <RevealText delay={0} style={{ fontSize: 14, fontWeight: 500, letterSpacing: '0.22em', textTransform: 'uppercase', color: '#52448a' }}>Cómo funciona</RevealText>
           <RevealText delay={0.1} tag="h2" style={{ fontSize: 'clamp(32px,5vw,44px)', fontWeight: 300, lineHeight: 1.05, color: '#141210' }}>Fabricamos de manera responsable y sustentable
 
 </RevealText>
           <FadeUp delay={0.2}><p style={{ fontSize: 16, fontWeight: 300, lineHeight: 1.8, color: '#5e5850' }}>FURŌ es fluir en la construcción. </p></FadeUp>
-<FadeUp delay={0.2}><p style={{ fontSize: 16, fontWeight: 300, lineHeight: 1.8, color: '#5e5850' }}>Combinamos los beneficios de la industrialización y de la madera laminada para innovar en la construcción
+<FadeUp delay={0.2}><p style={{ fontSize: 16, fontWeight: 300, lineHeight: 1.8, color: '#5e5850' }}>Optimizamos material y proceso de montaje, disminuyendo tiempos y plazos de la construcción tradicional.
+
 
 
 </p></FadeUp>
-          <FadeUp delay={0.4}><a href="/como-funciona" style={{ fontSize: 14, fontWeight: 500, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#52448a' }}>Como funciona →</a></FadeUp>
+          <FadeUp delay={0.4}><a href="/como-funciona" style={{ fontSize: 14, fontWeight: 500, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#52448a' }}>Cómo funciona →</a></FadeUp>
         </div>
         <div className="home-cf-img" style={{ background: '#141210', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', minHeight: 400 }}>
           <FadeUp delay={0.2}><img src="/home/dibujo.webp" alt="Componente" style={{ width: '100%', aspectRatio: '1/1', objectFit: 'cover' }} /></FadeUp>
@@ -268,7 +269,7 @@ export default function Home() {
         <div className="home-ben-header">
           <div>
             <RevealText delay={0} style={{ fontSize: 14, fontWeight: 500, letterSpacing: '0.22em', textTransform: 'uppercase', color: '#52448a', display: 'block', marginBottom: 24 }}>Seamos Partners</RevealText>
-            <RevealText delay={0.1} tag="h2" style={{ fontSize: 'clamp(30px,5vw,64px)', fontWeight: 300, lineHeight: 1.05, color: '#141210' }}>Nos involucramos desde el origen de cada proyecto
+            <RevealText delay={0.1} tag="h2" style={{ fontSize: 'clamp(32px,5vw,44px)', fontWeight: 300, lineHeight: 1.05, color: '#141210' }}>Nos involucramos desde el origen de cada proyecto
 
 </RevealText>
           </div>
@@ -280,9 +281,12 @@ export default function Home() {
           </FadeUp>
         </div>
         <div className="home-ben-cards">
-          <BenefitCard num="01" img="/home/sustentable_home_furo.jpg" title="Fabricamos de manera responsable y sustentable" desc="Optimizamos material y proceso de montaje, disminuyendo tiempos de la construccion tradicional." />
-          <BenefitCard num="02" img="/home/libertad_home_furo.jpg" title="Flexible, eficiente y con libertad espacial" desc="Grandes luces y espacios amplios, adaptandose a distintas configuraciones y usos." />
-          <BenefitCard num="03" img="/home/terminaciones_home_furo.jpg" title="Calidad Termica" desc="Fusionamos procesos con estetica contemporanea y alta eficiencia energetica." />
+          <BenefitCard num="01" img="/home/sustentable_home_furo.jpg" title="Fabricamos de manera responsable y sustentable" desc="Optimizamos material y proceso de montaje, disminuyendo tiempos de la construcción tradicional." />
+          <BenefitCard num="02" img="/home/libertad_home_furo.jpg" title="Flexible, eficiente y con libertad espacial" desc="Logramos soluciones con estética contemporánea y alta eficiencia energética
+
+" />
+          <BenefitCard num="03" img="/home/terminaciones_home_furo.jpg" title="Innovación y confort interior
+" desc="Fusionamos procesos con estetica contemporanea y alta eficiencia energetica." />
         </div>
       </section>
 
@@ -296,7 +300,7 @@ export default function Home() {
           <ObraCard img="/home/altos.jpg" name="Altos de Santa Cruz" tipo="Vivienda / +5.000 m2" />
           <ObraCard img="/home/humbolt.jpg" name="Colegio Humbolt" tipo="Comercial / +1000 m²" />
           <ObraCard img="/home/lago_Bertand.jpg" name="Casas Lago Bertand" tipo="Residencial/ +500 m²" />
-          <ObraCard img="/home/autoconstruccion.jpg" name="Construccion de Emergencia" tipo="Vivienda / +5.000 m2" />
+          <ObraCard img="/home/autoconstruccion.jpg" name="Construcción de Emergencia" tipo="Vivienda / +5.000 m2" />
         </div>
         <FadeUp>
           <div style={{ textAlign: 'center' }}>
@@ -310,7 +314,7 @@ export default function Home() {
       <section className="home-partners-pad" style={{ background: '#f5f3ee', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
         <FadeUp style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <img src="https://cdn.prod.website-files.com/69c9b2d67436dcea96fc3636/69c9b9f30560bd793310acfd_Logo-Furo-Blanco_web_medium.png" alt="FURO" style={{ height: 68, filter: 'brightness(0)', opacity: 0.85, marginBottom: 10, display: 'block' }} />
-          <p style={{ fontSize: 'clamp(18px,3vw,24px)', fontWeight: 300, color: '#52448a', marginBottom: 52 }}>es fluir en la construccion</p>
+          <p style={{ fontSize: 'clamp(18px,3vw,24px)', fontWeight: 300, color: '#52448a', marginBottom: 52 }}>es fluir en la construcción</p>
           <h2 style={{ fontSize: 'clamp(26px,7vw,36px)', fontWeight: 300, lineHeight: 1.1, color: '#141210', marginBottom: 32 }}>Seamos Partners</h2>
           <p style={{ fontSize: 16, fontWeight: 300, lineHeight: 1.8, color: '#5e5850', maxWidth: 640, marginBottom: 16 }}>Creemos en la mejora continua y somos partners de nuestros clientes, oficinas de arquitectura, constructoras y desarrolladores inmobiliarios.</p>
           <p style={{ fontSize: 18, fontWeight: 300, color: '#52448a', marginBottom: 52 }}>+flexible, +eficiente, +sostenible y con libertad espacial.</p>

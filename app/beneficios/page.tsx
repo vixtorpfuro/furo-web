@@ -190,10 +190,11 @@ export default function Beneficios() {
             <span style={{ fontSize: 14, fontWeight: 500, letterSpacing: '0.22em', textTransform: 'uppercase', color: '#52448a', display: 'block', marginBottom: 24 }}>Beneficios</span>
           </FadeUp>
           <RevealText tag="h1" delay={0.1} style={{ fontSize: 'clamp(26px,3.5vw,46px)', fontWeight: 300, lineHeight: 1.15, color: '#141210', marginBottom: 32 }}>
-            Pensamos diferente: menos madera, mas limpio, mas liviano, asset light.
+            Pensamos diferente: menos madera, más liviano, más limpio, asset light.
           </RevealText>
           <FadeUp delay={0.2}>
             <p style={{ fontSize: 16, fontWeight: 300, lineHeight: 1.8, color: '#5e5850', marginBottom: 40 }}>Entendemos los desafíos del negocio, de cada proyecto y nos adaptamos a cada uno, combinando una fabricación on-site y off-site lo que nos permite ser más eficientes y priorizar la agilidad, el crecimiento y reducir la inversión directa en activos fijos.
+
 </p>
             <a href="/nosotros" style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#141210', borderBottom: '1px solid rgba(20,18,16,0.3)', paddingBottom: 2 }}>Nosotros →</a>
           </FadeUp>
