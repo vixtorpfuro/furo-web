@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from 'react'
 import Nav from '../../components/Nav'
 import Footer from '../../components/Footer'
 
-const WEBHOOK = 'https://hook.us1.make.com/ai9dxmn268e8ibce64gdt7e86bq9fq37'
+const WEBHOOK = 'https://hook.eu2.make.com/jcti1vtgp2roletlg03vf2jm9leiqkhq'
 
 function FadeUp({ children, delay = 0 }: { children: React.ReactNode, delay?: number }) {
   const ref = useRef<HTMLDivElement>(null)
