@@ -59,7 +59,7 @@ export default function Noki() {
     if (!form.nombre || !form.email) { setStatus('error'); return }
     setStatus('sending')
     try {
-      const res = await fetch(WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...form, tipo: 'waitlist_noki', fecha: new Date().toLocaleString('es-CL') }) })
+      const res = await fetch(WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...form, tipo: 'waitlist_noki', fecha: new Date().toLocaleString('es-CL'), origen: 'noki', mailchimp: true }) })
       setStatus(res.ok ? 'ok' : 'error')
     } catch { setStatus('error') }
   }
