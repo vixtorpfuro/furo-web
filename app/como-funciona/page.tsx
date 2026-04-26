@@ -38,13 +38,13 @@ function RevealText({ children, delay = 0, tag = 'div', style = {} }: { children
 const pasos = [
   { num: '01', titulo: 'Integración temprana, una mejor toma de decisiones', texto: 'Nos involucramos desde el anteproyecto, entregando ingenieria, modelacion y analisis de costos, lo que permite una toma de decisiones mas certera desde el origen de cada proyecto.' },
   { num: '02', titulo: 'Modelación y cálculo para optimizar la ejecución desde el origen', texto: 'Utilizamos tecnologia BIM modelando los proyectos en Revit, con detalles para la fabricacion de cada pieza y calculo estructural preciso, de esta manera optimizamos la ejecucion desde la etapa de diseno.' },
-  { num: '03', titulo: 'Fabricación precisa de paneles estructurales', texto: 'Contamos con una planta central de mas de 2.500 m², donde fabricamos con precision los componentes estructurales para cada proyecto. Estos elementos versatiles permiten soluciones en muros, pisos ventilados, entrepisos y cubiertas, alcanzando longitudes de hasta 12 metros sin uniones intermedias. Nuestra solución de componentes estructurales incorporan la aislación, los emplacados y todos los herrajes y fijaciones necesarios para su montaje.' },
+  { num: '03', titulo: 'Fabricación precisa de paneles estructurales', texto: 'Contamos con una planta central de mas de 2.500 m², donde fabricamos con precision los paneles estructurales térmicos para cada proyecto. Estos elementos versatiles permiten soluciones en muros, pisos ventilados, entrepisos y cubiertas, alcanzando longitudes de hasta 12 metros sin uniones intermedias. Nuestra solución de paneles estructurales térmicos incorporan la aislación, los emplacados y todos los herrajes y fijaciones necesarios para su montaje.' },
   { num: '04', titulo: 'Eficientes y flexibles en la logística', texto: 'Desarrollamos una logistica eficiente y flexible. Las piezas estan optimizadas para su transporte despiezado, incluso en zonas remotas, gracias a su ligereza y modularidad.' },
   { num: '05', titulo: 'Montaje ágil y acompañamiento en todo el proceso', texto: 'Nuestra metodología de montaje es un proceso agil y organico, lo que nos permite reducir los tiempos en obra en un 40%, incluso en ubicaciones aisladas.Permite precisión, disminuyendo imprevistos y el uso de mano de obra no especializada, lo que garantiza su escalabilidad y asequibilidad.' },
 ]
 
 const componentes = [
-  { label: 'Envolvente termica', img: '/como-funciona/Envolvente.jpg' },
+  { label: 'Envolvente térmica', img: '/como-funciona/Envolvente.jpg' },
   { label: 'Componentes TECHO', img: '/como-funciona/techo.jpg' },
   { label: 'Componentes MUROS', img: '/como-funciona/muro.jpg' },
   { label: 'Componentes PISO', img: '/como-funciona/piso.jpg' },
@@ -135,7 +135,7 @@ export default function ComoFunciona() {
         <div className="cf-acordeon-right">
           <FadeUp delay={0.1}>
             <p style={{ fontSize: 16, fontWeight: 300, lineHeight: 1.8, color: '#5e5850', marginBottom: 24 }}>Analizamos y modelamos los proyectos de manera precisa, fabricamos y construimos estructuras para desarrollos inmobiliarios, proyectos comerciales, colegios y volúmenes que necesitan espacialidad, habitabilidad y eficiencia estructural.</p>
-            <p style={{ fontSize: 16, fontWeight: 300, lineHeight: 1.8, color: '#5e5850' }}>En un montaje ágil — una construcción tipo lego o mecano — se ensamblan los componentes, constituyendo una obra gruesa con menores imprevistos, tiempos de construcción y costos, y una mayor libertad en los espacios.
+            <p style={{ fontSize: 16, fontWeight: 300, lineHeight: 1.8, color: '#5e5850' }}>En un montaje ágil — una construcción tipo lego o mecano — se ensamblan los paneles estructurales térmicos, constituyendo una obra gruesa con menores imprevistos, tiempos de construcción y costos, y una mayor libertad en los espacios.
 </p>
           </FadeUp>
         </div>

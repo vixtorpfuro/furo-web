@@ -190,7 +190,7 @@ export default function Home() {
       <section className="home-cf-grid">
         <div className="home-cf-text" style={{ background: '#f5f3ee', padding: '100px 72px 100px 56px', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 28 }}>
           <RevealText delay={0} style={{ fontSize: 14, fontWeight: 500, letterSpacing: '0.22em', textTransform: 'uppercase', color: '#52448a' }}>Cómo funciona</RevealText>
-          <RevealText delay={0.1} tag="h2" style={{ fontSize: 'clamp(32px,5vw,44px)', fontWeight: 300, lineHeight: 1.05, color: '#141210' }}>Construimos de manera óptima, eficiente y con libertad.
+          <RevealText delay={0.1} tag="h2" style={{ fontSize: 'clamp(32px,5vw,44px)', fontWeight: 300, lineHeight: 1.05, color: '#141210' }}>Construimos de manera ágil, eficiente y con libertad.
 </RevealText>
           <FadeUp delay={0.2}><p style={{ fontSize: 16, fontWeight: 300, lineHeight: 1.8, color: '#5e5850' }}>FURŌ es fluir en la construcción. </p></FadeUp>
 <FadeUp delay={0.2}><p style={{ fontSize: 16, fontWeight: 300, lineHeight: 1.8, color: '#5e5850' }}>Mediante soluciones prefabricadas en madera laminada, y la metodología FURŌ, integramos la estructura con la envolvente térmica para optimizar el uso de la madera, permitir libertad espacial en el diseño y a través de un montaje ágil y liviano logramos abarcar obras de diferentes tamaños, usos y emplazados en cualquier lugar.

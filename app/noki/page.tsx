@@ -28,7 +28,7 @@ function FadeUp({ children, delay = 0, style = {} }: { children: React.ReactNode
 }
 
 const WHY_ITEMS = [
-  { img: 'P1010593.jpg', t: 'Montaje rápido, proceso transparente', d: 'Los componentes llegan prefabricados desde nuestra planta. La estructura se monta en 4 a 8 semanas. Presupuesto claro, plazo predecible.', sub: 'Ensamblaje preciso. Sin imprevistos.' },
+  { img: 'P1010593.jpg', t: 'Montaje rápido, proceso transparente', d: 'Los paneles estructurales térmicosentes llegan prefabricados desde nuestra planta. La estructura se monta en 4 a 8 semanas. Presupuesto claro, plazo predecible.', sub: 'Ensamblaje preciso. Sin imprevistos.' },
   { img: 'P1010591.jpg', t: 'Materiales naturales para todo clima', d: 'Estructura CLT/GLT, envolvente 160mm con lana de oveja. Eficiente en la costa y en el frío del sur. Interior en madera laminada vista.', sub: 'Una casa que se siente diferente.' },
   { img: 'P1010657.jpg', t: 'Una casa que se adapta contigo', d: 'Elige terminaciones y materiales sin alterar la estructura. Precio a suma alzada desde el primer día. Tu Noki, con tu impronta.', sub: 'Personalizable dentro del sistema.' },
 ]
