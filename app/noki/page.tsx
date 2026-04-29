@@ -40,7 +40,7 @@ const FAQS: { cat: string, items: { q: string, r: string }[] }[] = [
     { q: '¿Cuánto tarda el proceso completo?', r: 'Entre 6 y 12 meses desde la reserva hasta las llaves, dependiendo de los permisos del terreno.' },
   ]},
   { cat: 'Precios', items: [
-    { q: '¿Cuál es el precio?', r: 'El precio de lanzamiento parte desde 3.200 UF para las primeras 5 unidades. Únete a la lista de espera para asegurar tu tramo.' },
+    { q: '¿Cuál es el precio?', r: 'El precio de lanzamiento parte desde 3.200 UF para las primeras 5 unidades. Solicita tu propuesta para asegurar tu tramo.' },
     { q: '¿Qué incluye el precio?', r: 'Estructura CLT/GLT, envolvente 160mm con lana de oveja, cubierta de zinc, ventanas y montaje.' },
     { q: '¿Qué no incluye?', r: 'Terreno, permisos municipales, instalaciones de servicios y terminaciones adicionales fuera del paquete base.' },
   ]},
@@ -48,7 +48,7 @@ const FAQS: { cat: string, items: { q: string, r: string }[] }[] = [
 
 export default function Noki() {
   const [formOpen, setFormOpen] = useState(false)
-  const [form, setForm] = useState({ nombre: '', email: '', celular: '', perfil: '', donde: '' })
+  const [form, setForm] = useState({ nombre: '', apellido: '', email: '', celular: '', perfil: '', donde: '' })
   const [status, setStatus] = useState<'idle'|'sending'|'ok'|'error'>('idle')
   const [openFaq, setOpenFaq] = useState<string|null>(null)
   const [modeloActivo, setModeloActivo] = useState<'A'|'B'>('A')
@@ -56,7 +56,7 @@ export default function Noki() {
   const set = (k: string, v: string) => setForm(f => ({ ...f, [k]: v }))
 
   const submit = async () => {
-    if (!form.nombre || !form.email) { setStatus('error'); return }
+    if (!form.nombre || !form.apellido || !form.email) { setStatus('error'); return }
     setStatus('sending')
     try {
       const res = await fetch(WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...form, tipo: 'waitlist_noki', fecha: new Date().toLocaleString('es-CL'), origen: 'noki', mailchimp: true }) })
@@ -103,6 +103,8 @@ export default function Noki() {
         .faq-cat-label { padding: 28px 48px 28px 48px; font-size: 10px; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(245,243,238,0.3); }
         .faq-items { border-left: 1px solid rgba(255,255,255,0.06); padding: 0 48px; }
 
+        .nombre-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0 20px; }
+
         @media (max-width: 900px) {
           .form-panel { width: 100%; }
           .why-section { grid-template-columns: 1fr; }
@@ -114,6 +116,7 @@ export default function Noki() {
           .faq-cat-label { padding: 20px 32px; }
           .why-btn { padding: 28px 32px; }
           .noki-gal img { height: 42vh; }
+          .nombre-row { grid-template-columns: 1fr; }
         }
       `}</style>
 
@@ -122,14 +125,32 @@ export default function Noki() {
       <div className={`form-panel${formOpen ? ' open' : ''}`}>
         <div style={{ padding: '32px 40px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 48 }}>
-            <p style={{ fontSize: 10, fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase', color: C.muted }}>Lista de espera</p>
+            <p style={{ fontSize: 10, fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase', color: C.muted }}>Solicita tu propuesta</p>
             <button onClick={() => setFormOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 26, color: C.muted, lineHeight: 1, fontWeight: 300 }}>×</button>
           </div>
-          <h2 style={{ fontFamily: serif, fontSize: 30, fontWeight: 400, color: C.dark, lineHeight: 1.2, marginBottom: 12 }}>Asegura tu precio de lanzamiento.</h2>
-          <p style={{ fontSize: 14, fontWeight: 300, color: C.mid, lineHeight: 1.7, marginBottom: 6 }}>Las primeras <strong style={{ fontWeight: 500 }}>5 unidades</strong> desde <strong style={{ fontWeight: 500 }}>3.200 UF</strong>.</p>
-          <p style={{ fontSize: 12, color: C.muted, marginBottom: 40 }}>Sin compromiso de pago. Te contactamos en 48 horas.</p>
+          <h2 style={{ fontFamily: serif, fontSize: 30, fontWeight: 400, color: C.dark, lineHeight: 1.2, marginBottom: 20 }}>Asegura tu precio de lanzamiento.</h2>
+          <div style={{ marginBottom: 20 }}>
+            <p style={{ fontSize: 10, fontWeight: 500, letterSpacing: '0.15em', textTransform: 'uppercase', color: C.muted, marginBottom: 4 }}>Valor desde</p>
+            <p style={{ fontFamily: serif, fontSize: 38, fontWeight: 400, color: C.dark, lineHeight: 1 }}>3.500 UF</p>
+          </div>
+          <p style={{ fontSize: 13, fontWeight: 300, color: C.mid, lineHeight: 1.75, marginBottom: 40, paddingBottom: 24, borderBottom: `1px solid ${C.border}` }}>
+            Te enviaremos un link para una reunión de 20 minutos. Para calcular el precio final necesitamos conocer la ubicación y características de tu terreno.
+          </p>
+
+          {/* Nombre + Apellido en fila */}
+          <div className="nombre-row" style={{ marginBottom: 28 }}>
+            <div>
+              <label style={{ fontSize: 10, letterSpacing: '0.15em', textTransform: 'uppercase', color: C.muted, display: 'block', marginBottom: 8 }}>Nombre *</label>
+              <input style={inp} type="text" placeholder="Tu nombre" value={form.nombre} onChange={e => set('nombre', e.target.value)} />
+            </div>
+            <div>
+              <label style={{ fontSize: 10, letterSpacing: '0.15em', textTransform: 'uppercase', color: C.muted, display: 'block', marginBottom: 8 }}>Apellido *</label>
+              <input style={inp} type="text" placeholder="Tu apellido" value={form.apellido} onChange={e => set('apellido', e.target.value)} />
+            </div>
+          </div>
+
+          {/* Resto de campos */}
           {[
-            { k: 'nombre', l: 'Nombre *', p: 'Tu nombre completo', t: 'text' },
             { k: 'email', l: 'Email *', p: 'correo@email.com', t: 'email' },
             { k: 'celular', l: 'Celular', p: '+56 9 XXXX XXXX', t: 'text' },
             { k: 'donde', l: '¿Dónde quieres construir?', p: 'Región o lugar', t: 'text' },
@@ -139,41 +160,43 @@ export default function Noki() {
               <input style={inp} type={t} placeholder={p} value={(form as any)[k]} onChange={e => set(k, e.target.value)} />
             </div>
           ))}
+
           <div style={{ marginBottom: 36 }}>
             <label style={{ fontSize: 10, letterSpacing: '0.15em', textTransform: 'uppercase', color: C.muted, display: 'block', marginBottom: 8 }}>Perfil</label>
             <select style={sel} value={form.perfil} onChange={e => set('perfil', e.target.value)}>
               <option value="">Selecciona</option>
               <option value="owner">Owner / Propietario</option>
               <option value="developer">Developer / Inmobiliaria</option>
-              <option value="arquitecto">Arquitecto / Constructor</option>
               <option value="otro">Otro</option>
             </select>
           </div>
-          {status === 'ok' && <p style={{ fontSize: 13, color: C.green, borderTop: `2px solid ${C.green}`, paddingTop: 14, marginBottom: 16 }}>✓ Estás en la lista. Te contactamos pronto.</p>}
-          {status === 'error' && <p style={{ fontSize: 13, color: '#c0392b', borderTop: '2px solid #e05252', paddingTop: 14, marginBottom: 16 }}>Por favor ingresa nombre y email.</p>}
+
+          {status === 'ok' && <p style={{ fontSize: 13, color: C.green, borderTop: `2px solid ${C.green}`, paddingTop: 14, marginBottom: 16 }}>✓ Propuesta enviada. Te contactamos pronto.</p>}
+          {status === 'error' && <p style={{ fontSize: 13, color: '#c0392b', borderTop: '2px solid #e05252', paddingTop: 14, marginBottom: 16 }}>Por favor ingresa nombre, apellido y email.</p>}
           <button onClick={submit} disabled={status === 'sending' || status === 'ok'} style={{ width: '100%', background: status === 'ok' ? C.green : C.dark, color: '#fff', border: 'none', padding: '18px', fontSize: 11, fontWeight: 500, letterSpacing: '0.16em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif", cursor: 'pointer' }}>
-            {status === 'sending' ? 'Enviando...' : status === 'ok' ? '✓ En lista' : 'Unirme a la lista →'}
+            {status === 'sending' ? 'Enviando...' : status === 'ok' ? '✓ Propuesta solicitada' : 'Solicita tu propuesta →'}
           </button>
         </div>
       </div>
 
       {/* NAV — transparente sobre hero */}
-<nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, padding: '14px 44px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-  <Link href="/"><img src="/noki/logo_noki_negro.png" alt="Noki" style={{ height: 84 }} /></Link>
-  <button onClick={() => setFormOpen(true)} style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#fff', background: '#1a1714', padding: '12px 24px', border: 'none', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", borderRadius: 2 }}>
-    Lista de espera
-  </button>
-</nav>
+      <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, padding: '14px 44px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Link href="/"><img src="/noki/logo_noki_negro.png" alt="Noki" style={{ height: 84 }} /></Link>
+        <button onClick={() => setFormOpen(true)} style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#fff', background: '#1a1714', padding: '12px 24px', border: 'none', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", borderRadius: 2 }}>
+          Solicita tu propuesta
+        </button>
+      </nav>
+
       {/* HERO — foto full screen, headline abajo izq */}
       <section style={{ position: 'relative', height: '100svh', overflow: 'hidden' }}>
         <img src="/noki/noki1_hero.jpg" alt="Noki" style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', inset: 0 }} />
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.1) 40%, transparent 70%)' }} />
-<div style={{ position: 'absolute', bottom: 48, left: 48 }}>
-  <p style={{ fontSize: 'clamp(13px,1.2vw,40px)', fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgb(255, 255, 255)', marginBottom: 1 }}>Casas Noki</p>
-  <h1 style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 'clamp(36px,5vw,62px)', fontWeight: 400, lineHeight: 1.05, color: '#fff', maxWidth: '14ch' }}>
-    Una nueva forma de diseñar y construir.
-  </h1>
-</div>
+        <div style={{ position: 'absolute', bottom: 48, left: 48 }}>
+          <p style={{ fontSize: 'clamp(13px,1.2vw,40px)', fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgb(255, 255, 255)', marginBottom: 1 }}>Casas Noki</p>
+          <h1 style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 'clamp(36px,5vw,62px)', fontWeight: 400, lineHeight: 1.05, color: '#fff', maxWidth: '14ch' }}>
+            Una nueva forma de diseñar y construir.
+          </h1>
+        </div>
       </section>
 
       {/* WHAT WE DO */}
@@ -224,7 +247,7 @@ export default function Noki() {
               </div>
             ))}
             <button onClick={() => setFormOpen(true)} style={{ marginTop: 28, fontSize: 11, fontWeight: 500, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#fff', background: C.green, padding: '13px 26px', border: 'none', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
-              Reservar Tipo {modeloActivo} →
+              Solicita tu propuesta →
             </button>
           </div>
 
@@ -240,7 +263,7 @@ export default function Noki() {
             Dos modelos. Precio de lanzamiento desde 3.200 UF.
           </h3>
           <button onClick={() => setFormOpen(true)} style={{ fontSize: 11, fontWeight: 500, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#fff', background: C.dark, padding: '14px 32px', border: 'none', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
-            Unirse a la lista →
+            Solicita tu propuesta →
           </button>
         </div>
       </section>
@@ -386,11 +409,11 @@ export default function Noki() {
         <FadeUp style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <img src="/noki/logo_noki_blanco.png" alt="Noki" style={{ height: 28, marginBottom: 28, display: 'block' }} />
           <h2 style={{ fontFamily: serif, fontSize: 'clamp(26px,3.5vw,50px)', fontWeight: 400, lineHeight: 1.1, color: '#fff', marginBottom: 16, maxWidth: '18ch' }}>
-            Las primeras 5 unidades tienen precio especial.
+            Diseña y construye tu casa en cualquier terreno de Chile.
           </h2>
           <p style={{ fontSize: 15, fontWeight: 300, color: 'rgba(255,255,255,0.65)', marginBottom: 36 }}>Sin compromiso de pago. Únete y asegura tu lugar.</p>
           <button onClick={() => setFormOpen(true)} style={{ fontSize: 11, fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: C.green, background: '#fff', padding: '15px 40px', border: 'none', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
-            Unirme a la lista →
+            Solicita tu propuesta →
           </button>
         </FadeUp>
       </section>

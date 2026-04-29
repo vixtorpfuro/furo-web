@@ -46,7 +46,7 @@ function ContenidoObra({ obra }: { obra: any }) {
         {obra.anio && <div><p style={{ fontSize: 10, fontWeight: 500, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#8a8278', marginBottom: 4 }}>Año</p><p style={{ fontSize: 14, color: '#141210' }}>{obra.anio}</p></div>}
       </div>
       <Link href={`/obras/${obra.slug?.current || obra._id}`} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 12, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#141210', borderBottom: '1px solid rgba(20,18,16,0.3)', paddingBottom: 2, width: 'fit-content' }}>
-        Ver proyecto →
+        Ver proyecto &rarr;
       </Link>
     </>
   )
@@ -104,18 +104,20 @@ function ObraCard({ obra }: { obra: any }) {
 
 export default function ObrasClient({ obras = [] }: { obras: any[] }) {
   const [filtro, setFiltro] = useState('Todos')
-  const destacadas = obras.filter(o => o.destacada)
+  const destacadas = filtro === 'Todos' ? obras.filter(o => o.destacada) : []
   const filtradas = filtro === 'Todos' ? obras : obras.filter(o => o.categoria === filtro)
 
   return (
     <>
       <style>{`
-        .obras-header { padding: 140px 56px 80px; }
+        .obras-header { padding: 140px 56px 60px; }
+        .obras-filtros-wrap { padding: 0 56px 64px; }
+        .obras-filtros { display: flex; gap: 8px; flex-wrap: wrap; }
         .obras-grid-pad { padding: 100px 56px; }
         .obras-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 2px; }
-        .obras-filtros { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 56px; padding-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,0.07); }
         @media (max-width: 900px) {
-          .obras-header { padding: 100px 24px 48px !important; }
+          .obras-header { padding: 100px 24px 40px !important; }
+          .obras-filtros-wrap { padding: 0 24px 48px !important; }
           .obras-grid-pad { padding: 60px 24px !important; }
           .obras-grid { grid-template-columns: repeat(2,1fr) !important; }
         }
@@ -128,14 +130,28 @@ export default function ObrasClient({ obras = [] }: { obras: any[] }) {
         <FadeUp>
           <span style={{ fontSize: 14, fontWeight: 500, letterSpacing: '0.22em', textTransform: 'uppercase', color: '#52448a', display: 'block', marginBottom: 20 }}>Portafolio</span>
           <h1 style={{ fontSize: 'clamp(36px,6vw,56px)', fontWeight: 300, lineHeight: 1.05, color: '#141210', marginBottom: 20 }}>Descubre nuestro trabajo</h1>
-          <p style={{ fontSize: 16, fontWeight: 300, lineHeight: 1.8, color: '#5e5850', maxWidth: 560 }}>En FURŌ asumimos un compromiso con una construcción que se centra en mejorar la calidad de vida, entregando espacios únicos que fomenten el bienestar y la integración social.
+          <p style={{ fontSize: 16, fontWeight: 300, lineHeight: 1.8, color: '#5e5850', maxWidth: 560 }}>
+            En FURO asumimos un compromiso con una construccion que se centra en mejorar la calidad de vida, entregando espacios unicos que fomenten el bienestar y la integracion social. Participamos en proyectos para desarrollos inmobiliarios, proyectos comerciales, colegios, escuelas y volumenes que necesiten espacialidad, habitabilidad y eficiencia estructural. Apoyamos la evolucion industrial de la vivienda economica y trabajamos para transformar el deficit habitacional en una oportunidad, con un estandar superior de vivienda economica. Nuestro sistema constructivo, basado en componentes modulares de facil armado, hace posible que todo proyecto e iniciativas de ayuda social como Capilla Pais sean mas eficientes y replicables, fomentando la colaboracion, el sentido de comunidad y la transformacion social a traves de la construccion.
+          </p>
+        </FadeUp>
+      </div>
 
-Participamos en proyectos para desarrollos inmobiliarios, proyectos comerciales, colegios, escuelas y volúmenes que necesiten espacialidad, habitabilidad y eficiencia estructural. 
-
-Apoyamos la evolución industrial de la vivienda económica y trabajamos para transformar el déficit habitacional en una oportunidad, con un estándar superior de vivienda económica. 
-
-Nuestro sistema constructivo, basado en componentes modulares de fácil armado, hace posible que todo proyecto e iniciativas de ayuda social -como Capilla País- sean más eficientes y replicables, fomentando la colaboración, el sentido de comunidad y la transformación social a través de la construcción.
-</p>
+      <div className="obras-filtros-wrap">
+        <FadeUp>
+          <div className="obras-filtros">
+            {CATEGORIAS.map(cat => (
+              <button key={cat} onClick={() => setFiltro(cat)} style={{
+                padding: '8px 20px', fontSize: 12, fontWeight: 500, letterSpacing: '0.08em',
+                textTransform: 'uppercase', border: '1px solid', cursor: 'pointer', transition: 'all 0.2s',
+                borderColor: filtro === cat ? '#3a2d5e' : 'rgba(20,18,16,0.2)',
+                background: filtro === cat ? '#3a2d5e' : 'transparent',
+                color: filtro === cat ? '#fff' : 'rgba(20,18,16,0.6)',
+                borderRadius: 4, fontFamily: 'DM Sans, sans-serif',
+              }}>
+                {cat}
+              </button>
+            ))}
+          </div>
         </FadeUp>
       </div>
 
@@ -150,22 +166,6 @@ Nuestro sistema constructivo, basado en componentes modulares de fácil armado, 
       )}
 
       <div className="obras-grid-pad" style={{ background: '#141210' }}>
-        <FadeUp>
-          <div className="obras-filtros">
-            {CATEGORIAS.map(cat => (
-              <button key={cat} onClick={() => setFiltro(cat)} style={{
-                padding: '8px 20px', fontSize: 12, fontWeight: 500, letterSpacing: '0.08em',
-                textTransform: 'uppercase', border: '1px solid', cursor: 'pointer', transition: 'all 0.2s',
-                borderColor: filtro === cat ? '#fff' : 'rgba(255,255,255,0.2)',
-                background: filtro === cat ? '#fff' : 'transparent',
-                color: filtro === cat ? '#141210' : 'rgba(255,255,255,0.6)',
-                borderRadius: 4, fontFamily: 'DM Sans, sans-serif',
-              }}>
-                {cat}
-              </button>
-            ))}
-          </div>
-        </FadeUp>
         {obras.length === 0 ? (
           <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 14, textAlign: 'center', padding: '60px 0' }}>Cargando proyectos...</p>
         ) : (

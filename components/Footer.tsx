@@ -115,7 +115,6 @@ export default function Footer() {
             {[
               { label: 'Nosotros',  href: '/nosotros' },
               { label: 'Blog',      href: '/blog' },
-              { label: 'Noki',      href: '/noki' },
             ].map(({ label, href }) => (
               <li key={label} style={{ marginBottom: 10 }}>
                 <a href={href} style={{ fontSize: 14, fontWeight: 300, color: 'rgb(255, 255, 255)', textDecoration: 'none' }}>{label}</a>
