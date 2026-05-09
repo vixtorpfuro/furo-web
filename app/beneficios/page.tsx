@@ -57,7 +57,7 @@ type AreaKey = 'construccion' | 'diseno' | 'sostenibilidad'
 
 const areas: Record<AreaKey, { label: string, icon: React.ReactNode, img: string, items: { titulo: string, desc: string }[] }> = {
   construccion: {
-    label: 'Construccion', icon: <IconConstruccion />, img: '/beneficios/construccion2.jpg',
+    label: 'Construccion', icon: <IconConstruccion />, img: '/beneficios/construccion.jpg',
     items: [
       { titulo: 'Velocidad de construccion', desc: 'Estructuras listas para ensamblar y montar en obra, cual mecano o lego.' },
       { titulo: 'Certeza en costos y plazos', desc: 'Los proyectos son a suma alzada y la metodologia industrializada FURO entrega mayor certeza en fabricacion, logistica y montaje.' },
