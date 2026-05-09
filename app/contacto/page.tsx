@@ -49,19 +49,12 @@ export default function Contacto() {
         .contact-form-pad { padding: 64px 56px; border-right: 1px solid rgba(20,18,16,0.08); }
         .contact-aside-pad { padding: 64px 48px; background: #fff; }
         .contact-fields-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
-        .contact-ig-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 2px; }
-        .contact-ig-pad { padding: 72px 56px 80px; border-top: 1px solid rgba(20,18,16,0.08); }
         @media (max-width: 900px) {
           .contact-header-pad { padding: 100px 24px 48px !important; }
           .contact-grid { grid-template-columns: 1fr !important; }
           .contact-form-pad { padding: 48px 24px !important; border-right: none !important; border-bottom: 1px solid rgba(20,18,16,0.08); }
           .contact-aside-pad { padding: 48px 24px !important; }
           .contact-fields-2col { grid-template-columns: 1fr !important; }
-          .contact-ig-grid { grid-template-columns: repeat(3,1fr) !important; }
-          .contact-ig-pad { padding: 48px 24px 64px !important; }
-        }
-        @media (max-width: 480px) {
-          .contact-ig-grid { grid-template-columns: repeat(2,1fr) !important; }
         }
       `}</style>
       <Nav dark/>
@@ -182,28 +175,6 @@ export default function Contacto() {
           </FadeUp>
         </div>
       </div>
-
-      <section className="contact-ig-pad">
-        <FadeUp>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 28, flexWrap: 'wrap', gap: 12 }}>
-            <div>
-              <span style={{ fontSize: 14, fontWeight: 500, letterSpacing: '0.22em', textTransform: 'uppercase', color: '#52448a', display: 'block', marginBottom: 6 }}>Instagram</span>
-              <h2 style={{ fontSize: 'clamp(22px,3vw,30px)', fontWeight: 300, color: '#141210', margin: 0 }}>@furo.company</h2>
-            </div>
-            <a href="https://instagram.com/furo.company" target="_blank" style={{ fontSize: 11, fontWeight: 500, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#141210', borderBottom: '1px solid rgba(20,18,16,0.2)', paddingBottom: 1 }}>Ver perfil →</a>
-          </div>
-          <div className="contact-ig-grid">
-            {[1,2,3,4,5].map(i => (
-              <a key={i} href="https://instagram.com/furo.company" target="_blank"
-                style={{ aspectRatio: '1', background: '#ddd8d0', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', cursor: 'pointer' }}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.opacity = '0.8' }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.opacity = '1' }}>
-                <span style={{ fontSize: 9, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(20,18,16,0.25)' }}>Post</span>
-              </a>
-            ))}
-          </div>
-        </FadeUp>
-      </section>
 
       <Footer />
     </main>
