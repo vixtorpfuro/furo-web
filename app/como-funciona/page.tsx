@@ -120,7 +120,7 @@ export default function ComoFunciona() {
             <span style={{ fontSize: 14, fontWeight: 500, letterSpacing: '0.22em', textTransform: 'uppercase', color: '#52448a', display: 'block', marginBottom: 24 }}>Cómo funciona</span>
           </FadeUp>
           <RevealText tag="h1" delay={0.1} style={{ fontSize: 'clamp(28px,4vw,52px)', fontWeight: 300, lineHeight: 1.1, color: '#141210', marginBottom: 32 }}>
-            Un enfoque inteligente a la manera de construir, smart timber.
+            Un enfoque diferente a la manera de construir, smart timber.
           </RevealText>
           <FadeUp delay={0.2}>
             <a href="/contacto" style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#141210', borderBottom: '1px solid rgba(20,18,16,0.3)', paddingBottom: 2 }}>Seamos Partners →</a>

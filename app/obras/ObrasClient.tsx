@@ -4,6 +4,23 @@ import Link from 'next/link'
 
 const CATEGORIAS = ['Todos', 'Residencial', 'Comercial', 'Educacional', 'Industrial', 'Vivienda Economica', 'Hoteleria']
 
+const OBRA_MODELOS_FURO = {
+  _id: 'modelos-furo',
+  titulo: 'Modelos FURŌ',
+  slug: { current: 'modelos-furo' },
+  categoria: 'Residencial',
+  destacada: true,
+  cliente: 'FURŌ',
+  arquitecto: 'FURŌ',
+  superficie: 'Desde 46 m²',
+  ubicacion: 'Sur de Chile',
+  anio: '2024',
+  resumen: 'Cinco sistemas residenciales industrializados en madera laminada: Modelo A, T, Ts, Txs y W. Desde refugios en zonas extremas hasta casas familiares para el sur de Chile.',
+  imagen_url: '/catalogos/Portada-modelo-furo.jpg',
+  ctaLabel: 'Ver Modelos',
+  imagenVertical: true,
+}
+
 function useInView(threshold = 0.1) {
   const ref = useRef<HTMLDivElement>(null)
   const [inView, setInView] = useState(false)
@@ -24,14 +41,6 @@ function FadeUp({ children, delay = 0, style = {} }: { children: React.ReactNode
   )
 }
 
-function ImagenObra({ obra }: { obra: any }) {
-  return obra.imagen_url ? (
-    <img src={obra.imagen_url} alt={obra.titulo} style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', inset: 0 }} />
-  ) : (
-    <div style={{ width: '100%', height: '100%', background: '#ddd8d0', position: 'absolute', inset: 0 }} />
-  )
-}
-
 function ContenidoObra({ obra }: { obra: any }) {
   return (
     <>
@@ -46,7 +55,7 @@ function ContenidoObra({ obra }: { obra: any }) {
         {obra.anio && <div><p style={{ fontSize: 10, fontWeight: 500, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#8a8278', marginBottom: 4 }}>Año</p><p style={{ fontSize: 14, color: '#141210' }}>{obra.anio}</p></div>}
       </div>
       <Link href={`/obras/${obra.slug?.current || obra._id}`} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 12, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#141210', borderBottom: '1px solid rgba(20,18,16,0.3)', paddingBottom: 2, width: 'fit-content' }}>
-        Ver proyecto &rarr;
+        {obra.ctaLabel || 'Ver proyecto'} →
       </Link>
     </>
   )
@@ -54,22 +63,85 @@ function ContenidoObra({ obra }: { obra: any }) {
 
 function ObraDestacada({ obra, reverse }: { obra: any, reverse: boolean }) {
   const { ref, inView } = useInView()
+  const esVertical = obra.imagenVertical === true
+
   return (
     <>
       <style>{`
-        .obra-dest { display: grid; grid-template-columns: 1fr 1fr; min-height: 80vh; }
-        .obra-dest-img { position: relative; overflow: hidden; min-height: 300px; }
-        .obra-dest-text { background: #fff; padding: 80px 72px; display: flex; flex-direction: column; justify-content: center; }
+        .obra-dest {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          min-height: 540px;
+        }
+        /* Imagen normal: cubre todo el espacio */
+        .obra-dest-img-normal {
+          position: relative;
+          overflow: hidden;
+          min-height: 540px;
+        }
+        .obra-dest-img-normal img {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+        /* Imagen vertical: fondo neutro, imagen centrada y visible completa */
+        .obra-dest-img-vertical {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: #fff;
+          padding: 48px 40px;
+          min-height: 540px;
+        }
+        .obra-dest-img-vertical img {
+          display: block;
+          max-width: 100%;
+          max-height: 700px;
+          width: auto;
+          height: auto;
+          object-fit: contain;
+          box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+        }
+        /* Texto siempre centrado verticalmente con min-height */
+        .obra-dest-text {
+          background: #fff;
+          padding: 80px 72px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          min-height: 540px;
+        }
         @media (max-width: 900px) {
-          .obra-dest { grid-template-columns: 1fr; min-height: auto; }
-          .obra-dest-img { min-height: 60vw; order: 0 !important; }
-          .obra-dest-text { padding: 48px 24px !important; order: 1 !important; }
+          .obra-dest { grid-template-columns: 1fr !important; min-height: auto !important; }
+          .obra-dest-img-normal { min-height: 60vw !important; order: 0 !important; }
+          .obra-dest-img-vertical { min-height: auto !important; padding: 40px 24px !important; order: 0 !important; }
+          .obra-dest-text { padding: 48px 24px !important; min-height: auto !important; order: 1 !important; }
         }
       `}</style>
-      <div ref={ref} className="obra-dest" style={{ opacity: inView ? 1 : 0, transform: inView ? 'none' : 'translateY(40px)', transition: 'opacity 1s cubic-bezier(0.16,1,0.3,1), transform 1s cubic-bezier(0.16,1,0.3,1)' }}>
-        <div className="obra-dest-img" style={{ order: reverse ? 1 : 0 }}>
-          <ImagenObra obra={obra} />
+      <div
+        ref={ref}
+        className="obra-dest"
+        style={{
+          opacity: inView ? 1 : 0,
+          transform: inView ? 'none' : 'translateY(40px)',
+          transition: 'opacity 1s cubic-bezier(0.16,1,0.3,1), transform 1s cubic-bezier(0.16,1,0.3,1)',
+        }}
+      >
+        {/* IMAGEN */}
+        <div
+          className={esVertical ? 'obra-dest-img-vertical' : 'obra-dest-img-normal'}
+          style={{ order: reverse ? 1 : 0 }}
+        >
+          {obra.imagen_url ? (
+            <img src={obra.imagen_url} alt={obra.titulo} />
+          ) : (
+            <div style={{ width: '100%', height: '100%', background: '#ddd8d0' }} />
+          )}
         </div>
+
+        {/* TEXTO */}
         <div className="obra-dest-text" style={{ order: reverse ? 0 : 1 }}>
           <ContenidoObra obra={obra} />
         </div>
@@ -104,8 +176,12 @@ function ObraCard({ obra }: { obra: any }) {
 
 export default function ObrasClient({ obras = [] }: { obras: any[] }) {
   const [filtro, setFiltro] = useState('Todos')
-  const destacadas = filtro === 'Todos' ? obras.filter(o => o.destacada) : []
-  const filtradas = filtro === 'Todos' ? obras : obras.filter(o => o.categoria === filtro)
+
+  // Modelos FURŌ va al FINAL
+  const todasLasObras = [...obras, OBRA_MODELOS_FURO]
+
+  const destacadas = filtro === 'Todos' ? todasLasObras.filter(o => o.destacada) : []
+  const filtradas = filtro === 'Todos' ? todasLasObras : todasLasObras.filter(o => o.categoria === filtro)
 
   return (
     <>
@@ -166,14 +242,14 @@ export default function ObrasClient({ obras = [] }: { obras: any[] }) {
       )}
 
       <div className="obras-grid-pad" style={{ background: '#141210' }}>
-        {obras.length === 0 ? (
+        {todasLasObras.length === 0 ? (
           <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 14, textAlign: 'center', padding: '60px 0' }}>Cargando proyectos...</p>
         ) : (
           <div className="obras-grid">
             {filtradas.map(obra => <ObraCard key={obra._id} obra={obra} />)}
           </div>
         )}
-        {obras.length > 0 && filtradas.length === 0 && (
+        {todasLasObras.length > 0 && filtradas.length === 0 && (
           <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 14, textAlign: 'center', padding: '60px 0' }}>No hay obras en esta categoria aun.</p>
         )}
       </div>

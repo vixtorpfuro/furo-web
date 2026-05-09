@@ -40,3 +40,4 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 public/FURO_GIFTS_1.mp4
+.env*.local

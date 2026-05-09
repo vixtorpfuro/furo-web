@@ -72,7 +72,7 @@ export default function Contacto() {
           <h1 style={{ fontSize: 'clamp(36px,6vw,56px)', fontWeight: 300, lineHeight: 1.05, color: '#141210', marginBottom: 40 }}>Hablemos de tu proyecto</h1>
           <p style={{ fontSize: 16, fontWeight: 300, lineHeight: 1.8, color: '#5e5850', maxWidth: 640, marginBottom: 16 }}>¿Listo para comenzar con tu proyecto o simplemente quieres mas informacion? Completa el formulario — despues recibiras un correo con:</p>
           <ul style={{ listStyle: 'none', padding: 0, marginBottom: 24 }}>
-            {['Detalles sobre nuestros sistemas constructivos.', 'Una descripcion clara del proceso FURO.', 'Un enlace para agendar una llamada con nuestro equipo (cuando estes listo).'].map(t => (
+            {['Detalles sobre nuestra metodologia constructivos.', 'Una descripcion clara del proceso FURO.', 'Un enlace para agendar una llamada con nuestro equipo (cuando estes listo).'].map(t => (
               <li key={t} style={{ fontSize: 15, fontWeight: 300, color: '#5e5850', lineHeight: 1.7, paddingLeft: 22, position: 'relative', marginBottom: 4 }}>
                 <span style={{ position: 'absolute', left: 0, color: '#52448a', fontSize: 12 }}>→</span>{t}
               </li>

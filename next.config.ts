@@ -5,3 +5,20 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
+
+async rewrites() {
+  return {
+    beforeFiles: [
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'noki.cl' }],
+        destination: '/noki/:path*',
+      },
+      {
+        source: '/',
+        has: [{ type: 'host', value: 'noki.cl' }],
+        destination: '/noki',
+      },
+    ],
+  }
+},
