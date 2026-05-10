@@ -72,15 +72,15 @@ export default function Contacto() {
         <FadeUp>
           <span style={{ fontSize: 14, fontWeight: 500, letterSpacing: '0.22em', textTransform: 'uppercase', color: '#52448a', display: 'block', marginBottom: 20 }}>Contacto</span>
           <h1 style={{ fontSize: 'clamp(36px,6vw,56px)', fontWeight: 300, lineHeight: 1.05, color: '#141210', marginBottom: 40 }}>Hablemos de tu proyecto</h1>
-          <p style={{ fontSize: 16, fontWeight: 300, lineHeight: 1.8, color: '#5e5850', maxWidth: 640, marginBottom: 16 }}>¿Listo para comenzar con tu proyecto o simplemente quieres mas informacion? Completa el formulario — despues recibiras un correo con:</p>
+          <p style={{ fontSize: 16, fontWeight: 300, lineHeight: 1.8, color: '#5e5850', maxWidth: 640, marginBottom: 16 }}>¿Listo para comenzar con tu proyecto o simplemente quieres más información? Completa el formulario — después recibirás un correo con:</p>
           <ul style={{ listStyle: 'none', padding: 0, marginBottom: 24 }}>
-            {['Detalles sobre nuestra metodologia constructivos.', 'Una descripcion clara del proceso FURO.', 'Un enlace para agendar una llamada con nuestro equipo (cuando estes listo).'].map(t => (
+            {['Detalles sobre nuestra metodología constructiva.', 'Una descripción clara del proceso FURO.', 'Un enlace para agendar una llamada con nuestro equipo (cuando estés listo).'].map(t => (
               <li key={t} style={{ fontSize: 15, fontWeight: 300, color: '#5e5850', lineHeight: 1.7, paddingLeft: 22, position: 'relative', marginBottom: 4 }}>
                 <span style={{ position: 'absolute', left: 0, color: '#52448a', fontSize: 12 }}>→</span>{t}
               </li>
             ))}
           </ul>
-          <p style={{ fontSize: 15, fontWeight: 400, color: '#141210' }}>¡Estamos muy entusiasmados de acompanarte en este camino y no podemos esperar para comenzar!</p>
+          <p style={{ fontSize: 15, fontWeight: 400, color: '#141210' }}>¡Estamos muy entusiasmados de acompañarte en este camino y no podemos esperar para comenzar!</p>
         </FadeUp>
       </div>
 
@@ -97,12 +97,12 @@ export default function Contacto() {
               <div><label style={label}>Celular <span style={{ color: '#52448a' }}>*</span></label><input style={inp} placeholder="+56 9 XXXX XXXX" value={form.celular} onChange={e => set('celular', e.target.value)} /></div>
             </div>
             <div style={{ width: '100%', height: 1, background: 'rgba(20,18,16,0.06)', marginBottom: 28 }} />
-            <span style={{ fontSize: 14, fontWeight: 500, letterSpacing: '0.22em', textTransform: 'uppercase', color: '#52448a', display: 'block', marginBottom: 28 }}>Cuentanos un poco mas</span>
+            <span style={{ fontSize: 14, fontWeight: 500, letterSpacing: '0.22em', textTransform: 'uppercase', color: '#52448a', display: 'block', marginBottom: 28 }}>Cuéntanos un poco más</span>
             {[
               { key: 'soy', label: 'Soy', req: true, opts: ['Selecciona tu perfil', 'Inmobiliaria', 'Oficina de Arquitectura', 'Constructora', 'Propietario (Quiero construir mi casa)'] },
-              { key: 'cuando', label: '¿Cuando quieres comenzar?', req: true, opts: ['Selecciona un plazo', 'Proximos 3 meses', '3 a 6 meses', '6 a 12 meses', '1 ano o mas'] },
-              { key: 'como_contactar', label: '¿Como quieres que te contactemos?', req: true, opts: ['Selecciona un medio', 'Email', 'Telefono', 'WhatsApp'] },
-              { key: 'como_conocio', label: '¿Como supiste de nosotros?', req: false, opts: ['Selecciona una opcion', 'Referido', 'Redes Sociales', 'Buscadores', 'Pagina Web', 'Ferias'] },
+              { key: 'cuando', label: '¿Cuándo quieres comenzar?', req: true, opts: ['Selecciona un plazo', 'Próximos 3 meses', '3 a 6 meses', '6 a 12 meses', '1 año o más'] },
+              { key: 'como_contactar', label: '¿Cómo quieres que te contactemos?', req: true, opts: ['Selecciona un medio', 'Email', 'Teléfono', 'WhatsApp'] },
+              { key: 'como_conocio', label: '¿Cómo supiste de nosotros?', req: false, opts: ['Selecciona una opción', 'Referido', 'Redes Sociales', 'Buscadores', 'Página Web', 'Ferias'] },
             ].map(f => (
               <div key={f.key} style={{ marginBottom: 20 }}>
                 <label style={label}>{f.label}{f.req && <span style={{ color: '#52448a' }}> *</span>}</label>
@@ -114,8 +114,8 @@ export default function Contacto() {
             <div style={{ width: '100%', height: 1, background: 'rgba(20,18,16,0.06)', margin: '8px 0 28px' }} />
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14, marginBottom: 28 }}>
               {[
-                { key: 'mailchimp', text: 'Quiero recibir contenido sobre construccion industrializada y novedades de FURO.' },
-                { key: 'privacidad', text: 'Acepto la politica de privacidad y el uso de mis datos para gestionar mi consulta.' },
+                { key: 'mailchimp', text: 'Quiero recibir contenido sobre construcción industrializada y novedades de FURO.' },
+                { key: 'privacidad', text: 'Acepto la política de privacidad y el uso de mis datos para gestionar mi consulta.' },
               ].map(c => (
                 <label key={c.key} style={{ display: 'flex', alignItems: 'flex-start', gap: 12, cursor: 'pointer' }}>
                   <input type="checkbox" checked={(form as any)[c.key]} onChange={e => set(c.key, e.target.checked)} style={{ width: 16, height: 16, marginTop: 2, flexShrink: 0, accentColor: '#52448a', cursor: 'pointer' }} />
@@ -132,7 +132,7 @@ export default function Contacto() {
             <div style={{ marginTop: 40, padding: '28px 32px', background: '#ece9e3', borderLeft: '3px solid rgba(82,68,138,0.3)' }}>
               <span style={{ fontSize: 14, fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#52448a', display: 'block', marginBottom: 10 }}>¿Prefieres no llenar el formulario?</span>
               <p style={{ fontSize: 14, fontWeight: 300, lineHeight: 1.8, color: '#5e5850', margin: 0 }}>
-                Tambien puedes llamarnos o escribirnos directamente.<br />
+                También puedes llamarnos o escribirnos directamente.<br />
                 <a href="tel:+56977441963" style={{ color: '#141210', fontWeight: 500 }}>+56 9 7744 1963</a> · <a href="https://wa.me/56977441963" style={{ color: '#141210', fontWeight: 500 }}>WhatsApp</a> · <a href="mailto:contacto@furo.company" style={{ color: '#141210', fontWeight: 500 }}>contacto@furo.company</a>
               </p>
             </div>
@@ -143,7 +143,7 @@ export default function Contacto() {
           <FadeUp delay={0.1}>
             <div style={{ marginBottom: 36, paddingBottom: 36, borderBottom: '1px solid rgba(20,18,16,0.06)' }}>
               <span style={{ fontSize: 14, fontWeight: 500, letterSpacing: '0.22em', textTransform: 'uppercase', color: '#52448a', display: 'block', marginBottom: 18 }}>Oficina comercial</span>
-              {[{ icon: '📍', label: 'Direccion', val: 'Suecia 283, Providencia, Santiago, Chile' }, { icon: '📞', label: 'Telefono', val: '+56 9 8413 6893' }, { icon: '✉️', label: 'Email', val: 'contacto@furo.company' }].map(i => (
+              {[{ icon: '📍', label: 'Dirección', val: 'Suecia 283, Providencia, Santiago, Chile' }, { icon: '📞', label: 'Teléfono', val: '+56 9 8413 6893' }, { icon: '✉️', label: 'Email', val: 'contacto@furo.company' }].map(i => (
                 <div key={i.label} style={{ display: 'flex', gap: 14, marginBottom: 14, alignItems: 'flex-start' }}>
                   <div style={{ width: 34, height: 34, background: '#f5f3ee', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: 14 }}>{i.icon}</div>
                   <div><p style={{ fontSize: 10, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#8a8278', marginBottom: 3 }}>{i.label}</p><p style={{ fontSize: 14, fontWeight: 300, color: '#141210' }}>{i.val}</p></div>
@@ -151,8 +151,8 @@ export default function Contacto() {
               ))}
             </div>
             <div style={{ marginBottom: 36, paddingBottom: 36, borderBottom: '1px solid rgba(20,18,16,0.06)' }}>
-              <span style={{ fontSize: 14, fontWeight: 500, letterSpacing: '0.22em', textTransform: 'uppercase', color: '#52448a', display: 'block', marginBottom: 18 }}>Fabrica</span>
-              {[{ icon: '📍', label: 'Direccion', val: 'San Pablo 9490, Pudahuel, Santiago de Chile' }, { icon: '🕐', label: 'Visitas', val: 'Lun – Vie, 9:00 – 17:00\nPrevia coordinacion' }].map(i => (
+              <span style={{ fontSize: 14, fontWeight: 500, letterSpacing: '0.22em', textTransform: 'uppercase', color: '#52448a', display: 'block', marginBottom: 18 }}>Fábrica</span>
+              {[{ icon: '📍', label: 'Dirección', val: 'San Pablo 9490, Pudahuel, Santiago de Chile' }, { icon: '🕐', label: 'Visitas', val: 'Lun – Vie, 9:00 – 17:00\nPrevia coordinación' }].map(i => (
                 <div key={i.label} style={{ display: 'flex', gap: 14, marginBottom: 14, alignItems: 'flex-start' }}>
                   <div style={{ width: 34, height: 34, background: '#f5f3ee', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: 14 }}>{i.icon}</div>
                   <div><p style={{ fontSize: 10, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#8a8278', marginBottom: 3 }}>{i.label}</p><p style={{ fontSize: 14, fontWeight: 300, color: '#141210', whiteSpace: 'pre-line' }}>{i.val}</p></div>
@@ -167,7 +167,7 @@ export default function Contacto() {
               </a>
             </div>
             <div>
-              <span style={{ fontSize: 10, fontWeight: 500, letterSpacing: '0.22em', textTransform: 'uppercase', color: '#52448a', display: 'block', marginBottom: 18 }}>Siguenos</span>
+              <span style={{ fontSize: 10, fontWeight: 500, letterSpacing: '0.22em', textTransform: 'uppercase', color: '#52448a', display: 'block', marginBottom: 18 }}>Síguenos</span>
               <div style={{ display: 'flex', gap: 10 }}>
                 {[
                   { href: 'https://instagram.com/furo.company', svg: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg> },
