@@ -24,6 +24,14 @@ export default function Contacto() {
   const [form, setForm] = useState({ nombre: '', apellido: '', email: '', celular: '', soy: '', cuando: '', como_contactar: '', como_conocio: '', mailchimp: false, privacidad: false })
   const [status, setStatus] = useState<'idle'|'sending'|'ok'|'error'>('idle')
   const set = (k: string, v: string | boolean) => setForm(f => ({ ...f, [k]: v }))
+
+  useEffect(() => {
+    const s = document.createElement('script')
+    s.src = 'https://assets.calendly.com/assets/external/widget.js'
+    s.async = true
+    document.head.appendChild(s)
+    return () => { document.head.removeChild(s) }
+  }, [])
   const submit = async () => {
     if (!form.nombre || !form.apellido || !form.email || !form.celular || !form.soy || !form.cuando || !form.como_contactar || !form.privacidad) { setStatus('error'); return }
     setStatus('sending')
@@ -55,6 +63,7 @@ export default function Contacto() {
           .contact-form-pad { padding: 48px 24px !important; border-right: none !important; border-bottom: 1px solid rgba(20,18,16,0.08); }
           .contact-aside-pad { padding: 48px 24px !important; }
           .contact-fields-2col { grid-template-columns: 1fr !important; }
+          .calendly-section-header { padding: 56px 24px 32px !important; }
         }
       `}</style>
       <Nav dark/>
@@ -174,6 +183,21 @@ export default function Contacto() {
             </div>
           </FadeUp>
         </div>
+      </div>
+
+      <div style={{ borderTop: '1px solid rgba(20,18,16,0.08)', background: '#fff' }}>
+        <div className="calendly-section-header" style={{ padding: '72px 56px 40px' }}>
+          <FadeUp>
+            <span style={{ fontSize: 14, fontWeight: 500, letterSpacing: '0.22em', textTransform: 'uppercase', color: '#52448a', display: 'block', marginBottom: 20 }}>Agenda una reunión</span>
+            <h2 style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: 'clamp(28px,4vw,44px)', fontWeight: 400, lineHeight: 1.1, color: '#141210', marginBottom: 16 }}>Conversa directamente con nuestro equipo</h2>
+            <p style={{ fontSize: 15, fontWeight: 300, lineHeight: 1.8, color: '#5e5850', maxWidth: 560, margin: 0 }}>Elige el horario que mejor te acomode. La reunión dura 30 minutos y puedes hacerla por videollamada desde donde estés.</p>
+          </FadeUp>
+        </div>
+        <div
+          className="calendly-inline-widget"
+          data-url="https://calendly.com/jgrebe-furo/30min?primary_color=52448a&background_color=ffffff&text_color=141210&hide_gdpr_banner=1"
+          style={{ minWidth: 320, height: 700, width: '100%' }}
+        />
       </div>
 
       <Footer />
