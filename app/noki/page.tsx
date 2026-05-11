@@ -5,6 +5,8 @@ import Link from 'next/link'
 
 const WEBHOOK = 'https://hook.eu2.make.com/jcti1vtgp2roletlg03vf2jm9leiqkhq'
 
+const HERO_IMAGES = ['noki1_hero.jpg', 'noki1_hero2.jpg', 'noki1_hero3.jpg', 'noki1_hero4.jpg']
+
 function useInView(threshold = 0.1) {
   const ref = useRef<HTMLDivElement>(null)
   const [inView, setInView] = useState(false)
@@ -28,20 +30,26 @@ function FadeUp({ children, delay = 0, style = {} }: { children: React.ReactNode
 }
 
 const WHY_ITEMS = [
-  { img: 'P1010593.jpg', t: 'Montaje rápido, proceso transparente', d: 'Los paneles estructurales térmicosentes llegan prefabricados desde nuestra planta. La estructura se monta en 4 a 8 semanas. Presupuesto claro, plazo predecible.', sub: 'Ensamblaje preciso. Sin imprevistos.' },
-  { img: 'P1010591.jpg', t: 'Materiales naturales para todo clima', d: 'Estructura CLT/GLT, envolvente 160mm con lana de oveja. Eficiente en la costa y en el frío del sur. Interior en madera laminada vista.', sub: 'Una casa que se siente diferente.' },
+  { img: 'P1010593.jpg', t: 'Montaje rápido, proceso transparente', d: 'Los paneles estructurales térmicos FURŌ llegan prefabricados desde nuestra planta. La estructura se monta en 4 a 8 meses. Presupuesto claro, plazo predecible.', sub: 'Ensamblaje preciso. Sin imprevistos.' },
+  { img: 'P1010591.jpg', t: 'Materiales naturales para todo clima', d: 'Paneles Estructurales Térmicos FURŌ, envolvente 160mm con lana de oveja. Eficiente en la costa y en el frío del sur. Interior en madera laminada vista.', sub: 'Una casa que se siente diferente.' },
   { img: 'P1010657.jpg', t: 'Una casa que se adapta contigo', d: 'Elige terminaciones y materiales sin alterar la estructura. Precio a suma alzada desde el primer día. Tu Noki, con tu impronta.', sub: 'Personalizable dentro del sistema.' },
+]
+
+const BENEFIT_CARDS = [
+  { cat: 'Rapidez', title: 'Montaje en meses, no años', desc: 'La estructura llega prefabricada desde nuestra planta en Santiago. Lista para montar en cualquier geografía.' },
+  { cat: 'Transparencia', title: 'Precio a suma alzada', desc: 'Sabes exactamente lo que pagas desde el primer día. Sin adicionales ni sorpresas al final de la obra.' },
+  { cat: 'Adaptabilidad', title: 'Para cualquier geografía', desc: 'Playa, campo, sur o patagonia. Diseñada para adaptarse a cualquier clima y terreno de Chile.' },
+  { cat: 'Naturaleza', title: 'Materiales de alto desempeño', desc: 'Madera laminada, lana de oveja, zinc. Lo mejor de cada material combinado en un sistema que dura.' },
 ]
 
 const FAQS: { cat: string, items: { q: string, r: string }[] }[] = [
   { cat: 'General', items: [
-    { q: '¿Qué es Noki?', r: 'Noki es una casa prefabricada en madera laminada (CLT/GLT) diseñada por FURŌ para adaptarse a cualquier geografía chilena. Se produce en nuestra planta en Santiago y se monta en tu terreno en semanas.' },
+    { q: '¿Qué es Noki?', r: 'Noki es una casa prefabricada en madera laminada diseñada por FURŌ para adaptarse a cualquier geografía chilena. Se produce en nuestra planta en Santiago y se monta en tu terreno en meses.' },
     { q: '¿Puedo construir en cualquier lugar?', r: 'Sí. Playa, campo, sur, precordillera o patagonia. Solo necesitas un terreno con acceso básico.' },
     { q: '¿Cuánto tarda el proceso completo?', r: 'Entre 6 y 12 meses desde la reserva hasta las llaves, dependiendo de los permisos del terreno.' },
   ]},
   { cat: 'Precios', items: [
-    { q: '¿Cuál es el precio?', r: 'El precio de lanzamiento parte desde 3.200 UF para las primeras 5 unidades. Solicita tu propuesta para asegurar tu tramo.' },
-    { q: '¿Qué incluye el precio?', r: 'Estructura CLT/GLT, envolvente 160mm con lana de oveja, cubierta de zinc, ventanas y montaje.' },
+    { q: '¿Cuál es el precio?', r: 'El precio de lanzamiento parte desde 3.500 UF para las primeras unidades. Solicita tu propuesta para asegurar tu tramo.' },
     { q: '¿Qué no incluye?', r: 'Terreno, permisos municipales, instalaciones de servicios y terminaciones adicionales fuera del paquete base.' },
   ]},
 ]
@@ -51,9 +59,14 @@ export default function Noki() {
   const [form, setForm] = useState({ nombre: '', apellido: '', email: '', celular: '', perfil: '', donde: '', terreno: '', plazo: '', como_contactar: '' })
   const [status, setStatus] = useState<'idle'|'sending'|'ok'|'error'>('idle')
   const [openFaq, setOpenFaq] = useState<string|null>(null)
-  const [modeloActivo, setModeloActivo] = useState<'A'|'B'>('A')
+  const [heroImg, setHeroImg] = useState(0)
   const [whyActive, setWhyActive] = useState(0)
   const set = (k: string, v: string) => setForm(f => ({ ...f, [k]: v }))
+
+  useEffect(() => {
+    const t = setInterval(() => setHeroImg(i => (i + 1) % HERO_IMAGES.length), 5000)
+    return () => clearInterval(t)
+  }, [])
 
   const submit = async () => {
     if (!form.nombre || !form.apellido || !form.email) { setStatus('error'); return }
@@ -64,10 +77,9 @@ export default function Noki() {
     } catch { setStatus('error') }
   }
 
-  const C = { dark: '#1a1714', mid: '#5e5850', muted: '#8a8278', green: '#2c4a3d', cream: '#f7f5f0', border: 'rgba(26,23,20,0.08)' }
+  const C = { dark: '#1a1714', mid: '#5e5850', muted: '#8a8278', red: '#c0392b', cream: '#f7f5f0', border: 'rgba(26,23,20,0.08)' }
   const inp: React.CSSProperties = { width: '100%', padding: '14px 0', fontSize: 15, fontWeight: 300, color: C.dark, fontFamily: "'DM Sans', sans-serif", border: 'none', borderBottom: `1px solid ${C.border}`, background: 'transparent', outline: 'none' }
   const sel: React.CSSProperties = { ...inp, cursor: 'pointer', appearance: 'none' as any, backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7' viewBox='0 0 12 7'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238a8278' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0 center', paddingRight: 28 }
-
   const serif = "'Playfair Display', Georgia, serif"
 
   return (
@@ -95,6 +107,10 @@ export default function Noki() {
         .why-img-wrap { position: relative; overflow: hidden; background: #e0ddd8; }
         .why-img-wrap img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity 0.5s ease; }
 
+        .benefit-cards { display: flex; overflow-x: auto; scrollbar-width: none; gap: 0; }
+        .benefit-cards::-webkit-scrollbar { display: none; }
+        .benefit-card { flex: 0 0 320px; background: #fff; border-right: 1px solid rgba(26,23,20,0.07); padding: 48px 40px; }
+
         .bene-grid { display: grid; grid-template-columns: repeat(3,1fr); }
         .bene-item { padding: 40px 40px; border-right: 1px solid rgba(255,255,255,0.07); border-bottom: 1px solid rgba(255,255,255,0.07); }
         .bene-item:nth-child(3n) { border-right: none; }
@@ -104,6 +120,8 @@ export default function Noki() {
         .faq-items { border-left: 1px solid rgba(255,255,255,0.06); padding: 0 48px; }
 
         .nombre-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0 20px; }
+
+        .hero-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity 0.8s ease; }
 
         @media (max-width: 900px) {
           .form-panel { width: 100%; }
@@ -117,6 +135,7 @@ export default function Noki() {
           .why-btn { padding: 28px 32px; }
           .noki-gal img { height: 42vh; }
           .nombre-row { grid-template-columns: 1fr; }
+          .benefit-card { flex: 0 0 280px; padding: 36px 28px; }
         }
       `}</style>
 
@@ -125,7 +144,7 @@ export default function Noki() {
       <div className={`form-panel${formOpen ? ' open' : ''}`}>
         <div style={{ padding: '32px 40px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 48 }}>
-            <p style={{ fontSize: 10, fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase', color: C.muted }}>Solicita tu propuesta</p>
+            <p style={{ fontSize: 10, fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase', color: C.muted }}>Estoy interesado</p>
             <button onClick={() => setFormOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 26, color: C.muted, lineHeight: 1, fontWeight: 300 }}>×</button>
           </div>
           <h2 style={{ fontFamily: serif, fontSize: 30, fontWeight: 400, color: C.dark, lineHeight: 1.2, marginBottom: 20 }}>Asegura tu precio de lanzamiento.</h2>
@@ -137,7 +156,6 @@ export default function Noki() {
             Te enviaremos un link para una reunión de 20 minutos. Para calcular el precio final necesitamos conocer la ubicación y características de tu terreno.
           </p>
 
-          {/* Nombre + Apellido en fila */}
           <div className="nombre-row" style={{ marginBottom: 28 }}>
             <div>
               <label style={{ fontSize: 10, letterSpacing: '0.15em', textTransform: 'uppercase', color: C.muted, display: 'block', marginBottom: 8 }}>Nombre *</label>
@@ -149,7 +167,6 @@ export default function Noki() {
             </div>
           </div>
 
-          {/* Resto de campos */}
           {[
             { k: 'email', l: 'Email *', p: 'correo@email.com', t: 'email' },
             { k: 'celular', l: 'Celular', p: '+56 9 XXXX XXXX', t: 'text' },
@@ -201,110 +218,120 @@ export default function Noki() {
             </select>
           </div>
 
-          {status === 'ok' && <p style={{ fontSize: 13, color: C.green, borderTop: `2px solid ${C.green}`, paddingTop: 14, marginBottom: 16 }}>✓ Propuesta enviada. Te contactamos pronto.</p>}
-          {status === 'error' && <p style={{ fontSize: 13, color: '#c0392b', borderTop: '2px solid #e05252', paddingTop: 14, marginBottom: 16 }}>Por favor ingresa nombre, apellido y email.</p>}
-          <button onClick={submit} disabled={status === 'sending' || status === 'ok'} style={{ width: '100%', background: status === 'ok' ? C.green : C.dark, color: '#fff', border: 'none', padding: '18px', fontSize: 11, fontWeight: 500, letterSpacing: '0.16em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif", cursor: 'pointer' }}>
-            {status === 'sending' ? 'Enviando...' : status === 'ok' ? '✓ Propuesta solicitada' : 'Solicita tu propuesta →'}
+          {status === 'ok' && <p style={{ fontSize: 13, color: '#2c4a3d', borderTop: '2px solid #2c4a3d', paddingTop: 14, marginBottom: 16 }}>✓ Mensaje enviado. Te contactamos pronto.</p>}
+          {status === 'error' && <p style={{ fontSize: 13, color: C.red, borderTop: `2px solid ${C.red}`, paddingTop: 14, marginBottom: 16 }}>Por favor ingresa nombre, apellido y email.</p>}
+          <button onClick={submit} disabled={status === 'sending' || status === 'ok'} style={{ width: '100%', background: status === 'ok' ? '#2c4a3d' : C.dark, color: '#fff', border: 'none', padding: '18px', fontSize: 11, fontWeight: 500, letterSpacing: '0.16em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif", cursor: 'pointer' }}>
+            {status === 'sending' ? 'Enviando...' : status === 'ok' ? '✓ Mensaje enviado' : 'Estoy interesado →'}
           </button>
         </div>
       </div>
 
-      {/* NAV — transparente sobre hero */}
+      {/* NAV */}
       <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, padding: '14px 44px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <Link href="/"><img src="/noki/logo_noki_negro.png" alt="Noki" style={{ height: 84 }} /></Link>
         <button onClick={() => setFormOpen(true)} style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#fff', background: '#1a1714', padding: '12px 24px', border: 'none', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", borderRadius: 2 }}>
-          Solicita tu propuesta
+          Estoy interesado
         </button>
       </nav>
 
-      {/* HERO — foto full screen, headline abajo izq */}
+      {/* HERO — carrusel automático */}
       <section style={{ position: 'relative', height: '100svh', overflow: 'hidden' }}>
-        <img src="/noki/noki1_hero.jpg" alt="Noki" style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', inset: 0 }} />
+        {HERO_IMAGES.map((img, i) => (
+          <img key={img} src={`/noki/${img}`} alt="Noki" className="hero-img" style={{ opacity: heroImg === i ? 1 : 0 }} />
+        ))}
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.1) 40%, transparent 70%)' }} />
-        <div style={{ position: 'absolute', bottom: 48, left: 48 }}>
-          <p style={{ fontSize: 'clamp(13px,1.2vw,40px)', fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgb(255, 255, 255)', marginBottom: 1 }}>Casas Noki</p>
-          <h1 style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 'clamp(36px,5vw,62px)', fontWeight: 400, lineHeight: 1.05, color: '#fff', maxWidth: '14ch' }}>
-            Una nueva forma de diseñar y construir.
-          </h1>
+        <div style={{ position: 'absolute', bottom: 48, left: 48, right: 48, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between' }}>
+          <div>
+            <p style={{ fontSize: 'clamp(13px,1.2vw,40px)', fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#fff', marginBottom: 1 }}>Casas Noki</p>
+            <h1 style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 'clamp(36px,5vw,62px)', fontWeight: 400, lineHeight: 1.05, color: '#fff', maxWidth: '14ch' }}>
+              Una nueva forma de diseñar y construir.
+            </h1>
+          </div>
+          <div style={{ display: 'flex', gap: 6, paddingBottom: 8 }}>
+            {HERO_IMAGES.map((_, i) => (
+              <button key={i} onClick={() => setHeroImg(i)} style={{ width: i === heroImg ? 24 : 6, height: 6, borderRadius: 3, background: i === heroImg ? '#fff' : 'rgba(255,255,255,0.4)', border: 'none', cursor: 'pointer', padding: 0, transition: 'all 0.3s' }} />
+            ))}
+          </div>
         </div>
       </section>
 
       {/* WHAT WE DO */}
       <section style={{ padding: '80px 48px 0', background: C.cream }}>
         <FadeUp>
-          <p style={{ fontSize: 14, fontWeight: 500, letterSpacing: '0.22em', textTransform: 'uppercase', color: C.muted, marginBottom: 24, textAlign: 'center' }}>Lo que hacemos</p>
+          <p style={{ fontSize: 14, fontWeight: 500, letterSpacing: '0.22em', textTransform: 'uppercase', color: C.red, marginBottom: 24, textAlign: 'center' }}>Lo que hacemos</p>
           <h2 style={{ fontFamily: serif, fontSize: 'clamp(32px,4.5vw,40px)', fontWeight: 300, lineHeight: 1.1, color: C.dark, maxWidth: 700, margin: '0 auto 20px', textAlign: 'center' }}>
-            Combinamos paneles estructurales FURŌ con diseño modular y construcción industrializada para que puedas sacar el máximo potencial de tu espacio. <em>en cualquier entorno.</em>
+            Combinamos paneles estructurales térmicos FURŌ con diseño modular y construcción industrializada para que puedas sacar el máximo potencial de tu espacio. <em>en cualquier entorno.</em>
           </h2>
           <p style={{ fontSize: 16, fontWeight: 300, color: C.mid, maxWidth: 420, margin: '0 auto 48px', lineHeight: 1.8, textAlign: 'center' }}>
-            Prefabricadas en Santiago y montadas en tu terreno en semanas. Para la playa, el campo, el sur o la patagonia.
+            Prefabricadas en Santiago y montadas en tu terreno en meses. Para la playa, el campo, el sur o la patagonia.
           </p>
         </FadeUp>
       </section>
 
-      {/* MODELOS — imagen con radius + tabs + specs + plano */}
+      {/* MODELOS — sin tabs A/B, planos grandes */}
       <section style={{ padding: '0 20px 0', background: C.cream }}>
         <div style={{ borderRadius: 16, overflow: 'hidden', position: 'relative' }}>
-          <img src={`/noki/${modeloActivo === 'A' ? 'P1010657' : 'P1010640'}.jpg`} alt="Noki modelo" style={{ width: '100%', height: '65vh', objectFit: 'cover', display: 'block', transition: 'opacity 0.4s' }} />
-          <div style={{ position: 'absolute', bottom: 20, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 4 }}>
-            {(['A','B'] as const).map(m => (
-              <button key={m} onClick={() => setModeloActivo(m)} style={{ padding: '9px 22px', background: modeloActivo === m ? 'rgba(26,23,20,0.88)' : 'rgba(247,245,240,0.75)', color: modeloActivo === m ? '#fff' : C.dark, border: 'none', cursor: 'pointer', fontSize: 12, fontFamily: "'DM Sans', sans-serif", borderRadius: 4, backdropFilter: 'blur(10px)', fontWeight: 400 }}>
-                Tipo {m}
-              </button>
-            ))}
-          </div>
+          <img src="/noki/P1010657.jpg" alt="Noki" style={{ width: '100%', height: '65vh', objectFit: 'cover', display: 'block' }} />
         </div>
 
-        {/* Texto + specs + plano */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 56px', padding: '36px 28px 56px', alignItems: 'start' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 56px', padding: '36px 28px 32px', alignItems: 'start' }}>
           <div>
             <h3 style={{ fontFamily: serif, fontSize: 'clamp(24px,2.5vw,38px)', fontWeight: 400, color: C.dark, marginBottom: 10, lineHeight: 1.15 }}>
-              {modeloActivo === 'A' ? 'Tu base, sin importar la montaña.' : 'Más compacta, igual de completa.'}
+              Tu Noki, en cualquier lugar.
             </h3>
             <p style={{ fontSize: 14, fontWeight: 300, color: C.mid, lineHeight: 1.75, marginBottom: 28 }}>
-              {modeloActivo === 'A' ? '3 dormitorios, 3 baños, 133 m² totales. Diseñada para ir a cualquier lugar.' : '3 dormitorios, 2 baños, 98 m² totales. Todo lo esencial, formato compacto.'}
+              3 dormitorios, 3 baños, 133 m² totales. Diseñada para ir a cualquier lugar de Chile.
             </p>
             {[
-              { l: 'Área útil', v: modeloActivo === 'A' ? '112 m²' : '94 m²' },
-              { l: 'Terraza', v: modeloActivo === 'A' ? '21 m²' : '4 m²' },
-              { l: 'Área total', v: modeloActivo === 'A' ? '133 m²' : '98 m²' },
-              { l: 'Dormitorios / Baños', v: modeloActivo === 'A' ? '3D / 3B' : '3D / 2B' },
-              { l: 'Precio desde', v: modeloActivo === 'A' ? '3.500 UF' : '3.200 UF' },
+              { l: 'Área útil', v: '112 m²' },
+              { l: 'Terraza', v: '21 m²' },
+              { l: 'Área total', v: '133 m²' },
+              { l: 'Dormitorios / Baños', v: '3D / 3B' },
+              { l: 'Precio desde', v: '3.500 UF' },
             ].map(({ l, v }) => (
               <div key={l} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', padding: '13px 0', borderBottom: `1px solid ${C.border}` }}>
                 <span style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.1em', color: C.muted, fontWeight: 400 }}>{l}</span>
                 <span style={{ fontFamily: serif, fontSize: 18, fontWeight: 400, color: C.dark }}>{v}</span>
               </div>
             ))}
-            <button onClick={() => setFormOpen(true)} style={{ marginTop: 28, fontSize: 11, fontWeight: 500, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#fff', background: C.green, padding: '13px 26px', border: 'none', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
-              Solicita tu propuesta →
+            <button onClick={() => setFormOpen(true)} style={{ marginTop: 28, fontSize: 11, fontWeight: 500, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#fff', background: C.dark, padding: '13px 26px', border: 'none', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
+              Estoy interesado →
             </button>
           </div>
 
-          {/* Plano */}
-          <div style={{ background: '#eae7e0', borderRadius: 10, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 300 }}>
-            <img src={`/noki/tipo${modeloActivo}.avif`} alt={`Planta Tipo ${modeloActivo}`} style={{ width: '100%', display: 'block', objectFit: 'contain', padding: 16 }} />
+          {/* Planos primero y segundo piso */}
+          <div>
+            <p style={{ fontSize: 10, fontWeight: 500, letterSpacing: '0.15em', textTransform: 'uppercase', color: C.muted, marginBottom: 16 }}>Plantas</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <div style={{ background: '#eae7e0', borderRadius: 10, overflow: 'hidden' }}>
+                <img src="/noki/planta1.jpg" alt="Planta primer piso" style={{ width: '100%', display: 'block', objectFit: 'contain', padding: 20 }} />
+                <p style={{ fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase', color: C.muted, padding: '8px 20px 16px' }}>Primer piso</p>
+              </div>
+              <div style={{ background: '#eae7e0', borderRadius: 10, overflow: 'hidden' }}>
+                <img src="/noki/planta2.jpg" alt="Planta segundo piso" style={{ width: '100%', display: 'block', objectFit: 'contain', padding: 20 }} />
+                <p style={{ fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase', color: C.muted, padding: '8px 20px 16px' }}>Segundo piso</p>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Separador CTA */}
         <div style={{ padding: '24px 28px 56px', borderTop: `1px solid ${C.border}`, textAlign: 'center' }}>
           <h3 style={{ fontFamily: serif, fontSize: 'clamp(22px,2.5vw,36px)', fontWeight: 400, color: C.dark, marginBottom: 20 }}>
-            Dos modelos. Precio de lanzamiento desde 3.200 UF.
+            Precio de lanzamiento desde 3.500 UF.
           </h3>
           <button onClick={() => setFormOpen(true)} style={{ fontSize: 11, fontWeight: 500, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#fff', background: C.dark, padding: '14px 32px', border: 'none', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
-            Solicita tu propuesta →
+            Estoy interesado →
           </button>
         </div>
       </section>
 
-      {/* WHY NOKI — acordeón izq, imagen derecha */}
+      {/* WHY NOKI */}
       <section style={{ background: C.cream, borderTop: `1px solid ${C.border}` }}>
         <div style={{ padding: '64px 48px 32px', textAlign: 'center' }}>
           <FadeUp>
-            <p style={{ fontSize: 11, fontWeight: 500, letterSpacing: '0.22em', textTransform: 'uppercase', color: C.muted, marginBottom: 20 }}>Por qué Noki</p>
+            <p style={{ fontSize: 11, fontWeight: 500, letterSpacing: '0.22em', textTransform: 'uppercase', color: C.red, marginBottom: 20 }}>Por qué Noki</p>
             <h2 style={{ fontFamily: serif, fontSize: 'clamp(30px,4vw,54px)', fontWeight: 400, lineHeight: 1.1, color: C.dark, maxWidth: 640, margin: '0 auto' }}>
-              Construida mejor y entregada más rápido, para una <em>escape</em> sin sorpresas.
+              Construida mejor y entregada más rápido, para una <em>escapada</em> sin sorpresas.
             </h2>
             <p style={{ fontSize: 16, fontWeight: 300, color: C.mid, maxWidth: 480, margin: '16px auto 0', lineHeight: 1.75 }}>
               Prefabricadas con materiales naturales de alto desempeño, diseño minimalista y precio transparente.
@@ -329,6 +356,19 @@ export default function Noki() {
           <div className="why-img-wrap">
             {WHY_ITEMS.map((item, i) => (
               <img key={i} src={`/noki/${item.img}`} alt={item.t} style={{ opacity: whyActive === i ? 1 : 0 }} />
+            ))}
+          </div>
+        </div>
+
+        {/* BENEFIT CARDS — estilo base habitation */}
+        <div style={{ borderTop: `1px solid ${C.border}` }}>
+          <div className="benefit-cards">
+            {BENEFIT_CARDS.map((card, i) => (
+              <div key={i} className="benefit-card">
+                <p style={{ fontFamily: serif, fontSize: 22, fontWeight: 400, fontStyle: 'italic', color: C.dark, marginBottom: 20 }}>{card.cat}</p>
+                <p style={{ fontSize: 13, fontWeight: 500, color: C.red, marginBottom: 12, letterSpacing: '0.01em' }}>{card.title}</p>
+                <p style={{ fontSize: 13, fontWeight: 300, color: C.mid, lineHeight: 1.8 }}>{card.desc}</p>
+              </div>
             ))}
           </div>
         </div>
@@ -362,8 +402,8 @@ export default function Noki() {
             { n:'01', t:'Va a cualquier lugar', d:'Transportada en camión. Montada en cualquier geografía chilena.' },
             { n:'02', t:'Precio transparente', d:'Suma alzada. Sin adicionales. Sabes lo que pagas desde el día uno.' },
             { n:'03', t:'Aislación real', d:'160mm de lana de oveja. Eficiente en la costa y en el sur.' },
-            { n:'04', t:'CLT y GLT', d:'Más resistente y liviana que el hormigón. Interior visto que se siente diferente.' },
-            { n:'05', t:'Montaje en semanas', d:'Estructura prefabricada. 4 a 8 semanas en tu terreno.' },
+            { n:'04', t:'Paneles Estructurales Térmicos FURŌ', d:'Más resistente y liviano que el hormigón. Interior visto que se siente diferente.' },
+            { n:'05', t:'Montaje en meses', d:'Estructura prefabricada. 4 a 8 meses en tu terreno.' },
             { n:'06', t:'Personalizable', d:'Terminaciones a tu gusto. Sin afectar estructura ni precio.' },
           ].map(({ n, t, d }) => (
             <div key={n} className="bene-item">
@@ -387,7 +427,7 @@ export default function Noki() {
         </div>
       </section>
 
-      {/* FAQ fondo oscuro — estilo Base con categorías */}
+      {/* FAQ */}
       <section style={{ background: C.dark, padding: '56px 0' }}>
         <p style={{ fontSize: 11, fontWeight: 500, letterSpacing: '0.22em', textTransform: 'uppercase', color: 'rgba(245,243,238,0.25)', padding: '0 48px', marginBottom: 40 }}>FAQ</p>
         {FAQS.map(grupo => (
@@ -410,7 +450,7 @@ export default function Noki() {
         ))}
       </section>
 
-      {/* ABOUT — foto izq, texto der */}
+      {/* ABOUT */}
       <section style={{ background: C.cream, borderTop: `1px solid ${C.border}` }}>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', minHeight: '64vh' }}>
           <div style={{ overflow: 'hidden', background: '#dedad4' }}>
@@ -418,12 +458,12 @@ export default function Noki() {
           </div>
           <div style={{ padding: '64px 60px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
             <FadeUp>
-              <p style={{ fontSize: 10, fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase', color: C.muted, marginBottom: 32 }}>Sobre Noki</p>
+              <p style={{ fontSize: 10, fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase', color: C.red, marginBottom: 32 }}>Sobre Noki</p>
               <p style={{ fontSize: 15, fontWeight: 300, color: C.mid, lineHeight: 1.9, marginBottom: 20 }}>
                 En <strong style={{ fontWeight: 500, color: C.dark }}>FURŌ</strong> llevamos años perfeccionando la construcción con madera laminada en Chile. Aprendimos que la mayor barrera para una casa de calidad no era el costo — era la incertidumbre.
               </p>
               <p style={{ fontSize: 15, fontWeight: 300, color: C.mid, lineHeight: 1.9, marginBottom: 20 }}>
-                Noki nació de una convicción simple: se puede construir mejor para vivir mejor. Un producto diseñado desde la raíz para ser prefabricado con precisión, transportado a cualquier lugar y montado en semanas.
+                Noki nació de una convicción simple: se puede construir mejor para vivir mejor. Un producto diseñado desde la raíz para ser prefabricado con precisión, transportado a cualquier lugar y montado en meses.
               </p>
               <p style={{ fontSize: 15, fontWeight: 300, color: C.mid, lineHeight: 1.9, marginBottom: 36 }}>
                 Porque creemos en la madera como material del futuro. En casas que se adaptan al paisaje, no al revés.
@@ -435,21 +475,21 @@ export default function Noki() {
       </section>
 
       {/* CTA FINAL */}
-      <section style={{ padding: '88px 48px', background: C.green, textAlign: 'center' }}>
+      <section style={{ padding: '88px 48px', background: C.dark, textAlign: 'center' }}>
         <FadeUp style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <img src="/noki/logo_noki_blanco.png" alt="Noki" style={{ height: 28, marginBottom: 28, display: 'block' }} />
           <h2 style={{ fontFamily: serif, fontSize: 'clamp(26px,3.5vw,50px)', fontWeight: 400, lineHeight: 1.1, color: '#fff', marginBottom: 16, maxWidth: '18ch' }}>
-            Diseña y construye tu casa en cualquier terreno de Chile.
+            Construye tu casa en cualquier terreno de Chile.
           </h2>
-          <p style={{ fontSize: 15, fontWeight: 300, color: 'rgba(255,255,255,0.65)', marginBottom: 36 }}>Sin compromiso de pago. Únete y asegura tu lugar.</p>
-          <button onClick={() => setFormOpen(true)} style={{ fontSize: 11, fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: C.green, background: '#fff', padding: '15px 40px', border: 'none', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
-            Solicita tu propuesta →
+          <p style={{ fontSize: 15, fontWeight: 300, color: 'rgba(255,255,255,0.5)', marginBottom: 36 }}>Únete y asegura tu lugar.</p>
+          <button onClick={() => setFormOpen(true)} style={{ fontSize: 11, fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: C.dark, background: '#fff', padding: '15px 40px', border: 'none', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
+            Estoy interesado →
           </button>
         </FadeUp>
       </section>
 
       {/* FOOTER */}
-      <footer style={{ background: C.dark, padding: '40px 48px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <footer style={{ background: C.dark, borderTop: '1px solid rgba(255,255,255,0.06)', padding: '40px 48px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
           <img src="/noki/logo_noki_blanco.png" alt="Noki" style={{ height: 16, opacity: 0.35, display: 'block', marginBottom: 6 }} />
           <p style={{ fontSize: 11, color: 'rgba(245,243,238,0.18)', fontWeight: 300 }}>© {new Date().getFullYear()} Noki by FURŌ</p>
