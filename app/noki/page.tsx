@@ -500,54 +500,50 @@ export default function Noki() {
         </div>
       </section>
 
-      {/* FAQ — estilo base habitation */}
+      {/* FAQ */}
       <section style={{ background: C.dark, marginTop: 32 }}>
-        <div style={{ padding: '56px 48px 0' }}>
-          <p style={{ fontSize: 13, fontWeight: 500, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.9)', marginBottom: 40 }}>Preguntas Frecuentes</p>
+        <div style={{ padding: '56px 48px 24px' }}>
+          <p style={{ fontSize: 13, fontWeight: 500, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.9)' }}>Preguntas Frecuentes</p>
         </div>
         {FAQ_CATS.map(grupo => {
           const isOpen = openCat === grupo.cat
           return (
-            <div key={grupo.cat} className="faq-cat-row">
-              {/* Columna izquierda: categoría */}
+            <div key={grupo.cat} style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>
               <button
-                className="faq-cat-btn"
                 onClick={() => setOpenCat(isOpen ? null : grupo.cat)}
+                style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 20, padding: '26px 48px', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left' }}
               >
-                <span style={{ fontSize: 18, color: isOpen ? '#fff' : 'rgba(255,255,255,0.4)', lineHeight: 1, flexShrink: 0, marginTop: 2 }}>
+                <span style={{ fontSize: 18, color: isOpen ? '#fff' : 'rgba(255,255,255,0.5)', lineHeight: 1, flexShrink: 0 }}>
                   {isOpen ? '—' : '+'}
                 </span>
-                <span style={{ fontSize: 13, fontWeight: 500, letterSpacing: '0.12em', textTransform: 'uppercase', color: isOpen ? '#fff' : 'rgba(255,255,255,0.45)', lineHeight: 1.4 }}>
+                <span style={{ fontSize: 13, fontWeight: 500, letterSpacing: '0.12em', textTransform: 'uppercase', color: isOpen ? '#fff' : 'rgba(255,255,255,0.5)', lineHeight: 1.4 }}>
                   {grupo.cat}
                 </span>
               </button>
-
-              {/* Columna derecha: preguntas */}
-              <div className="faq-questions" style={{ display: isOpen ? 'block' : 'none' }}>
-                {grupo.items.map((item, i) => {
-                  const key = `${grupo.cat}-${i}`
-                  const qOpen = openFaq === key
-                  return (
-                    <div key={i} className="faq-q-row">
-                      <button
-                        className="faq-q-btn"
-                        onClick={() => setOpenFaq(qOpen ? null : key)}
-                      >
-                        <span style={{ fontSize: 17, fontWeight: 300, color: qOpen ? '#fff' : 'rgba(255,255,255,0.65)', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.4 }}>
-                          {item.q}
-                        </span>
-                        <span style={{ fontSize: 20, color: 'rgba(255,255,255,0.4)', flexShrink: 0, lineHeight: 1.2, transition: 'transform 0.3s', display: 'block', transform: qOpen ? 'rotate(45deg)' : 'none' }}>+</span>
-                      </button>
-                      <div style={{ maxHeight: qOpen ? 240 : 0, overflow: 'hidden', transition: 'max-height 0.4s cubic-bezier(0.16,1,0.3,1)' }}>
-                        <p style={{ fontSize: 16, fontWeight: 300, color: 'rgba(255,255,255,0.45)', lineHeight: 1.85, paddingBottom: 24 }}>{item.r}</p>
+              <div style={{ maxHeight: isOpen ? 2000 : 0, overflow: 'hidden', transition: 'max-height 0.5s cubic-bezier(0.16,1,0.3,1)' }}>
+                <div style={{ padding: '0 48px 12px' }}>
+                  {grupo.items.map((item, i) => {
+                    const key = `${grupo.cat}-${i}`
+                    const qOpen = openFaq === key
+                    return (
+                      <div key={i} style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                        <button
+                          onClick={() => setOpenFaq(qOpen ? null : key)}
+                          style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', padding: '22px 0', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', gap: 24 }}
+                        >
+                          <span style={{ fontSize: 17, fontWeight: 300, color: qOpen ? '#fff' : 'rgba(255,255,255,0.65)', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.4 }}>
+                            {item.q}
+                          </span>
+                          <span style={{ fontSize: 20, color: 'rgba(255,255,255,0.4)', flexShrink: 0, lineHeight: 1.2, transition: 'transform 0.3s', display: 'block', transform: qOpen ? 'rotate(45deg)' : 'none' }}>+</span>
+                        </button>
+                        <div style={{ maxHeight: qOpen ? 300 : 0, overflow: 'hidden', transition: 'max-height 0.4s cubic-bezier(0.16,1,0.3,1)' }}>
+                          <p style={{ fontSize: 16, fontWeight: 300, color: 'rgba(255,255,255,0.45)', lineHeight: 1.85, paddingBottom: 24 }}>{item.r}</p>
+                        </div>
                       </div>
-                    </div>
-                  )
-                })}
+                    )
+                  })}
+                </div>
               </div>
-
-              {/* Columna derecha vacía cuando está cerrado */}
-              {!isOpen && <div />}
             </div>
           )
         })}
