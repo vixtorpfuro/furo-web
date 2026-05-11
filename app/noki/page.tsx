@@ -94,7 +94,7 @@ export default function Noki() {
   const [formOpen, setFormOpen] = useState(false)
   const [form, setForm] = useState({ nombre: '', apellido: '', email: '', celular: '', perfil: '', donde: '', terreno: '', plazo: '', como_contactar: '' })
   const [status, setStatus] = useState<'idle'|'sending'|'ok'|'error'>('idle')
-  const [openCat, setOpenCat] = useState<string|null>('FURŌ')
+  const [openCat, setOpenCat] = useState<string|null>(null)
   const [openFaq, setOpenFaq] = useState<string|null>(null)
   const [heroImg, setHeroImg] = useState(0)
   const [whyActive, setWhyActive] = useState(0)
@@ -311,15 +311,10 @@ export default function Noki() {
               Una nueva forma de diseñar y construir.
             </h1>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 16 }}>
-            <div style={{ display: 'flex', gap: 6 }}>
-              {HERO_IMAGES.map((_, i) => (
-                <button key={i} onClick={() => setHeroImg(i)} style={{ width: i === heroImg ? 24 : 6, height: 6, borderRadius: 3, background: i === heroImg ? '#fff' : 'rgba(255,255,255,0.4)', border: 'none', cursor: 'pointer', padding: 0, transition: 'all 0.3s' }} />
-              ))}
-            </div>
-            <button onClick={() => setFormOpen(true)} style={ctaBtn}>
-              Únete a la lista de espera
-            </button>
+          <div style={{ display: 'flex', gap: 6, paddingBottom: 4 }}>
+            {HERO_IMAGES.map((_, i) => (
+              <button key={i} onClick={() => setHeroImg(i)} style={{ width: i === heroImg ? 24 : 6, height: 6, borderRadius: 3, background: i === heroImg ? '#fff' : 'rgba(255,255,255,0.4)', border: 'none', cursor: 'pointer', padding: 0, transition: 'all 0.3s' }} />
+            ))}
           </div>
         </div>
       </section>
@@ -390,29 +385,29 @@ export default function Noki() {
       </section>
 
       {/* WHY NOKI */}
-      <section style={{ background: C.white, borderTop: `1px solid ${C.border}` }}>
-        <div style={{ padding: '72px 48px 40px', textAlign: 'center' }}>
+      <section style={{ background: C.dark }}>
+        <div style={{ padding: '80px 48px 48px', textAlign: 'center' }}>
           <FadeUp>
-            <p style={{ fontSize: 11, fontWeight: 500, letterSpacing: '0.22em', textTransform: 'uppercase', color: C.dark, marginBottom: 24, opacity: 0.4 }}>Por qué Noki</p>
-            <h2 style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 'clamp(32px,4.5vw,60px)', fontWeight: 400, lineHeight: 1.08, color: C.dark, maxWidth: 700, margin: '0 auto 20px' }}>
+            <p style={{ fontSize: 11, fontWeight: 500, letterSpacing: '0.22em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: 24 }}>Por qué Noki</p>
+            <h2 style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 'clamp(32px,4.5vw,60px)', fontWeight: 400, lineHeight: 1.08, color: '#fff', maxWidth: 700, margin: '0 auto 20px' }}>
               Construida mejor. Entregada más <em style={{ fontFamily: serif, fontStyle: 'italic', fontWeight: 300 }}>rápido.</em>
             </h2>
-            <p style={{ fontSize: 16, fontWeight: 300, color: C.mid, maxWidth: 480, margin: '0 auto', lineHeight: 1.8 }}>
+            <p style={{ fontSize: 20, fontWeight: 300, color: 'rgba(255,255,255,0.55)', maxWidth: 560, margin: '0 auto', lineHeight: 1.75 }}>
               Materiales naturales de alto desempeño, diseño minimalista y precio transparente desde el primer día.
             </p>
           </FadeUp>
         </div>
 
-        <div className="why-section" style={{ marginTop: 48 }}>
+        <div className="why-section" style={{ marginTop: 48, borderTop: '1px solid rgba(255,255,255,0.08)' }}>
           <div className="why-items">
             {WHY_ITEMS.map((item, i) => (
               <button key={i} className="why-btn" onClick={() => setWhyActive(i)}>
-                <h3 style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 'clamp(18px,1.8vw,26px)', fontWeight: 400, color: whyActive === i ? C.dark : C.muted, lineHeight: 1.25, marginBottom: whyActive === i ? 14 : 0, transition: 'color 0.3s, margin 0.4s' }}>
+                <h3 style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 'clamp(20px,2vw,30px)', fontWeight: 400, color: whyActive === i ? '#fff' : 'rgba(255,255,255,0.3)', lineHeight: 1.25, marginBottom: whyActive === i ? 14 : 0, transition: 'color 0.3s, margin 0.4s' }}>
                   {item.t}
                 </h3>
-                <div style={{ maxHeight: whyActive === i ? 180 : 0, overflow: 'hidden', transition: 'max-height 0.45s cubic-bezier(0.16,1,0.3,1)' }}>
-                  <p style={{ fontSize: 14, fontWeight: 300, color: C.mid, lineHeight: 1.8, marginBottom: 10 }}>{item.d}</p>
-                  <p style={{ fontSize: 13, fontWeight: 500, color: C.dark }}>+ {item.sub}</p>
+                <div style={{ maxHeight: whyActive === i ? 200 : 0, overflow: 'hidden', transition: 'max-height 0.45s cubic-bezier(0.16,1,0.3,1)' }}>
+                  <p style={{ fontSize: 16, fontWeight: 300, color: 'rgba(255,255,255,0.45)', lineHeight: 1.8, marginBottom: 10 }}>{item.d}</p>
+                  <p style={{ fontSize: 14, fontWeight: 500, color: 'rgba(255,255,255,0.7)' }}>+ {item.sub}</p>
                 </div>
               </button>
             ))}
@@ -425,13 +420,13 @@ export default function Noki() {
         </div>
 
         {/* BENEFIT CARDS */}
-        <div style={{ borderTop: `1px solid ${C.border}` }}>
+        <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>
           <div className="benefit-cards">
             {BENEFIT_CARDS.map((card, i) => (
-              <div key={i} className="benefit-card">
-                <p style={{ fontFamily: serif, fontSize: 24, fontWeight: 300, fontStyle: 'italic', color: C.dark, marginBottom: 20 }}>{card.cat}</p>
-                <p style={{ fontSize: 14, fontWeight: 500, color: C.dark, marginBottom: 12 }}>{card.title}</p>
-                <p style={{ fontSize: 13, fontWeight: 300, color: C.mid, lineHeight: 1.8 }}>{card.desc}</p>
+              <div key={i} className="benefit-card" style={{ background: 'transparent', borderRight: '1px solid rgba(255,255,255,0.08)' }}>
+                <p style={{ fontFamily: serif, fontSize: 26, fontWeight: 300, fontStyle: 'italic', color: '#fff', marginBottom: 20 }}>{card.cat}</p>
+                <p style={{ fontSize: 15, fontWeight: 500, color: 'rgba(255,255,255,0.8)', marginBottom: 12 }}>{card.title}</p>
+                <p style={{ fontSize: 14, fontWeight: 300, color: 'rgba(255,255,255,0.4)', lineHeight: 1.8 }}>{card.desc}</p>
               </div>
             ))}
           </div>
@@ -508,7 +503,7 @@ export default function Noki() {
       {/* FAQ — estilo base habitation */}
       <section style={{ background: C.dark, marginTop: 32 }}>
         <div style={{ padding: '56px 48px 0' }}>
-          <p style={{ fontSize: 11, fontWeight: 500, letterSpacing: '0.22em', textTransform: 'uppercase', color: 'rgba(245,243,238,0.25)', marginBottom: 40 }}>Preguntas Frecuentes</p>
+          <p style={{ fontSize: 13, fontWeight: 500, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.9)', marginBottom: 40 }}>Preguntas Frecuentes</p>
         </div>
         {FAQ_CATS.map(grupo => {
           const isOpen = openCat === grupo.cat
@@ -519,10 +514,10 @@ export default function Noki() {
                 className="faq-cat-btn"
                 onClick={() => setOpenCat(isOpen ? null : grupo.cat)}
               >
-                <span style={{ fontSize: 16, color: isOpen ? 'rgba(245,243,238,0.9)' : 'rgba(245,243,238,0.3)', lineHeight: 1, flexShrink: 0, marginTop: 1 }}>
+                <span style={{ fontSize: 18, color: isOpen ? '#fff' : 'rgba(255,255,255,0.4)', lineHeight: 1, flexShrink: 0, marginTop: 2 }}>
                   {isOpen ? '—' : '+'}
                 </span>
-                <span style={{ fontSize: 12, fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: isOpen ? 'rgba(245,243,238,0.9)' : 'rgba(245,243,238,0.35)', lineHeight: 1.4 }}>
+                <span style={{ fontSize: 13, fontWeight: 500, letterSpacing: '0.12em', textTransform: 'uppercase', color: isOpen ? '#fff' : 'rgba(255,255,255,0.45)', lineHeight: 1.4 }}>
                   {grupo.cat}
                 </span>
               </button>
@@ -538,13 +533,13 @@ export default function Noki() {
                         className="faq-q-btn"
                         onClick={() => setOpenFaq(qOpen ? null : key)}
                       >
-                        <span style={{ fontSize: 15, fontWeight: 300, color: qOpen ? 'rgba(245,243,238,0.9)' : 'rgba(245,243,238,0.55)', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.4 }}>
+                        <span style={{ fontSize: 17, fontWeight: 300, color: qOpen ? '#fff' : 'rgba(255,255,255,0.65)', fontFamily: "'DM Sans', sans-serif", lineHeight: 1.4 }}>
                           {item.q}
                         </span>
-                        <span style={{ fontSize: 18, color: 'rgba(245,243,238,0.35)', flexShrink: 0, lineHeight: 1.2, transition: 'transform 0.3s', display: 'block', transform: qOpen ? 'rotate(45deg)' : 'none' }}>+</span>
+                        <span style={{ fontSize: 20, color: 'rgba(255,255,255,0.4)', flexShrink: 0, lineHeight: 1.2, transition: 'transform 0.3s', display: 'block', transform: qOpen ? 'rotate(45deg)' : 'none' }}>+</span>
                       </button>
                       <div style={{ maxHeight: qOpen ? 240 : 0, overflow: 'hidden', transition: 'max-height 0.4s cubic-bezier(0.16,1,0.3,1)' }}>
-                        <p style={{ fontSize: 14, fontWeight: 300, color: 'rgba(245,243,238,0.4)', lineHeight: 1.85, paddingBottom: 24 }}>{item.r}</p>
+                        <p style={{ fontSize: 16, fontWeight: 300, color: 'rgba(255,255,255,0.45)', lineHeight: 1.85, paddingBottom: 24 }}>{item.r}</p>
                       </div>
                     </div>
                   )
@@ -567,14 +562,17 @@ export default function Noki() {
           </div>
           <div style={{ padding: '72px 64px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
             <FadeUp>
-              <p style={{ fontSize: 11, fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase', color: C.dark, opacity: 0.4, marginBottom: 36 }}>Sobre Noki</p>
-              <p style={{ fontSize: 16, fontWeight: 300, color: C.mid, lineHeight: 1.9, marginBottom: 20 }}>
+              <p style={{ fontSize: 11, fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase', color: C.dark, opacity: 0.4, marginBottom: 20 }}>Sobre Noki</p>
+              <h2 style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 'clamp(26px,3vw,44px)', fontWeight: 400, color: C.dark, lineHeight: 1.1, marginBottom: 32 }}>
+                Construimos diferente porque creemos en una arquitectura mejor.
+              </h2>
+              <p style={{ fontSize: 18, fontWeight: 300, color: C.mid, lineHeight: 1.85, marginBottom: 20 }}>
                 En <strong style={{ fontWeight: 500, color: C.dark }}>FURŌ</strong> llevamos años perfeccionando la construcción con madera laminada en Chile. Aprendimos que la mayor barrera para una casa de calidad no era el costo — era la incertidumbre.
               </p>
-              <p style={{ fontSize: 16, fontWeight: 300, color: C.mid, lineHeight: 1.9, marginBottom: 20 }}>
+              <p style={{ fontSize: 18, fontWeight: 300, color: C.mid, lineHeight: 1.85, marginBottom: 20 }}>
                 Noki nació de una convicción simple: se puede construir mejor para vivir mejor. Prefabricado con precisión, transportado a cualquier lugar, montado en meses.
               </p>
-              <p style={{ fontSize: 16, fontWeight: 300, color: C.mid, lineHeight: 1.9, marginBottom: 40 }}>
+              <p style={{ fontSize: 18, fontWeight: 300, color: C.mid, lineHeight: 1.85, marginBottom: 40 }}>
                 Porque creemos en la madera como material del futuro. En casas que se adaptan al paisaje, no al revés.
               </p>
               <button onClick={() => setFormOpen(true)} style={ctaBtn}>Únete a la lista de espera</button>
@@ -598,28 +596,28 @@ export default function Noki() {
       </section>
 
       {/* FOOTER */}
-      <footer style={{ background: C.dark, borderTop: '1px solid rgba(255,255,255,0.08)', padding: '64px 48px 40px' }}>
+      <footer style={{ background: C.white, borderTop: `1px solid ${C.border}`, padding: '64px 48px 40px' }}>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 48, marginBottom: 64 }}>
           <div>
-            <p style={{ fontSize: 11, fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(245,243,238,0.3)', marginBottom: 20 }}>Noki by FURŌ</p>
-            <p style={{ fontSize: 18, fontWeight: 300, color: 'rgba(245,243,238,0.75)', lineHeight: 1.7, maxWidth: 360 }}>
+            <p style={{ fontSize: 11, fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: C.muted, marginBottom: 24 }}>Noki by FURŌ</p>
+            <p style={{ fontSize: 22, fontWeight: 300, color: C.dark, lineHeight: 1.6, maxWidth: 360 }}>
               Noki está construyendo la próxima generación de viviendas prefabricadas — usando materiales naturales y de alto desempeño para crear casas que se adaptan a cualquier paisaje de Chile.
             </p>
           </div>
           <div>
-            <p style={{ fontSize: 11, fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(245,243,238,0.3)', marginBottom: 20 }}>Contacto</p>
-            <a href="mailto:contacto@furo.company" style={{ fontSize: 14, color: 'rgba(245,243,238,0.55)', fontWeight: 300, display: 'block', marginBottom: 10 }}>contacto@furo.company</a>
-            <a href="https://wa.me/56977441963" style={{ fontSize: 14, color: 'rgba(245,243,238,0.55)', fontWeight: 300, display: 'block' }}>WhatsApp</a>
+            <p style={{ fontSize: 11, fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: C.muted, marginBottom: 24 }}>Contacto</p>
+            <a href="mailto:contacto@furo.company" style={{ fontSize: 15, color: C.mid, fontWeight: 300, display: 'block', marginBottom: 12 }}>contacto@furo.company</a>
+            <a href="https://wa.me/56977441963" style={{ fontSize: 15, color: C.mid, fontWeight: 300, display: 'block' }}>WhatsApp</a>
           </div>
           <div>
-            <p style={{ fontSize: 11, fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(245,243,238,0.3)', marginBottom: 20 }}>Síguenos</p>
-            <a href="https://instagram.com/furo.company" style={{ fontSize: 14, color: 'rgba(245,243,238,0.55)', fontWeight: 300, display: 'block', marginBottom: 10 }}>Instagram</a>
-            <Link href="/" style={{ fontSize: 14, color: 'rgba(245,243,238,0.55)', fontWeight: 300, display: 'block' }}>furo.company</Link>
+            <p style={{ fontSize: 11, fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: C.muted, marginBottom: 24 }}>Síguenos</p>
+            <a href="https://instagram.com/furo.company" style={{ fontSize: 15, color: C.mid, fontWeight: 300, display: 'block', marginBottom: 12 }}>Instagram</a>
+            <Link href="/" style={{ fontSize: 15, color: C.mid, fontWeight: 300, display: 'block' }}>furo.company</Link>
           </div>
         </div>
-        <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 24, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <img src="/noki/logo_noki_blanco.png" alt="Noki" style={{ height: 14, opacity: 0.25, display: 'block' }} />
-          <p style={{ fontSize: 11, color: 'rgba(245,243,238,0.18)', fontWeight: 300 }}>© {new Date().getFullYear()} Noki by FURŌ</p>
+        <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 24, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <img src="/noki/logo_noki_negro.png" alt="Noki" style={{ height: 14, opacity: 0.2, display: 'block' }} />
+          <p style={{ fontSize: 11, color: C.muted, fontWeight: 300 }}>© {new Date().getFullYear()} Noki by FURŌ</p>
         </div>
       </footer>
     </main>
