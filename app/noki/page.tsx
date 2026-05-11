@@ -48,7 +48,7 @@ const FAQS: { cat: string, items: { q: string, r: string }[] }[] = [
 
 export default function Noki() {
   const [formOpen, setFormOpen] = useState(false)
-  const [form, setForm] = useState({ nombre: '', apellido: '', email: '', celular: '', perfil: '', donde: '' })
+  const [form, setForm] = useState({ nombre: '', apellido: '', email: '', celular: '', perfil: '', donde: '', terreno: '', plazo: '', como_contactar: '' })
   const [status, setStatus] = useState<'idle'|'sending'|'ok'|'error'>('idle')
   const [openFaq, setOpenFaq] = useState<string|null>(null)
   const [modeloActivo, setModeloActivo] = useState<'A'|'B'>('A')
@@ -161,13 +161,43 @@ export default function Noki() {
             </div>
           ))}
 
-          <div style={{ marginBottom: 36 }}>
+          <div style={{ marginBottom: 28 }}>
             <label style={{ fontSize: 10, letterSpacing: '0.15em', textTransform: 'uppercase', color: C.muted, display: 'block', marginBottom: 8 }}>Perfil</label>
             <select style={sel} value={form.perfil} onChange={e => set('perfil', e.target.value)}>
               <option value="">Selecciona</option>
               <option value="owner">Owner / Propietario</option>
               <option value="developer">Developer / Inmobiliaria</option>
               <option value="otro">Otro</option>
+            </select>
+          </div>
+
+          <div style={{ marginBottom: 28 }}>
+            <label style={{ fontSize: 10, letterSpacing: '0.15em', textTransform: 'uppercase', color: C.muted, display: 'block', marginBottom: 8 }}>¿Tienes terreno?</label>
+            <select style={sel} value={form.terreno} onChange={e => set('terreno', e.target.value)}>
+              <option value="">Selecciona</option>
+              <option value="Sí">Sí</option>
+              <option value="Estoy buscando">Estoy buscando</option>
+              <option value="No pero me interesa">No pero me interesa</option>
+            </select>
+          </div>
+
+          <div style={{ marginBottom: 28 }}>
+            <label style={{ fontSize: 10, letterSpacing: '0.15em', textTransform: 'uppercase', color: C.muted, display: 'block', marginBottom: 8 }}>¿En cuánto tiempo piensas construir?</label>
+            <select style={sel} value={form.plazo} onChange={e => set('plazo', e.target.value)}>
+              <option value="">Selecciona</option>
+              <option value="Próximos 3 meses">Próximos 3 meses</option>
+              <option value="6 a 12 meses">6 a 12 meses</option>
+              <option value="1 año o más">1 año o más</option>
+            </select>
+          </div>
+
+          <div style={{ marginBottom: 36 }}>
+            <label style={{ fontSize: 10, letterSpacing: '0.15em', textTransform: 'uppercase', color: C.muted, display: 'block', marginBottom: 8 }}>¿Cómo quieres que te contactemos?</label>
+            <select style={sel} value={form.como_contactar} onChange={e => set('como_contactar', e.target.value)}>
+              <option value="">Selecciona</option>
+              <option value="Mail">Mail</option>
+              <option value="WhatsApp">WhatsApp</option>
+              <option value="Teléfono">Teléfono</option>
             </select>
           </div>
 
