@@ -164,9 +164,8 @@ export default function Noki() {
         .why-img-wrap { position: relative; overflow: hidden; background: #e0ddd8; }
         .why-img-wrap img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity 0.5s ease; }
 
-        .benefit-cards { display: flex; overflow-x: auto; scrollbar-width: none; gap: 0; }
-        .benefit-cards::-webkit-scrollbar { display: none; }
-        .benefit-card { flex: 0 0 300px; background: #fff; border-right: 1px solid rgba(26,23,20,0.07); padding: 48px 36px; }
+        .benefit-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; }
+        .benefit-card { background: #fff; border-right: 1px solid rgba(255,255,255,0.08); padding: 48px 40px; }
 
         .bene-grid { display: grid; grid-template-columns: repeat(3,1fr); }
         .bene-item { padding: 40px 40px; border-right: 1px solid rgba(255,255,255,0.07); border-bottom: 1px solid rgba(255,255,255,0.07); }
@@ -196,7 +195,8 @@ export default function Noki() {
           .why-btn { padding: 28px 32px; }
           .noki-gal img { height: 42vh; }
           .nombre-row { grid-template-columns: 1fr; }
-          .benefit-card { flex: 0 0 260px; padding: 36px 24px; }
+          .benefit-cards { grid-template-columns: 1fr 1fr; }
+          .benefit-card { padding: 36px 24px; }
           .plantas-grid { grid-template-columns: 1fr; }
         }
       `}</style>
@@ -349,15 +349,15 @@ export default function Noki() {
           <div>
             <p style={{ fontSize: 11, fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase', color: C.muted, marginBottom: 16 }}>Tu Noki, en cualquier lugar.</p>
             <h3 style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 'clamp(26px,3vw,42px)', fontWeight: 400, color: C.dark, marginBottom: 12, lineHeight: 1.1 }}>
-              3 dormitorios. 3 baños. 133 m².
+              3 dormitorios. 3 baños. 162 m².
             </h3>
             <p style={{ fontSize: 15, fontWeight: 300, color: C.mid, lineHeight: 1.75, marginBottom: 32 }}>
               Diseñada para ir a cualquier lugar de Chile. Estructura prefabricada en paneles estructurales térmicos FURŌ.
             </p>
             {[
-              { l: 'Área útil', v: '112 m²' },
-              { l: 'Terraza', v: '21 m²' },
-              { l: 'Área total', v: '133 m²' },
+              { l: 'Área útil (térmico)', v: '140 m²' },
+              { l: 'Terraza techada', v: '22 m²' },
+              { l: 'Área total', v: '162 m²' },
               { l: 'Dormitorios / Baños', v: '3D / 3B' },
             ].map(({ l, v }) => (
               <div key={l} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', padding: '13px 0', borderBottom: `1px solid ${C.border}` }}>
