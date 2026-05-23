@@ -152,7 +152,7 @@ export default function Noki() {
         .noki-gal::-webkit-scrollbar { display: none; }
         .noki-gal img { height: 55vh; width: auto; flex-shrink: 0; display: block; object-fit: cover; border-radius: 8px; }
 
-        .form-panel { position: fixed; top: 0; right: 0; bottom: 0; width: 460px; background: #fff; z-index: 200; transform: translateX(100%); transition: transform 0.45s cubic-bezier(0.16,1,0.3,1); overflow-y: auto; }
+        .form-panel { position: fixed; top: 0; right: 0; bottom: 0; width: min(460px, 100vw); max-width: 100vw; background: #fff; z-index: 200; transform: translateX(100%); transition: transform 0.45s cubic-bezier(0.16,1,0.3,1); overflow-y: auto; overflow-x: hidden; }
         .form-panel.open { transform: translateX(0); box-shadow: -8px 0 48px rgba(0,0,0,0.15); }
         .form-overlay { position: fixed; inset: 0; background: rgba(26,23,20,0.4); z-index: 199; opacity: 0; pointer-events: none; transition: opacity 0.35s ease; }
         .form-overlay.open { opacity: 1; pointer-events: all; }
