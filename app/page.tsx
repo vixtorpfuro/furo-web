@@ -168,7 +168,7 @@ export default function Home() {
       <Nav />
 
       <section style={{ position: 'relative', height: '100vh', overflow: 'hidden' }}>
-<video autoPlay muted loop playsInline poster="/home/lago_Bertrand.jpg" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.65 }} src="https://victorpellegrini.com/wp-content/uploads/FURO_GIFTS_1.mp4" />
+<video autoPlay muted loop playsInline poster="/home/lago_Bertand.jpg" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.65 }} src="https://victorpellegrini.com/wp-content/uploads/FURO_GIFTS_1.mp4" />
         <div className="home-hero-content" style={{ position: 'relative', zIndex: 1, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
           <span className="he d1" style={{ fontSize: 'clamp(14px,3vw,20px)', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.55)', display: 'block' }}>Build Smarter</span>
           <h1 className="he d2" style={{ fontSize: 'clamp(30px,5vw,48px)', fontWeight: 300, lineHeight: 1.1, color: '#fff', marginBottom: 44 }}>Soluciones constructivas<br />eficientes en madera laminada</h1>
@@ -231,7 +231,7 @@ export default function Home() {
 
       <section className="home-test-grid">
         <div className="home-test-img" style={{ position: 'relative', minHeight: 400, overflow: 'hidden' }}>
-          <RevealImage src={slide === 0 ? "/home/inarco.jpg" : slide === 1 ? "/home/lago_Bertrand.jpg" : "/home/colegio_juan_fernandez.jpg"} alt="Testimonio" />
+          <RevealImage src={slide === 0 ? "/home/inarco.jpg" : slide === 1 ? "/home/lago_Bertand.jpg" : "/home/colegio_juan_fernandez.jpg"} alt="Testimonio" />
         </div>
         <div className="home-test-text" style={{ background: '#f5f3ee', padding: '80px 72px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
           <FadeUp>
@@ -276,7 +276,7 @@ export default function Home() {
         <div className="home-obras-grid">
           <ObraCard img="/home/altos.jpg" name="Altos de Santa Cruz" tipo="Vivienda / +5.000 m2" />
           <ObraCard img="/home/humbolt.jpg" name="Colegio Humbolt" tipo="Comercial / +1000 m²" />
-          <ObraCard img="/home/lago_Bertrand.jpg" name="Casas Lago Bertrand" tipo="Residencial/ +500 m²" />
+          <ObraCard img="/home/lago_Bertand.jpg" name="Casas Lago Bertrand" tipo="Residencial/ +500 m²" />
           <ObraCard img="/home/autoconstruccion.jpg" name="Construcción de Emergencia" tipo="Vivienda / +5.000 m2" />
         </div>
         <FadeUp>
