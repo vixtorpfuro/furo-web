@@ -14,7 +14,7 @@ const OBRA_MODELOS_FURO = {
   cliente: 'FURŌ',
   arquitecto: 'FURŌ',
   superficie: 'Desde 46 m²',
-  ubicacion: 'Sur de Chile',
+  ubicacion: 'Todo Chile',
   anio: '2024',
   resumen: 'Cinco sistemas residenciales industrializados en madera laminada: Modelo A, T, Ts, Txs y W. Desde refugios en zonas extremas hasta casas familiares para el sur de Chile.',
   imagen_url: '/catalogos/Portada-modelo-furo.jpg',
