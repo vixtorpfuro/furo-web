@@ -49,13 +49,12 @@ const FAQ_CATS = [
       { q: '¿Qué es FURŌ?', r: 'FURŌ es una empresa chilena de construcción industrializada. Fabricamos estructuras en madera laminada desde nuestra planta en Santiago y las montamos en el terreno del cliente, en cualquier geografía del país.' },
       { q: '¿Qué son los Paneles Estructurales Térmicos FURŌ?', r: 'Son el corazón de cada Noki. Paneles prefabricados de madera laminada con aislación integrada de lana de oveja (160mm). Más resistentes y livianos que el hormigón, con interior visto que se siente diferente.' },
       { q: '¿Dónde se fabrican las casas Noki?', r: 'En nuestra planta en Santiago. Cada panel se produce en condiciones controladas, garantizando precisión y calidad constante en cada proyecto.' },
-      { q: '¿Las casas tienen garantía?', r: 'Sí. Los Paneles Estructurales Térmicos FURŌ tienen garantía estructural. Con cada proyecto entregamos un manual de uso y mantenimiento.' },
     ]
   },
   {
     cat: 'MATERIALES & DESEMPEÑO',
     items: [
-      { q: '¿Qué materiales utilizan?', r: 'Madera laminada encolada (glulam), lana de oveja como aislante, zinc en cubierta y terminaciones en madera tratada al exterior. Todos seleccionados por durabilidad, desempeño térmico y origen responsable.' },
+      { q: '¿Qué materiales utilizan?', r: 'Madera laminada, lana de oveja como aislante, zinc en cubierta y terminaciones en madera tratada al exterior. Todos seleccionados por durabilidad, desempeño térmico y origen responsable.' },
       { q: '¿Cómo funciona el aislamiento térmico?', r: 'La envolvente incluye 160mm de lana de oveja. Mantiene el calor en invierno y el frío fuera en verano, sin necesidad de climatización permanente.' },
       { q: '¿Funciona en climas extremos?', r: 'Sí. Diseñada para la diversidad climática de Chile: costa, precordillera, sur lluvioso y patagonia. La lana de oveja regula la humedad y la temperatura de forma natural.' },
       { q: '¿Qué tan resistente es la estructura?', r: 'Los paneles de madera laminada tienen mayor resistencia por peso que el hormigón. La estructura está calculada para cumplir con la normativa sísmica chilena.' },
@@ -74,8 +73,7 @@ const FAQ_CATS = [
     cat: 'TERRENO & PERMISOS',
     items: [
       { q: '¿Necesito terreno propio?', r: 'Sí. Noki se construye en tu terreno. Si estás buscando, podemos orientarte en el proceso.' },
-      { q: '¿Qué tipo de terreno necesito?', r: 'Necesitas acceso vehicular básico para el camión de transporte. No requiere pendiente específica, pero sí una evaluación previa de suelo.' },
-      { q: '¿Cuáles son los permisos necesarios?', r: 'Permiso de edificación municipal y, según la zona, permiso del SAG o MBN. Gestionamos el proceso técnico contigo, aunque los plazos dependen de cada municipio.' },
+      { q: '¿Qué tipo de terreno necesito?', r: 'Llegamos a cualquier rincón de Chile — hemos cruzado en balsa y subido a la cordillera. Lo que necesitas es una evaluación previa de suelo; el acceso lo resolvemos nosotros.' },
       { q: '¿Puedo construir en zona rural?', r: 'Sí, en la mayoría de los casos. Evaluamos la factibilidad del terreno caso a caso en la primera reunión.' },
     ]
   },
@@ -324,7 +322,7 @@ export default function Noki() {
         <FadeUp>
           <p style={{ fontSize: 11, fontWeight: 500, letterSpacing: '0.22em', textTransform: 'uppercase', color: C.dark, marginBottom: 32, textAlign: 'center', opacity: 0.4 }}>Lo que hacemos</p>
           <h2 style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 'clamp(36px,5vw,68px)', fontWeight: 400, lineHeight: 1.08, color: C.dark, maxWidth: 820, margin: '0 auto 24px', textAlign: 'center' }}>
-            Casas prefabricadas para vivir mejor, en <em style={{ fontFamily: serif, fontStyle: 'italic', fontWeight: 300 }}>cualquier lugar.</em>
+            Casas prefabricadas para vivir mejor, en <em style={{ fontFamily: serif, fontStyle: 'italic', fontWeight: 300, fontSize: 'calc(1em + 4px)' }}>cualquier lugar.</em>
           </h2>
           <p style={{ fontSize: 17, fontWeight: 300, color: C.mid, maxWidth: 520, margin: '0 auto 48px', lineHeight: 1.8, textAlign: 'center' }}>
             Prefabricadas en Santiago y montadas en tu terreno en meses. Para la playa, el campo, el sur o la patagonia.

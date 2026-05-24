@@ -2,7 +2,8 @@
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 
-const CATEGORIAS = ['Todos', 'Residencial', 'Comercial', 'Educacional', 'Industrial', 'Vivienda Economica', 'Hoteleria']
+// Orden preferido — solo aparece si tiene obras. Categorías nuevas aparecen automáticamente al final.
+const ORDEN_CATEGORIAS = ['Residencial', 'Comercial', 'Educacional', 'Industrial', 'Vivienda Economica', 'Hoteleria']
 
 const OBRA_MODELOS_FURO = {
   _id: 'modelos-furo',
@@ -180,8 +181,21 @@ export default function ObrasClient({ obras = [] }: { obras: any[] }) {
   // Modelos FURŌ va al FINAL
   const todasLasObras = [...obras, OBRA_MODELOS_FURO]
 
-  const destacadas = filtro === 'Todos' ? todasLasObras.filter(o => o.destacada) : []
-  const filtradas = filtro === 'Todos' ? todasLasObras : todasLasObras.filter(o => o.categoria === filtro)
+  const categoriasActivas = [
+    'Todos',
+    ...Array.from(new Set(todasLasObras.map((o: any) => o.categoria).filter(Boolean)))
+      .sort((a: any, b: any) => {
+        const ia = ORDEN_CATEGORIAS.indexOf(a)
+        const ib = ORDEN_CATEGORIAS.indexOf(b)
+        if (ia === -1 && ib === -1) return a.localeCompare(b)
+        if (ia === -1) return 1
+        if (ib === -1) return -1
+        return ia - ib
+      })
+  ]
+
+  const destacadas = filtro === 'Todos' ? todasLasObras.filter((o: any) => o.destacada) : []
+  const filtradas = filtro === 'Todos' ? todasLasObras : todasLasObras.filter((o: any) => o.categoria === filtro)
 
   return (
     <>
@@ -215,7 +229,7 @@ export default function ObrasClient({ obras = [] }: { obras: any[] }) {
       <div className="obras-filtros-wrap">
         <FadeUp>
           <div className="obras-filtros">
-            {CATEGORIAS.map(cat => (
+            {categoriasActivas.map(cat => (
               <button key={cat} onClick={() => setFiltro(cat)} style={{
                 padding: '8px 20px', fontSize: 12, fontWeight: 500, letterSpacing: '0.08em',
                 textTransform: 'uppercase', border: '1px solid', cursor: 'pointer', transition: 'all 0.2s',
