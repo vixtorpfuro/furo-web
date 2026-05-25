@@ -15,6 +15,13 @@ const otrosQuery = `*[_type == "blog" && slug.current != $slug] | order(fecha de
   titulo, slug, fecha, imagen_principal, resumen
 }`
 
+function safeUrlFor(value: any, width: number): string | null {
+  try {
+    if (!value?.asset?._ref && !value?.asset?._id) return null
+    return urlFor(value).width(width).url()
+  } catch { return null }
+}
+
 function formatFecha(fecha: string) {
   return new Date(fecha).toLocaleDateString('es-CL', {
     year: 'numeric', month: 'long', day: 'numeric'
@@ -23,10 +30,13 @@ function formatFecha(fecha: string) {
 
 const portableComponents = {
   types: {
-    image: ({ value }: any) => (
+    image: ({ value }: any) => {
+      const src = safeUrlFor(value, 1200)
+      if (!src) return null
+      return (
       <figure style={{ margin: '48px 0' }}>
         <img
-          src={urlFor(value).width(1200).url()}
+          src={src}
           alt={value.alt || ''}
           style={{ width: '100%', display: 'block' }}
         />
@@ -36,15 +46,18 @@ const portableComponents = {
           </figcaption>
         )}
       </figure>
-    ),
+      )
+    },
     galeria: ({ value }: any) => {
       const cols = value.layout === 'three' ? 3 : 2
       return (
         <div style={{ display: 'grid', gridTemplateColumns: `repeat(${cols}, 1fr)`, gap: 4, margin: '48px 0' }}>
-          {value.imagenes?.map((img: any, i: number) => (
-            <img key={i} src={urlFor(img).width(800).url()} alt={img.alt || ''}
+          {value.imagenes?.map((img: any, i: number) => {
+            const src = safeUrlFor(img, 800)
+            if (!src) return null
+            return <img key={i} src={src} alt={img.alt || ''}
               style={{ width: '100%', display: 'block', aspectRatio: '4/3', objectFit: 'cover' }} />
-          ))}
+          }))}
         </div>
       )
     },
@@ -136,10 +149,10 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
       </section>
 
       {/* IMAGEN PRINCIPAL */}
-      {post.imagen_principal && (
+      {post.imagen_principal && safeUrlFor(post.imagen_principal, 1400) && (
         <div style={{ padding: '48px 56px 0' }}>
           <img
-            src={urlFor(post.imagen_principal).width(1400).url()}
+            src={safeUrlFor(post.imagen_principal, 1400)!}
             alt={post.titulo}
             style={{ width: '100%', display: 'block' }}
           />
@@ -190,10 +203,10 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
               <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
                 {otros.map((otro: any) => (
                   <Link key={otro.slug.current} href={`/blog/${otro.slug.current}`} className="sidebar-card" style={{ display: 'block' }}>
-                    {otro.imagen_principal && (
+                    {otro.imagen_principal && safeUrlFor(otro.imagen_principal, 400) && (
                       <div style={{ width: '100%', aspectRatio: '4/3', overflow: 'hidden', background: '#e8e4de', marginBottom: 12 }}>
                         <img
-                          src={urlFor(otro.imagen_principal).width(400).url()}
+                          src={safeUrlFor(otro.imagen_principal, 400)!}
                           alt={otro.titulo}
                           style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
                         />
