@@ -5,6 +5,8 @@ import Link from 'next/link'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 
+export const revalidate = 0
+
 const query = `*[_type == "blog" && slug.current == $slug][0] {
   titulo, slug, fecha, autor, resumen, imagen_principal, contenido
 }`
