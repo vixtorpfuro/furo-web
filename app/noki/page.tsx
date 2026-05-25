@@ -342,7 +342,7 @@ export default function Noki() {
         {/* ISO + Specs */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 64px', alignItems: 'center', marginBottom: 16 }}>
           <div style={{ borderRadius: 12, overflow: 'hidden', background: '#f2f0eb' }}>
-            <img src="/noki/noki_iso.webp" alt="Noki isométrico" style={{ width: '100%', display: 'block', objectFit: 'contain', padding: 32 }} />
+            <img src="/noki/noki_I_iso.jpg" alt="Noki isométrico" style={{ width: '100%', display: 'block', objectFit: 'contain', padding: 32 }} />
           </div>
           <div>
             <p style={{ fontSize: 11, fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase', color: C.muted, marginBottom: 16 }}>Tu Noki, en cualquier lugar.</p>

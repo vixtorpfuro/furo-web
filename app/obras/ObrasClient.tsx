@@ -5,6 +5,23 @@ import Link from 'next/link'
 // Orden preferido — solo aparece si tiene obras. Categorías nuevas aparecen automáticamente al final.
 const ORDEN_CATEGORIAS = ['Residencial', 'Comercial', 'Educacional', 'Industrial', 'Vivienda Economica', 'Hoteleria']
 
+const OBRA_NOKI = {
+  _id: 'noki',
+  titulo: 'Casas Noki',
+  slug: { current: 'noki' },
+  categoria: 'Residencial',
+  destacada: true,
+  cliente: 'FURŌ',
+  arquitecto: 'FURŌ',
+  superficie: '162 m²',
+  ubicacion: 'Todo Chile',
+  anio: '2025',
+  resumen: 'Sistema residencial prefabricado en madera laminada. Diseñadas para llegar a cualquier lugar de Chile — desde la costa hasta la cordillera. Precio a suma alzada, montaje en meses. Para precios, especificaciones y lista de espera, visita noki.cl.',
+  imagen_url: '/noki/P1010657.jpg',
+  ctaLabel: 'Ver en noki.cl',
+  externalHref: 'https://noki.cl',
+}
+
 const OBRA_MODELOS_FURO = {
   _id: 'modelos-furo',
   titulo: 'Modelos FURŌ',
@@ -55,7 +72,7 @@ function ContenidoObra({ obra }: { obra: any }) {
         {obra.ubicacion && <div><p style={{ fontSize: 10, fontWeight: 500, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#8a8278', marginBottom: 4 }}>Ubicacion</p><p style={{ fontSize: 14, color: '#141210' }}>{obra.ubicacion}</p></div>}
         {obra.anio && <div><p style={{ fontSize: 10, fontWeight: 500, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#8a8278', marginBottom: 4 }}>Año</p><p style={{ fontSize: 14, color: '#141210' }}>{obra.anio}</p></div>}
       </div>
-      <Link href={`/obras/${obra.slug?.current || obra._id}`} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 12, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#141210', borderBottom: '1px solid rgba(20,18,16,0.3)', paddingBottom: 2, width: 'fit-content' }}>
+      <Link href={obra.externalHref || `/obras/${obra.slug?.current || obra._id}`} target={obra.externalHref ? '_blank' : undefined} rel={obra.externalHref ? 'noopener noreferrer' : undefined} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 12, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#141210', borderBottom: '1px solid rgba(20,18,16,0.3)', paddingBottom: 2, width: 'fit-content' }}>
         {obra.ctaLabel || 'Ver proyecto'} →
       </Link>
     </>
@@ -157,7 +174,7 @@ function ObraCard({ obra }: { obra: any }) {
   return (
     <div ref={ref} onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
       style={{ position: 'relative', overflow: 'hidden', cursor: 'pointer', aspectRatio: '4/3', opacity: inView ? 1 : 0, transform: inView ? 'none' : 'translateY(30px)', transition: 'opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1)' }}>
-      <Link href={`/obras/${obra.slug?.current || obra._id}`} style={{ display: 'block', width: '100%', height: '100%' }}>
+      <Link href={obra.externalHref || `/obras/${obra.slug?.current || obra._id}`} target={obra.externalHref ? '_blank' : undefined} rel={obra.externalHref ? 'noopener noreferrer' : undefined} style={{ display: 'block', width: '100%', height: '100%' }}>
         {obra.imagen_url ? (
           <img src={obra.imagen_url} alt={obra.titulo} style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', inset: 0, transition: 'transform 0.7s cubic-bezier(0.16,1,0.3,1)', transform: hov ? 'scale(1.06)' : 'scale(1)' }} />
         ) : (
@@ -179,7 +196,7 @@ export default function ObrasClient({ obras = [] }: { obras: any[] }) {
   const [filtro, setFiltro] = useState('Todos')
 
   // Modelos FURŌ va al FINAL
-  const todasLasObras = [...obras, OBRA_MODELOS_FURO]
+  const todasLasObras = [...obras, OBRA_NOKI, OBRA_MODELOS_FURO]
 
   const categoriasActivas = [
     'Todos',
