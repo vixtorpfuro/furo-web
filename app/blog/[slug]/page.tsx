@@ -55,9 +55,9 @@ const portableComponents = {
           {value.imagenes?.map((img: any, i: number) => {
             const src = safeUrlFor(img, 800)
             if (!src) return null
-            return <img key={i} src={src} alt={img.alt || ''}
-              style={{ width: '100%', display: 'block', aspectRatio: '4/3', objectFit: 'cover' }} />
-          }))}
+            return (<img key={i} src={src} alt={img.alt || ''}
+              style={{ width: '100%', display: 'block', aspectRatio: '4/3', objectFit: 'cover' }} />)
+          })}
         </div>
       )
     },
