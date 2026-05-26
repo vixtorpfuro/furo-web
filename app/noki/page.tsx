@@ -210,7 +210,7 @@ export default function Noki() {
           <h2 style={{ fontFamily: serif, fontSize: 30, fontWeight: 400, color: C.dark, lineHeight: 1.2, marginBottom: 20 }}>Asegura tu precio de lanzamiento.</h2>
           <div style={{ marginBottom: 20 }}>
             <p style={{ fontSize: 10, fontWeight: 500, letterSpacing: '0.15em', textTransform: 'uppercase', color: C.muted, marginBottom: 4 }}>Valor desde</p>
-            <p style={{ fontFamily: serif, fontSize: 38, fontWeight: 400, color: C.dark, lineHeight: 1 }}>6.000 UF</p>
+            <p style={{ fontFamily: serif, fontSize: 38, fontWeight: 400, color: C.dark, lineHeight: 1 }}>desde 6.000 UF</p>
           </div>
           <p style={{ fontSize: 13, fontWeight: 300, color: C.mid, lineHeight: 1.75, marginBottom: 40, paddingBottom: 24, borderBottom: `1px solid ${C.border}` }}>
             Te enviaremos un link para una reunión de 20 minutos. Para calcular el precio final necesitamos conocer la ubicación y características de tu terreno.
@@ -436,7 +436,7 @@ export default function Noki() {
         <FadeUp style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <p style={{ fontSize: 11, fontWeight: 500, letterSpacing: '0.22em', textTransform: 'uppercase', color: C.dark, marginBottom: 24, opacity: 0.4 }}>Precio de lanzamiento</p>
           <h2 style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 'clamp(40px,6vw,80px)', fontWeight: 400, color: C.dark, lineHeight: 1, marginBottom: 12 }}>
-            6.000 <span style={{ fontFamily: serif, fontStyle: 'italic', fontWeight: 300 }}>UF</span>
+            <span style={{ fontSize: '0.4em', fontWeight: 300, letterSpacing: '0.05em', verticalAlign: 'middle', marginRight: 8, opacity: 0.6 }}>desde</span>6.000 <span style={{ fontFamily: serif, fontStyle: 'italic', fontWeight: 300 }}>UF</span>
           </h2>
           <p style={{ fontSize: 16, fontWeight: 300, color: C.mid, maxWidth: 400, margin: '0 auto 36px', lineHeight: 1.75 }}>
             Precio a suma alzada para las primeras unidades. Solicita tu propuesta y asegura tu tramo.
