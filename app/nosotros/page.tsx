@@ -41,6 +41,9 @@ export default function Nosotros() {
         .nos-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
         .nos-two-col img { width: 100%; height: 50vw; max-height: 600px; object-fit: cover; display: block; background: #e8e4de; }
 
+        .nos-hero-intro { display: grid; grid-template-columns: 1fr 1fr; gap: 0 80px; }
+        .nos-hero-intro-empty { display: block; }
+
         .nos-text-img { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
         .nos-text-img-reverse { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
 
@@ -62,6 +65,8 @@ export default function Nosotros() {
           .nos-stat-row { grid-template-columns: 1fr !important; }
           .nos-stat-item { border-right: none !important; border-bottom: 1px solid rgba(20,18,16,0.08); padding: 32px 0 !important; }
           .nos-img-full-tall { height: 50vw !important; }
+          .nos-hero-intro { grid-template-columns: 1fr !important; gap: 0 !important; }
+          .nos-hero-intro-empty { display: none !important; }
         }
 
         @media (max-width: 480px) {
@@ -80,8 +85,8 @@ export default function Nosotros() {
           </h1>
         </FadeUp>
         <FadeUp delay={0.1}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 80px' }}>
-            <div />
+          <div className="nos-hero-intro">
+            <div className="nos-hero-intro-empty" />
             <div>
               <p style={{ fontSize: 18, fontWeight: 300, lineHeight: 1.8, color: '#5e5850', marginBottom: 20 }}>
                 FURŌ significa "fluir" en japonés. Apostamos 100% por el trabajo colaborativo y la mejora continua.

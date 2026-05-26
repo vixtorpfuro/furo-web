@@ -77,28 +77,37 @@ export default async function Blog() {
           overflow: hidden;
         }
 
+        .blog-intro { display: grid; grid-template-columns: 1fr 1fr; gap: 0 80px; }
+        .blog-intro-empty { display: block; }
+
+        .blog-intro-section { padding: 160px 56px 80px; }
+
         @media (max-width: 900px) {
           .blog-grid { grid-template-columns: repeat(2,1fr); padding: 60px 32px 100px; row-gap: 72px; }
+          .blog-intro { grid-template-columns: 1fr !important; gap: 0 !important; }
+          .blog-intro-empty { display: none !important; }
+          .blog-intro-text { text-align: left !important; }
+          .blog-intro-section { padding: 100px 24px 60px !important; }
         }
         @media (max-width: 560px) {
-          .blog-grid { grid-template-columns: 1fr; }
+          .blog-grid { grid-template-columns: 1fr; padding: 48px 20px 80px; }
         }
       `}</style>
 
       <Nav dark />
 
       {/* INTRO — estilo Nosotros, texto alineado derecha */}
-      <section style={{ background: '#fff', padding: '160px 56px 80px', borderBottom: '1px solid rgba(20,18,16,0.08)' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 80px' }}>
-          <div />
+      <section className="blog-intro-section" style={{ background: '#fff', borderBottom: '1px solid rgba(20,18,16,0.08)' }}>
+        <div className="blog-intro">
+          <div className="blog-intro-empty" />
           <div>
-            <p style={{ fontSize: 16, fontWeight: 300, lineHeight: 1.85, color: '#5e5850', textAlign: 'right', marginBottom: 20 }}>
+            <p className="blog-intro-text" style={{ fontSize: 16, fontWeight: 300, lineHeight: 1.85, color: '#5e5850', textAlign: 'right', marginBottom: 20 }}>
               Compartimos lo que aprendemos construyendo con madera laminada en Chile. Proyectos, procesos, tecnología y los desafíos reales de industrializar la construcción.
             </p>
-            <p style={{ fontSize: 16, fontWeight: 300, lineHeight: 1.85, color: '#5e5850', textAlign: 'right' }}>
+            <p className="blog-intro-text" style={{ fontSize: 16, fontWeight: 300, lineHeight: 1.85, color: '#5e5850', textAlign: 'right' }}>
               Desde detalles constructivos hasta reflexiones sobre el futuro de la industria — todo lo que forma parte de nuestra manera de construir.
             </p>
-            <p style={{ fontSize: 18, fontWeight: 300, color: '#52448a', textAlign: 'right', marginTop: 32 }}>
+            <p className="blog-intro-text" style={{ fontSize: 18, fontWeight: 300, color: '#52448a', textAlign: 'right', marginTop: 32 }}>
               Blog FURŌ
             </p>
           </div>
