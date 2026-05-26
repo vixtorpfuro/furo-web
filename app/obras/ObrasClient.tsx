@@ -17,7 +17,7 @@ const OBRA_NOKI = {
   ubicacion: 'Todo Chile',
   anio: '2025',
   resumen: 'Sistema residencial prefabricado en madera laminada. Diseñadas para llegar a cualquier lugar de Chile — desde la costa hasta la cordillera. Precio a suma alzada, montaje en meses. Para precios, especificaciones y lista de espera, visita noki.cl.',
-  imagen_url: '/noki/P1010657.jpg',
+  imagen_url: '/noki/noki1_hero.jpg',
   ctaLabel: 'Ver en noki.cl',
   externalHref: 'https://noki.cl',
 }
