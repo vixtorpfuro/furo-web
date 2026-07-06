@@ -7,16 +7,16 @@ const CATEGORIAS = [
   {
     cat: 'Generales',
     items: [
-      { q: '¿Qué es FURŌ?', r: 'FURŌ es una empresa especializada en soluciones constructivas eficientes en madera laminada. Desarrollamos componentes estructurales industrializados que permiten construir con mayor precisión, rapidez y calidad.' },
+      { q: '¿Qué es FURŌ?', r: 'FURŌ es una empresa especializada en soluciones constructivas eficientes en madera laminada. Desarrollamos paneles estructurales térmicos industrializados que permiten construir con mayor precisión, rapidez y calidad.' },
       { q: '¿Qué tipo de proyectos puede desarrollar FURŌ?', r: 'Nuestra tecnología se adapta a múltiples escalas y usos: desde viviendas sociales hasta colegios, proyectos turísticos, comerciales e institucionales.' },
-      { q: '¿Qué incluye el servicio FURŌ?', r: 'FURŌ puede participar en distintas etapas del proyecto: consultoría y soporte en anteproyectos, ingeniería estructural y coordinación BIM, fabricación industrial de componentes, logística y transporte a obra, montaje o asistencia técnica en terreno, y acompañamiento durante la obra (opcional).' },
+      { q: '¿Qué incluye el servicio FURŌ?', r: 'FURŌ puede participar en distintas etapas del proyecto: consultoría y soporte en anteproyectos, ingeniería estructural y coordinación BIM, fabricación industrial de paneles estructurales térmicos, logística y transporte a obra, montaje o asistencia técnica en terreno, y acompañamiento durante la obra (opcional).' },
       { q: '¿En qué se diferencia FURŌ de una constructora tradicional?', r: 'FURŌ no es una constructora. Somos un partner técnico que optimiza la obra gruesa mediante diseño, ingeniería y fabricación industrializada. Trabajamos en conjunto con constructoras locales, mejorando la eficiencia, reduciendo tiempos y aumentando la calidad del proyecto.' },
-      { q: '¿FURŌ ofrece casas prefabricadas?', r: 'No vendemos casas prefabricadas genéricas. Contamos con modelos eficientes configurables, y también trabajamos con proyectos personalizados. Si tienes un anteproyecto, podemos analizarlo y definir la mejor solución constructiva con nuestros componentes.' },
+      { q: '¿FURŌ ofrece casas prefabricadas?', r: 'No vendemos casas prefabricadas genéricas. Contamos con modelos eficientes configurables, y también trabajamos con proyectos personalizados. Si tienes un anteproyecto, podemos analizarlo y definir la mejor solución constructiva con nuestros paneles estructurales térmicos.' },
       { q: '¿En qué se diferencia FURŌ de un sistema modular o SIP?', r: 'FURŌ combina lo mejor de ambos mundos: la eficiencia de la construcción industrializada y la libertad de diseño de la arquitectura tradicional. A diferencia de sistemas rígidos como SIP, trabajamos con estructuras de madera laminada que permiten mayor flexibilidad, precisión y durabilidad.' },
       { q: '¿Puedo construir yo mismo con FURŌ?', r: 'Es posible trabajar con autoconstrucción supervisada, aunque recomendamos que el montaje lo realice un equipo capacitado para asegurar calidad y precisión.' },
-      { q: '¿Dónde opera FURŌ?', r: 'FURŌ opera en todo Chile. Gracias a la ligereza de nuestros componentes, podemos construir en zonas remotas, rurales o de difícil acceso.' },
+      { q: '¿Dónde opera FURŌ?', r: 'FURŌ opera en todo Chile. Gracias a la ligereza de nuestros paneles estructurales térmicos, podemos construir en zonas remotas, rurales o de difícil acceso.' },
       { q: '¿Los proyectos FURŌ pueden financiarse?', r: 'Sí. Entregamos toda la documentación técnica necesaria para presentar proyectos a entidades financieras.' },
-      { q: '¿Los productos FURŌ tienen garantía?', r: 'Sí. Nuestros componentes cuentan con garantía técnica y soporte durante el proceso de montaje y ejecución.' },
+      { q: '¿Los productos FURŌ tienen garantía?', r: 'Sí. Nuestros paneles estructurales térmicos cuentan con garantía técnica y soporte durante el proceso de montaje y ejecución.' },
     ]
   },
   {
@@ -31,10 +31,10 @@ const CATEGORIAS = [
   {
     cat: 'Técnica',
     items: [
-      { q: '¿Qué productos ofrece FURŌ?', r: 'Componentes estructurales para obra gruesa: muros, techos, pisos y entrepisos, y fachadas.' },
-      { q: '¿Qué incluyen los componentes FURŌ?', r: 'Cada componente incluye estructura en madera laminada, emplacados estructurales, aislación térmica (lana de oveja), herrajes y conectores, pasadas técnicas, y planos y manuales de montaje.' },
+      { q: '¿Qué productos ofrece FURŌ?', r: 'Paneles estructurales térmicos para obra gruesa: muros, techos, pisos y entrepisos, y fachadas.' },
+      { q: '¿Qué incluyen los Paneles estructurales térmicos FURŌ?', r: 'Cada componente incluye estructura en madera laminada, emplacados estructurales, aislación térmica (lana de oveja), herrajes y conectores, pasadas técnicas, y planos y manuales de montaje.' },
       { q: '¿Incluyen cálculo estructural?', r: 'Sí. Todos los proyectos incluyen ingeniería estructural desarrollada en base a normativa vigente.' },
-      { q: '¿Cómo se integran las instalaciones?', r: 'Los componentes consideran espacios y pasadas técnicas definidas desde el diseño, facilitando la integración de instalaciones sin afectar la estructura.' },
+      { q: '¿Cómo se integran las instalaciones?', r: 'Los paneles estructurales térmicos consideran espacios y pasadas técnicas definidas desde el diseño, facilitando la integración de instalaciones sin afectar la estructura.' },
       { q: '¿Qué tipo de fundaciones requiere FURŌ?', r: 'Depende del proyecto, pero generalmente pueden optimizarse debido a la ligereza del sistema.' },
       { q: '¿Soportan nieve y condiciones extremas?', r: 'Sí. Las estructuras se diseñan según las condiciones específicas del lugar: sismo, viento, nieve, etc.' },
       { q: '¿Puedo conectar servicios?', r: 'Sí. Se integran redes tradicionales o soluciones autónomas según el proyecto.' },
@@ -54,7 +54,7 @@ const CATEGORIAS = [
     cat: 'Valores',
     items: [
       { q: '¿Cuánto cuesta construir con FURŌ?', r: 'Las estructuras FURŌ generalmente están entre 4,5 y 5,5 UF/m². Incluyen una solución integrada, por lo que deben compararse con el costo total de construcción y no solo materiales.' },
-      { q: '¿Qué incluye FURŌ?', r: 'Ingeniería, componentes estructurales, aislación, emplacados, logística y montaje (según alcance).' },
+      { q: '¿Qué incluye FURŌ?', r: 'Ingeniería, paneles estructurales térmicos, aislación, emplacados, logística y montaje (según alcance).' },
       { q: '¿Qué no incluye FURŌ?', r: 'Fundaciones, terminaciones, instalaciones y obras exteriores.' },
       { q: '¿Cómo puedo cotizar?', r: 'Contáctanos con información básica del proyecto y te orientaremos con una propuesta inicial.' },
     ]
@@ -63,7 +63,7 @@ const CATEGORIAS = [
     cat: 'Tiempos y logística',
     items: [
       { q: '¿Cuánto se demora construir con FURŌ?', r: 'El montaje de estructuras se realiza en una fracción del tiempo de la construcción tradicional.' },
-      { q: '¿Incluyen transporte?', r: 'Sí. Podemos encargarnos del transporte optimizado de los componentes a obra.' },
+      { q: '¿Incluyen transporte?', r: 'Sí. Podemos encargarnos del transporte optimizado de los paneles estructurales térmicos a obra.' },
     ]
   },
 ]
