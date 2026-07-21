@@ -105,7 +105,7 @@ export default function Footer() {
               {[
                 { label: 'Comienza tu proyecto', href: '/contacto' },
                 { label: 'contacto@furo.company', href: 'mailto:contacto@furo.company' },
-                { label: 'WhatsApp', href: 'https://wa.me/56977441963' },
+                { label: 'WhatsApp', href: 'https://wa.me/56981813436' },
               ].map(({ label, href }) => (
                 <li key={label} style={{ marginBottom: 10 }}><a href={href} style={{ fontSize: 14, fontWeight: 300, color: '#fff', textDecoration: 'none' }}>{label}</a></li>
               ))}
