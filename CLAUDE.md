@@ -20,10 +20,10 @@
 ## Integraciones
 - **Make webhook:** `https://hook.eu2.make.com/jcti1vtgp2roletlg03vf2jm9leiqkhq`
 - **Flujo de leads:** Meta Lead Ads → Make → Email + Monday CRM (board: Leads) + Mailchimp (audiencia `7e44a3e24f`)
-- **WhatsApp FURŌ:** +56965149218
+- **WhatsApp FURŌ:** +56981813436 (temporal, número de Victor Pellegrini)
 
 ## Equipo
-- **Vendedora:** Josefina Grebe — jgrebe@furo.company — Calendly: https://calendly.com/jgrebe-furo/30min
+- **Agendamiento:** Victor Pellegrini — Calendly: https://calendly.com/vpellegrini-furo/30min
 
 ## Páginas activas
 Home · Cómo Funciona · Beneficios · Noki · Nosotros · Obras · Contacto

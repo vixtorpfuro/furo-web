@@ -601,7 +601,7 @@ export default function Noki() {
           <div>
             <p style={{ fontSize: 11, fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: C.muted, marginBottom: 24 }}>Contacto</p>
             <a href="mailto:contacto@furo.company" style={{ fontSize: 15, color: C.mid, fontWeight: 300, display: 'block', marginBottom: 12 }}>contacto@furo.company</a>
-            <a href="https://wa.me/56977441963" style={{ fontSize: 15, color: C.mid, fontWeight: 300, display: 'block' }}>WhatsApp</a>
+            <a href="https://wa.me/56981813436" style={{ fontSize: 15, color: C.mid, fontWeight: 300, display: 'block' }}>WhatsApp</a>
           </div>
           <div>
             <p style={{ fontSize: 11, fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: C.muted, marginBottom: 24 }}>Síguenos</p>
