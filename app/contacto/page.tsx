@@ -25,13 +25,6 @@ export default function Contacto() {
   const [status, setStatus] = useState<'idle'|'sending'|'ok'|'error'>('idle')
   const set = (k: string, v: string | boolean) => setForm(f => ({ ...f, [k]: v }))
 
-  useEffect(() => {
-    const s = document.createElement('script')
-    s.src = 'https://assets.calendly.com/assets/external/widget.js'
-    s.async = true
-    document.head.appendChild(s)
-    return () => { document.head.removeChild(s) }
-  }, [])
   const submit = async () => {
     if (!form.nombre || !form.apellido || !form.email || !form.celular || !form.soy || !form.cuando || !form.como_contactar || !form.privacidad) { setStatus('error'); return }
     setStatus('sending')
@@ -63,7 +56,6 @@ export default function Contacto() {
           .contact-form-pad { padding: 48px 24px !important; border-right: none !important; border-bottom: 1px solid rgba(20,18,16,0.08); }
           .contact-aside-pad { padding: 48px 24px !important; }
           .contact-fields-2col { grid-template-columns: 1fr !important; }
-          .calendly-section-header { padding: 56px 24px 32px !important; }
         }
       `}</style>
       <Nav dark/>
@@ -129,13 +121,6 @@ export default function Contacto() {
               style={{ background: status === 'ok' ? '#2c4a3d' : '#141210', color: '#fff', border: 'none', padding: '18px 48px', fontSize: 12, fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', fontFamily: 'DM Sans, sans-serif', cursor: 'pointer', transition: 'background 0.25s', display: 'inline-block', marginTop: 4 }}>
               {status === 'sending' ? 'Enviando...' : status === 'ok' ? '✓ Enviado' : 'Enviar consulta →'}
             </button>
-            <div style={{ marginTop: 40, padding: '28px 32px', background: '#ece9e3', borderLeft: '3px solid rgba(82,68,138,0.3)' }}>
-              <span style={{ fontSize: 14, fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#52448a', display: 'block', marginBottom: 10 }}>¿Prefieres no llenar el formulario?</span>
-              <p style={{ fontSize: 14, fontWeight: 300, lineHeight: 1.8, color: '#5e5850', margin: 0 }}>
-                También puedes llamarnos o escribirnos directamente.<br />
-                <a href="tel:+56977441963" style={{ color: '#141210', fontWeight: 500 }}>+56 9 7744 1963</a> · <a href="https://wa.me/56981813436" style={{ color: '#141210', fontWeight: 500 }}>WhatsApp</a> · <a href="mailto:contacto@furo.company" style={{ color: '#141210', fontWeight: 500 }}>contacto@furo.company</a>
-              </p>
-            </div>
           </FadeUp>
         </div>
 
@@ -143,7 +128,7 @@ export default function Contacto() {
           <FadeUp delay={0.1}>
             <div style={{ marginBottom: 36, paddingBottom: 36, borderBottom: '1px solid rgba(20,18,16,0.06)' }}>
               <span style={{ fontSize: 14, fontWeight: 500, letterSpacing: '0.22em', textTransform: 'uppercase', color: '#52448a', display: 'block', marginBottom: 18 }}>Oficina comercial</span>
-              {[{ icon: '📍', label: 'Dirección', val: 'Suecia 283, Providencia, Santiago, Chile' }, { icon: '📞', label: 'Teléfono', val: '+56 9 8413 6893' }, { icon: '✉️', label: 'Email', val: 'contacto@furo.company' }].map(i => (
+              {[{ icon: '📍', label: 'Dirección', val: 'Suecia 283, Providencia, Santiago, Chile' }, { icon: '✉️', label: 'Email', val: 'contacto@furo.company' }].map(i => (
                 <div key={i.label} style={{ display: 'flex', gap: 14, marginBottom: 14, alignItems: 'flex-start' }}>
                   <div style={{ width: 34, height: 34, background: '#f5f3ee', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: 14 }}>{i.icon}</div>
                   <div><p style={{ fontSize: 10, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#8a8278', marginBottom: 3 }}>{i.label}</p><p style={{ fontSize: 14, fontWeight: 300, color: '#141210' }}>{i.val}</p></div>
@@ -166,7 +151,7 @@ export default function Contacto() {
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.112 1.525 5.84L.057 23.197a.75.75 0 00.956.899l5.51-1.747A11.934 11.934 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.686-.497-5.23-1.367l-.374-.213-3.882 1.231 1.102-3.762-.23-.38A9.96 9.96 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
                   Escribir por WhatsApp
                 </a>
-                <a href="#calendly-section" onClick={e => { e.preventDefault(); document.getElementById('calendly-section')?.scrollIntoView({ behavior: 'smooth' }) }}
+                <a href="https://calendly.com/vpellegrini-furo/30min" target="_blank"
                   style={{ display: 'inline-flex', alignItems: 'center', gap: 10, background: '#52448a', color: '#fff', padding: '13px 22px', fontSize: 13, fontWeight: 500, fontFamily: 'DM Sans, sans-serif', textDecoration: 'none' }}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                   Agendar reunión online
@@ -190,21 +175,6 @@ export default function Contacto() {
             </div>
           </FadeUp>
         </div>
-      </div>
-
-      <div id="calendly-section" style={{ borderTop: '1px solid rgba(20,18,16,0.08)', background: '#fff' }}>
-        <div className="calendly-section-header" style={{ padding: '72px 56px 40px' }}>
-          <FadeUp>
-            <span style={{ fontSize: 14, fontWeight: 500, letterSpacing: '0.22em', textTransform: 'uppercase', color: '#52448a', display: 'block', marginBottom: 20 }}>Agenda una reunión</span>
-            <h2 style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: 'clamp(28px,4vw,44px)', fontWeight: 400, lineHeight: 1.1, color: '#141210', marginBottom: 16 }}>Conversa directamente con nuestro equipo</h2>
-            <p style={{ fontSize: 15, fontWeight: 300, lineHeight: 1.8, color: '#5e5850', maxWidth: 560, margin: 0 }}>Elige el horario que mejor te acomode. La reunión dura 30 minutos y puedes hacerla por videollamada desde donde estés.</p>
-          </FadeUp>
-        </div>
-        <div
-          className="calendly-inline-widget"
-          data-url="https://calendly.com/vpellegrini-furo/30min?primary_color=52448a&background_color=ffffff&text_color=141210&hide_gdpr_banner=1"
-          style={{ minWidth: 320, height: 700, width: '100%' }}
-        />
       </div>
 
       <Footer />
