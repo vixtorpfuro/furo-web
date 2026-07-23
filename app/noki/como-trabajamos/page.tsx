@@ -24,7 +24,7 @@ export default function ComoTrabajamos() {
             Prefabricadas en Santiago y montadas en tu terreno en meses. Para la playa, el campo, el sur o la patagonia.
           </p>
           <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <button onClick={openForm} style={ctaBtn}>Únete a la lista de espera</button>
+            <button onClick={openForm} style={ctaBtn}>Estoy interesado</button>
           </div>
         </FadeUp>
       </section>

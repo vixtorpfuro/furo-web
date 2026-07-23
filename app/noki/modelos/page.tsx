@@ -6,8 +6,8 @@ const MODELOS = [
   { slug: 'noki-i', nombre: 'Noki I', desc: '3 dormitorios · 3 baños · 162 m²', img: '/noki/Modelos/baja/nokiI.jpg' },
   { slug: 'noki-ii-65', nombre: 'Noki II — 65 m²', desc: '1 dormitorio · 1 baño · 1 estar', img: '/noki/Modelos/baja/nokiII_65.jpg' },
   { slug: 'noki-ii-110', nombre: 'Noki II — 110 m²', desc: '2 dormitorios · 2 baños (1 en suite)', img: '/noki/Modelos/baja/nokiII_110.jpg' },
-  { slug: 'noki-ii-140', nombre: 'Noki II — 140 m²', desc: '3 dormitorios · 2 baños', img: '/noki/Modelos/baja/nokiII_140.jpg' },
-  { slug: 'noki-ii-160', nombre: 'Noki II — 160 m²', desc: '2 dormitorios en suite · 2 baños · Quincho 42 m²', img: '/noki/Modelos/baja/nokiII_160.jpg' },
+  { slug: 'noki-ii-140', nombre: 'Noki II — 140 m²', desc: '3 dormitorios · 2 baños · Quincho 36 m²', img: '/noki/Modelos/baja/nokiII_140.jpg' },
+  { slug: 'noki-ii-160', nombre: 'Noki II — 160 m²', desc: '2 dormitorios en suite · 2 baños · Quincho 36 m²', img: '/noki/Modelos/baja/nokiII_160.jpg' },
 ]
 
 function ModeloTile({ m }: { m: typeof MODELOS[number] }) {

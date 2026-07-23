@@ -11,8 +11,8 @@ const HERO_IMAGES = [
   '/noki/Modelos/baja/nokiI.jpg',
   '/noki/Modelos/baja/nokiII_65.jpg',
   '/noki/Modelos/baja/nokiII_110.jpg',
+  '/noki/Modelos/baja/nokiII_140.jpg',
   '/noki/Modelos/baja/nokiII_160.jpg',
-  '/noki/Modelos/baja/nokiII_160b.jpg',
 ]
 
 export default function Noki() {

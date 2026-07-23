@@ -6,15 +6,15 @@ export default function NokiII160() {
     <ModeloDetail
       eyebrow="Modelos · Noki II"
       title="Noki II — 160 m²"
-      description="Nuestra versión más completa de la línea Noki II, con un quincho de 42 m² para disfrutar en familia o con amigos, en cualquier rincón de Chile."
+      description="Nuestra versión más completa de la línea Noki II, con un quincho de 36 m² para disfrutar en familia o con amigos, en cualquier rincón de Chile."
       heroImg="/noki/Modelos/baja/nokiII_160.jpg"
-      detailImg="/noki/Modelos/baja/nokiII_160b.jpg"
       specs={[
         { l: 'Área total', v: '160 m²' },
         { l: 'Dormitorios', v: '2 (en suite)' },
         { l: 'Baños', v: '2' },
-        { l: 'Quincho', v: '42 m²' },
+        { l: 'Quincho', v: '36 m²' },
       ]}
+      planoPdf="/noki/Modelos/nokiII_160.pdf"
     />
   )
 }

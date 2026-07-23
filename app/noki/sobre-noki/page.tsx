@@ -76,7 +76,7 @@ export default function SobreNoki() {
               <p style={{ fontSize: 18, fontWeight: 300, color: C.mid, lineHeight: 1.85, marginBottom: 40 }}>
                 Porque creemos en la madera como material del futuro. En casas que se adaptan al paisaje, no al revés.
               </p>
-              <button onClick={openForm} style={ctaBtn}>Únete a la lista de espera</button>
+              <button onClick={openForm} style={ctaBtn}>Estoy interesado</button>
             </FadeUp>
           </div>
         </div>
@@ -139,9 +139,9 @@ export default function SobreNoki() {
           <h2 style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 'clamp(28px,4vw,56px)', fontWeight: 400, lineHeight: 1.08, color: '#fff', marginBottom: 16, maxWidth: '20ch' }}>
             Construye tu casa en cualquier terreno de Chile.
           </h2>
-          <p style={{ fontSize: 16, fontWeight: 300, color: 'rgba(255,255,255,0.45)', marginBottom: 40 }}>Únete y asegura tu precio de lanzamiento.</p>
+          <p style={{ fontSize: 16, fontWeight: 300, color: 'rgba(255,255,255,0.45)', marginBottom: 40 }}>Conversemos sobre tu proyecto.</p>
           <button onClick={openForm} style={ctaBtn}>
-            Únete a la lista de espera
+            Estoy interesado
           </button>
         </FadeUp>
       </section>
