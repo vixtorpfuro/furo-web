@@ -2,7 +2,7 @@ import 'server-only'
 
 const MONDAY_API_TOKEN = process.env.MONDAY_API_TOKEN
 const BOARD_ID = '9586473749'
-const CARPETA_MARCADOR = 'Carpeta Drive:'
+export const COLUMNA_CARPETA_DRIVE = 'link_mm76h1jj'
 
 async function mondayFetch(query: string, variables: Record<string, unknown>) {
   if (!MONDAY_API_TOKEN) throw new Error('Falta configurar MONDAY_API_TOKEN en el servidor.')
@@ -19,16 +19,6 @@ async function mondayFetch(query: string, variables: Record<string, unknown>) {
   const data = await res.json()
   if (data.errors) throw new Error(data.errors[0]?.message || 'Error consultando Monday.')
   return data.data
-}
-
-function extraeCarpetaDrive(comentarios: string | null | undefined): string | null {
-  if (!comentarios) return null
-  const linea = comentarios.split('\n').find(l => l.trim().startsWith(CARPETA_MARCADOR))
-  return linea ? linea.replace(CARPETA_MARCADOR, '').trim() : null
-}
-
-export function prependCarpetaDrive(comentarios: string, url: string) {
-  return `${CARPETA_MARCADOR} ${url}${comentarios ? '\n\n' + comentarios : ''}`
 }
 
 export type LeadResumen = {
@@ -66,7 +56,7 @@ export async function getMisLeads(mondayPersonId: string): Promise<LeadResumen[]
             id
             name
             created_at
-            column_values(ids: ["lead_status", "long_text_mm6d9214", "multiple_person_mm6d63rj"]) { id text value }
+            column_values(ids: ["lead_status", "multiple_person_mm6d63rj", "${COLUMNA_CARPETA_DRIVE}"]) { id text value }
           }
         }
       }
@@ -78,13 +68,13 @@ export async function getMisLeads(mondayPersonId: string): Promise<LeadResumen[]
     .filter(item => esResponsable(item, mondayPersonId))
     .map(item => {
       const estado = item.column_values.find(c => c.id === 'lead_status')?.text || ''
-      const comentarios = item.column_values.find(c => c.id === 'long_text_mm6d9214')?.text || ''
+      const carpetaDrive = item.column_values.find(c => c.id === COLUMNA_CARPETA_DRIVE)?.text || null
       return {
         id: item.id,
         nombre: item.name,
         estado,
         createdAt: item.created_at,
-        carpetaDrive: extraeCarpetaDrive(comentarios),
+        carpetaDrive,
       }
     })
 }
@@ -118,7 +108,7 @@ export async function getLead(itemId: string): Promise<LeadDetalle | null> {
     nombre: item.name,
     estado: columnValues['lead_status'] || '',
     createdAt: item.created_at,
-    carpetaDrive: extraeCarpetaDrive(columnValues['long_text_mm6d9214']),
+    carpetaDrive: columnValues[COLUMNA_CARPETA_DRIVE] || null,
     columnValues,
   }
 }

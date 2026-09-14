@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { obtenerSesionInterno } from '@/lib/interno/sesion'
 import { crearCarpetaProyecto, subirArchivoACarpeta } from '@/lib/interno/drive'
-import { prependCarpetaDrive } from '@/lib/interno/monday'
+import { COLUMNA_CARPETA_DRIVE } from '@/lib/interno/monday'
 
 const MONDAY_API_TOKEN = process.env.MONDAY_API_TOKEN
 const BOARD_ID = '9586473749' // Leads — workspace "CRM nuevo"
@@ -77,6 +77,7 @@ export async function POST(req: Request) {
     lead_status: { label: 'Lead nuevo' },
     date_mkswkng3: { date: new Date().toISOString().slice(0, 10), time: new Date().toISOString().slice(11, 19) },
     multiple_person_mm6d63rj: { personsAndTeams: [{ id: Number(sesion.mondayPersonId), kind: 'person' }] },
+    [COLUMNA_CARPETA_DRIVE]: { url: carpeta.webViewLink, text: carpeta.name },
   }
 
   if (email) columnValues.lead_email = { email, text: email }
@@ -108,8 +109,7 @@ export async function POST(req: Request) {
   if (notasReunion) reunion.push(`Notas de la reunión:\n${notasReunion}`)
   if (reunion.length) comentariosFinal = `${reunion.join('\n')}${comentariosFinal ? '\n\n' + comentariosFinal : ''}`
 
-  comentariosFinal = prependCarpetaDrive(comentariosFinal, carpeta.webViewLink)
-  columnValues.long_text_mm6d9214 = comentariosFinal
+  if (comentariosFinal) columnValues.long_text_mm6d9214 = comentariosFinal
 
   const mutation = `
     mutation ($boardId: ID!, $groupId: String, $itemName: String!, $columnValues: JSON!) {
