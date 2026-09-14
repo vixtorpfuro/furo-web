@@ -36,6 +36,16 @@ type ItemConColumnas = {
   column_values: { id: string; text: string; value: string | null }[]
 }
 
+function extraeUrlDeLinkColumna(value: string | null | undefined): string | null {
+  if (!value) return null
+  try {
+    const parsed = JSON.parse(value) as { url?: string }
+    return parsed.url || null
+  } catch {
+    return null
+  }
+}
+
 function esResponsable(item: ItemConColumnas, mondayPersonId: string): boolean {
   const raw = item.column_values.find(c => c.id === 'multiple_person_mm6d63rj')?.value
   if (!raw) return false
@@ -68,7 +78,7 @@ export async function getMisLeads(mondayPersonId: string): Promise<LeadResumen[]
     .filter(item => esResponsable(item, mondayPersonId))
     .map(item => {
       const estado = item.column_values.find(c => c.id === 'lead_status')?.text || ''
-      const carpetaDrive = item.column_values.find(c => c.id === COLUMNA_CARPETA_DRIVE)?.text || null
+      const carpetaDrive = extraeUrlDeLinkColumna(item.column_values.find(c => c.id === COLUMNA_CARPETA_DRIVE)?.value)
       return {
         id: item.id,
         nombre: item.name,
@@ -90,7 +100,7 @@ export async function getLead(itemId: string): Promise<LeadDetalle | null> {
         id
         name
         created_at
-        column_values { id text }
+        column_values { id text value }
       }
     }
   `
@@ -99,7 +109,8 @@ export async function getLead(itemId: string): Promise<LeadDetalle | null> {
   if (!item) return null
 
   const columnValues: Record<string, string> = {}
-  for (const cv of item.column_values as { id: string; text: string }[]) {
+  const columnasCrudas = item.column_values as { id: string; text: string; value: string | null }[]
+  for (const cv of columnasCrudas) {
     columnValues[cv.id] = cv.text
   }
 
@@ -108,7 +119,7 @@ export async function getLead(itemId: string): Promise<LeadDetalle | null> {
     nombre: item.name,
     estado: columnValues['lead_status'] || '',
     createdAt: item.created_at,
-    carpetaDrive: columnValues[COLUMNA_CARPETA_DRIVE] || null,
+    carpetaDrive: extraeUrlDeLinkColumna(columnasCrudas.find(c => c.id === COLUMNA_CARPETA_DRIVE)?.value),
     columnValues,
   }
 }
