@@ -29,6 +29,9 @@ async function nextFolderNumber(drive: ReturnType<typeof getDrive>, parentId: st
     q: `'${parentId}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
     fields: 'files(name)',
     pageSize: 1000,
+    supportsAllDrives: true,
+    includeItemsFromAllDrives: true,
+    corpora: 'allDrives',
   })
   const numeros = (res.data.files || [])
     .map(f => /^(\d+)\./.exec(f.name || '')?.[1])
@@ -50,6 +53,7 @@ export async function crearCarpetaProyecto(nombreProyecto: string, nombreCliente
       parents: [parentId],
     },
     fields: 'id, name, webViewLink',
+    supportsAllDrives: true,
   })
 
   return { id: res.data.id!, name: res.data.name!, webViewLink: res.data.webViewLink! }
@@ -62,6 +66,7 @@ export async function subirArchivoACarpeta(folderId: string, nombre: string, mim
     requestBody: { name: nombre, parents: [folderId] },
     media: { mimeType, body: Readable.from(buffer) },
     fields: 'id, name, webViewLink',
+    supportsAllDrives: true,
   })
   return { id: res.data.id!, name: res.data.name!, webViewLink: res.data.webViewLink! }
 }
@@ -77,6 +82,9 @@ export async function listarArchivosDeCarpeta(folderId: string) {
     fields: 'files(id, name, mimeType, webViewLink, iconLink, createdTime)',
     orderBy: 'createdTime desc',
     pageSize: 200,
+    supportsAllDrives: true,
+    includeItemsFromAllDrives: true,
+    corpora: 'allDrives',
   })
   return res.data.files || []
 }
