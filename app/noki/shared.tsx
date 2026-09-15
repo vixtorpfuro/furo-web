@@ -220,7 +220,7 @@ function InterestedForm({ open, onClose }: { open: boolean, onClose: () => void 
           {status === 'ok' && <p style={{ fontSize: 13, color: '#2c4a3d', borderTop: '2px solid #2c4a3d', paddingTop: 14, marginBottom: 16 }}>✓ Mensaje enviado. Te contactamos pronto.</p>}
           {status === 'error' && <p style={{ fontSize: 13, color: C.red, borderTop: `2px solid ${C.red}`, paddingTop: 14, marginBottom: 16 }}>Por favor ingresa nombre, apellido y email.</p>}
           <button onClick={submit} disabled={status === 'sending' || status === 'ok'} style={{ ...ctaBtn, width: '100%', padding: '16px', fontSize: 14, background: status === 'ok' ? '#2c4a3d' : C.red }}>
-            {status === 'sending' ? 'Enviando...' : status === 'ok' ? '✓ Mensaje enviado' : 'Únete a la lista de espera →'}
+            {status === 'sending' ? 'Enviando...' : status === 'ok' ? '✓ Mensaje enviado' : 'Agenda tu reunión →'}
           </button>
         </div>
       </div>

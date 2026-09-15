@@ -11,9 +11,9 @@ export function middleware(request: NextRequest) {
     if (pathname.startsWith('/noki')) {
       return NextResponse.next()
     }
-    // Rewrite root (and anything else) to /noki
+    // Rewrite to the matching /noki sub-path (root → /noki, /agenda → /noki/agenda, etc.)
     const url = request.nextUrl.clone()
-    url.pathname = '/noki'
+    url.pathname = pathname === '/' ? '/noki' : `/noki${pathname}`
     return NextResponse.rewrite(url)
   }
 
