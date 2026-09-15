@@ -1,11 +1,9 @@
 'use client'
-import NokiChrome, { C, serif, ctaBtn, secBtn, FadeUp, useNokiForm } from '../shared'
+import NokiChrome, { C, serif, ctaBtn, secBtn, FadeUp, AbrirFormularioButton } from '../shared'
 
 const CALENDLY_URL = 'https://calendly.com/vpellegrini-furo/30min'
 
 export default function AgendaNoki() {
-  const openForm = useNokiForm()
-
   return (
     <NokiChrome>
       <section style={{ background: C.white, paddingTop: 96 }}>
@@ -27,7 +25,7 @@ export default function AgendaNoki() {
               </p>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16 }}>
                 <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer" style={ctaBtn}>Agendar en Calendly →</a>
-                <button onClick={openForm} style={secBtn}>Dejar mis datos</button>
+                <AbrirFormularioButton style={secBtn}>Dejar mis datos</AbrirFormularioButton>
               </div>
             </FadeUp>
           </div>

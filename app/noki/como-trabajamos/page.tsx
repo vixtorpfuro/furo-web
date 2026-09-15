@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react'
-import NokiChrome, { C, serif, ctaBtn, FadeUp, useNokiForm } from '../shared'
+import NokiChrome, { C, serif, ctaBtn, FadeUp, AbrirFormularioButton } from '../shared'
 
 const WHY_ITEMS = [
   { img: 'P1010593.jpg', t: 'Montaje rápido, proceso transparente', d: 'Los paneles estructurales térmicos FURŌ llegan prefabricados desde nuestra planta. La estructura se monta en 4 a 8 meses. Presupuesto claro, plazo predecible.', sub: 'Ensamblaje preciso. Sin imprevistos.' },
@@ -10,7 +10,6 @@ const WHY_ITEMS = [
 
 export default function ComoTrabajamos() {
   const [whyActive, setWhyActive] = useState(0)
-  const openForm = useNokiForm()
 
   return (
     <NokiChrome>
@@ -24,7 +23,7 @@ export default function ComoTrabajamos() {
             Prefabricadas en Santiago y montadas en tu terreno en meses. Para la playa, el campo, el sur o la patagonia.
           </p>
           <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <button onClick={openForm} style={ctaBtn}>Estoy interesado</button>
+            <AbrirFormularioButton style={ctaBtn}>Estoy interesado</AbrirFormularioButton>
           </div>
         </FadeUp>
       </section>

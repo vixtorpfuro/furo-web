@@ -47,6 +47,15 @@ export function useNokiForm() {
   return useContext(NokiFormContext)
 }
 
+// Los botones "Estoy interesado" fuera de NokiNav viven en páginas que
+// devuelven <NokiChrome>, así que llamar useNokiForm() ahí arriba no
+// alcanza al Provider (que NokiChrome recién crea al renderizarse).
+// Este botón llama al hook desde dentro del árbol de NokiChrome.
+export function AbrirFormularioButton({ children, style }: { children: React.ReactNode, style?: React.CSSProperties }) {
+  const openForm = useNokiForm()
+  return <button onClick={openForm} style={style}>{children}</button>
+}
+
 const MENU = [
   { label: 'Modelos', href: '/noki/modelos' },
   { label: 'Como Trabajamos', href: '/noki/como-trabajamos' },

@@ -1,6 +1,6 @@
 'use client'
 import Link from 'next/link'
-import NokiChrome, { C, ctaBtn, secBtn, FadeUp, useNokiForm } from '../shared'
+import NokiChrome, { C, ctaBtn, secBtn, FadeUp, AbrirFormularioButton } from '../shared'
 
 export type Spec = { l: string, v: string }
 
@@ -16,7 +16,6 @@ export function ModeloDetail({
   planoPdf?: string
   gallery?: string[]
 }) {
-  const openForm = useNokiForm()
   const rightImg = detailImg || heroImg
 
   return (
@@ -55,7 +54,7 @@ export function ModeloDetail({
               </div>
             ))}
             <div style={{ marginTop: 28, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-              <button onClick={openForm} style={ctaBtn}>Estoy interesado</button>
+              <AbrirFormularioButton style={ctaBtn}>Estoy interesado</AbrirFormularioButton>
               {planoPdf && (
                 <a href={planoPdf} target="_blank" rel="noopener noreferrer" style={{ ...secBtn, background: 'transparent', border: `1px solid ${C.border}`, display: 'inline-flex', alignItems: 'center' }}>
                   Ver plano ↗

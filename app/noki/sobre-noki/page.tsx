@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react'
-import NokiChrome, { C, ctaBtn, FadeUp, useNokiForm } from '../shared'
+import NokiChrome, { C, ctaBtn, FadeUp, AbrirFormularioButton } from '../shared'
 
 const FAQ_CATS = [
   {
@@ -51,7 +51,6 @@ const FAQ_CATS = [
 export default function SobreNoki() {
   const [openCat, setOpenCat] = useState<string|null>(null)
   const [openFaq, setOpenFaq] = useState<string|null>(null)
-  const openForm = useNokiForm()
 
   return (
     <NokiChrome>
@@ -76,7 +75,7 @@ export default function SobreNoki() {
               <p style={{ fontSize: 18, fontWeight: 300, color: C.mid, lineHeight: 1.85, marginBottom: 40 }}>
                 Porque creemos en la madera como material del futuro. En casas que se adaptan al paisaje, no al revés.
               </p>
-              <button onClick={openForm} style={ctaBtn}>Estoy interesado</button>
+              <AbrirFormularioButton style={ctaBtn}>Estoy interesado</AbrirFormularioButton>
             </FadeUp>
           </div>
         </div>
@@ -140,9 +139,9 @@ export default function SobreNoki() {
             Construye tu casa en cualquier terreno de Chile.
           </h2>
           <p style={{ fontSize: 16, fontWeight: 300, color: 'rgba(255,255,255,0.45)', marginBottom: 40 }}>Conversemos sobre tu proyecto.</p>
-          <button onClick={openForm} style={ctaBtn}>
+          <AbrirFormularioButton style={ctaBtn}>
             Estoy interesado
-          </button>
+          </AbrirFormularioButton>
         </FadeUp>
       </section>
     </NokiChrome>
