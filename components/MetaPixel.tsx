@@ -4,31 +4,18 @@
  * MetaPixel — FURŌ / Noki
  * Pixel ID: 946261648306071
  *
- * INSTALACIÓN:
- * 1. Este archivo ya está en: components/MetaPixel.tsx ✓
- * 2. <MetaPixel /> ya está en app/layout.tsx ✓
- * 3. NEXT_PUBLIC_META_PIXEL_ID=946261648306071 ya está en Vercel env vars ✓
- * 4. Para trackear leads: importa trackLead() y llámala al enviar el formulario Noki
- *
- * Ejemplo en el handler del formulario:
+ * Para trackear leads, importa trackLead() y llámala al enviar el formulario:
  *   import { trackLead } from '@/components/MetaPixel'
- *   await enviarFormulario(data)
  *   trackLead({ content_name: 'Formulario Noki' })
  */
 
 import Script from 'next/script'
 import { usePathname, useSearchParams } from 'next/navigation'
-import { useEffect } from 'react'
+import { useEffect, Suspense } from 'react'
 
 const PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID
 
-type FbqEvent =
-  | 'PageView'
-  | 'Lead'
-  | 'Contact'
-  | 'Schedule'
-  | 'ViewContent'
-  | 'InitiateCheckout'
+type FbqEvent = 'PageView' | 'Lead' | 'Contact' | 'Schedule' | 'ViewContent'
 
 declare global {
   interface Window {
@@ -37,31 +24,27 @@ declare global {
   }
 }
 
+// ── Helpers exportables ───────────────────────────────────────────────────────
+
 export function trackPageView() {
-  if (typeof window !== 'undefined' && window.fbq) {
-    window.fbq('track', 'PageView')
-  }
+  if (typeof window !== 'undefined' && window.fbq) window.fbq('track', 'PageView')
 }
 
 export function trackLead(params?: { content_name?: string; content_category?: string }) {
-  if (typeof window !== 'undefined' && window.fbq) {
-    window.fbq('track', 'Lead', params)
-  }
+  if (typeof window !== 'undefined' && window.fbq) window.fbq('track', 'Lead', params)
 }
 
 export function trackSchedule() {
-  if (typeof window !== 'undefined' && window.fbq) {
-    window.fbq('track', 'Schedule')
-  }
+  if (typeof window !== 'undefined' && window.fbq) window.fbq('track', 'Schedule')
 }
 
 export function trackContact() {
-  if (typeof window !== 'undefined' && window.fbq) {
-    window.fbq('track', 'Contact')
-  }
+  if (typeof window !== 'undefined' && window.fbq) window.fbq('track', 'Contact')
 }
 
-export function MetaPixel() {
+// ── Componente interno (usa useSearchParams — debe estar en Suspense) ─────────
+
+function MetaPixelInner() {
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
@@ -71,6 +54,12 @@ export function MetaPixel() {
     }
   }, [pathname, searchParams])
 
+  return null
+}
+
+// ── Componente principal (exportado) ─────────────────────────────────────────
+
+export function MetaPixel() {
   if (!PIXEL_ID) {
     if (process.env.NODE_ENV === 'development') {
       console.warn('[MetaPixel] NEXT_PUBLIC_META_PIXEL_ID no está definida.')
@@ -109,6 +98,10 @@ export function MetaPixel() {
           alt=""
         />
       </noscript>
+      {/* Suspense requerido por useSearchParams en Next.js App Router */}
+      <Suspense fallback={null}>
+        <MetaPixelInner />
+      </Suspense>
     </>
   )
 }
