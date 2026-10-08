@@ -187,7 +187,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
               style={{ height: 20, filter: 'brightness(0)', opacity: 0.7, display: 'block', marginBottom: 16 }}
             />
             <p style={{ fontSize: 12, fontWeight: 300, lineHeight: 1.8, color: '#5e5850', marginBottom: 16 }}>
-              Construimos con madera laminada (GLT y CLT) para proyectos de todo tipo, tamaño y lugar en Chile.
+              Construimos con madera laminada para proyectos de todo tipo, tamaño y lugar en Chile.
             </p>
             <Link href="/contacto" style={{ fontSize: 11, fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#fff', background: '#141210', padding: '10px 18px', display: 'inline-block' }}>
               Hablemos →
