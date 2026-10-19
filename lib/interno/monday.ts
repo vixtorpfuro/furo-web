@@ -4,7 +4,7 @@ const MONDAY_API_TOKEN = process.env.MONDAY_API_TOKEN
 const BOARD_ID = '9586473749'
 export const COLUMNA_CARPETA_DRIVE = 'link_mm76h1jj'
 
-async function mondayFetch(query: string, variables: Record<string, unknown>) {
+export async function mondayFetch(query: string, variables: Record<string, unknown>) {
   if (!MONDAY_API_TOKEN) throw new Error('Falta configurar MONDAY_API_TOKEN en el servidor.')
   const res = await fetch('https://api.monday.com/v2', {
     method: 'POST',

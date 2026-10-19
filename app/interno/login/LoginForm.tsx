@@ -34,7 +34,15 @@ function LoginFormInner() {
         setErrorMsg(data.error || 'No se pudo iniciar sesión.')
         return
       }
-      router.push(searchParams.get('next') || '/interno')
+      // Solo rutas internas del sitio: evita redirigir a otro dominio con ?next=//sitio-externo.
+      const next = searchParams.get('next') || ''
+      const destino = next.startsWith('/interno') && !next.startsWith('//') ? next : '/interno'
+      if (destino.startsWith('/interno/cotizador')) {
+        // El cotizador es HTML servido por un route handler, no una página de React.
+        window.location.assign(destino)
+        return
+      }
+      router.push(destino)
       router.refresh()
     } catch {
       setStatus('error')

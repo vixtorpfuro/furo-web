@@ -32,9 +32,15 @@ export default async function InternoDashboard() {
 
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
           <h1 style={{ fontSize: 26, fontWeight: 400, margin: 0 }}>Mis leads</h1>
-          <Link href="/interno/nuevo-lead" style={{ background: C.dark, color: '#fff', padding: '12px 24px', fontSize: 13, fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase', borderRadius: 6, textDecoration: 'none' }}>
-            + Nuevo lead
-          </Link>
+          <div style={{ display: 'flex', gap: 10 }}>
+            {/* <a> y no <Link>: el cotizador es HTML servido por un route handler */}
+            <a href="/interno/cotizador" style={{ border: `1px solid ${C.dark}`, color: C.dark, padding: '11px 20px', fontSize: 13, fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase', borderRadius: 6, textDecoration: 'none' }}>
+              Cotizador
+            </a>
+            <Link href="/interno/nuevo-lead" style={{ background: C.dark, color: '#fff', padding: '12px 24px', fontSize: 13, fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase', borderRadius: 6, textDecoration: 'none' }}>
+              + Nuevo lead
+            </Link>
+          </div>
         </div>
 
         {error && (
