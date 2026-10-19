@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { obtenerSesionInterno } from '@/lib/interno/sesion'
-import { crearItemMonday, limpiarDatosMonday, solicitudMismoOrigen } from '@/lib/cotizador/integraciones'
+import { crearItemMonday, limpiarDatosMonday } from '@/lib/cotizador/integraciones'
+import { solicitudMismoOrigen } from '@/lib/interno/solicitud'
 
 export async function POST(req: Request) {
   const sesion = await obtenerSesionInterno()
