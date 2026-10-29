@@ -10,13 +10,16 @@ export const TIPOS_PROYECTO = {
 } as const
 export type TipoProyecto = keyof typeof TIPOS_PROYECTO
 
-// Orden = orden habitual en que ocurren en un proyecto.
+// Orden = orden habitual en que ocurren en un proyecto. Las fundaciones van generalmente en
+// paralelo al pedido de madera. La clave `calculo` se mantiene por los datos ya guardados.
 export const HITOS = {
   analisis: { etiqueta: 'Análisis inicial', corto: 'Análisis', fondo: '#e4ddd0', texto: '#141210' },
   anteproyecto: { etiqueta: 'Ingreso anteproyecto', corto: 'Anteproyecto', fondo: '#d6cdea', texto: '#141210' },
   presupuestoInicial: { etiqueta: 'Presupuesto inicial', corto: 'Ppto. inicial', fondo: '#bccbe0', texto: '#141210' },
   presupuestoCierre: { etiqueta: 'Presupuesto de cierre', corto: 'Ppto. cierre', fondo: '#6f8fbf', texto: '#ffffff' },
-  calculo: { etiqueta: 'Cálculo', corto: 'Cálculo', fondo: '#aaa49b', texto: '#ffffff' },
+  calculo: { etiqueta: 'BIM (cálculo y modelado)', corto: 'BIM', fondo: '#aaa49b', texto: '#ffffff' },
+  pedidoMadera: { etiqueta: 'Pedido de madera', corto: 'Madera', fondo: '#c99a5b', texto: '#141210' },
+  fundaciones: { etiqueta: 'Fundaciones', corto: 'Fundaciones', fondo: '#8c8577', texto: '#ffffff' },
   fabrica: { etiqueta: 'Fábrica', corto: 'Fábrica', fondo: '#52448a', texto: '#ffffff' },
   montaje: { etiqueta: 'Montaje', corto: 'Montaje', fondo: '#f08a5d', texto: '#141210' },
   terminoObra: { etiqueta: 'Término de obra', corto: 'Término', fondo: '#5f8f6b', texto: '#ffffff' },
@@ -63,12 +66,13 @@ export type ProyectoComercial = {
 // Indicadores comerciales en UF/m². Se editan desde la cabecera del board. Cada tipo de
 // proyecto suma los anteriores: estructuras → + montaje → + partidas intermedia → + obra completa.
 export type Indicadores = {
-  estructuras: number; montaje: number; revestimiento: number; techumbre: number; ventanas: number; completa: number; logistica: number
+  estructuras: number; bim: number; montaje: number; revestimiento: number; techumbre: number; ventanas: number; completa: number; logistica: number
 }
 // Revestimiento, techumbre y ventanas parten en 0 hasta que se definan sus valores.
-export const INDICADORES_BASE: Indicadores = { estructuras: 1.56, montaje: 1, revestimiento: 0, techumbre: 0, ventanas: 0, completa: 3.5, logistica: 0.1 }
+export const INDICADORES_BASE: Indicadores = { estructuras: 1.56, bim: 0.5, montaje: 1, revestimiento: 0, techumbre: 0, ventanas: 0, completa: 3.5, logistica: 0.1 }
 export const INDICADORES_TEXTO: Record<keyof Indicadores, { etiqueta: string; detalle: string }> = {
   estructuras: { etiqueta: 'Solo estructuras', detalle: 'Fabricación de paneles' },
+  bim: { etiqueta: 'BIM', detalle: 'Modelación y cálculo; todos los tipos' },
   montaje: { etiqueta: 'Montaje estructuras', detalle: 'Opcional en solo estructuras' },
   revestimiento: { etiqueta: 'Revestimiento ext.', detalle: 'Partida intermedia' },
   techumbre: { etiqueta: 'Techumbre', detalle: 'Partida intermedia' },
@@ -83,10 +87,10 @@ type BaseValor = Pick<ProyectoComercial, 'tipo' | 'logistica' | 'ufM2' | 'conMon
 export function desgloseProyecto(p: BaseValor, ind: Indicadores): { concepto: keyof Indicadores; uf: number }[] {
   const partidas: (keyof Indicadores)[] = (() => {
     switch (p.tipo) {
-      case 'estructuras': return p.conMontaje ? ['estructuras', 'montaje'] : ['estructuras']
-      case 'intermedia': return ['estructuras', 'montaje', 'revestimiento', 'techumbre', 'ventanas']
+      case 'estructuras': return p.conMontaje ? ['estructuras', 'bim', 'montaje'] : ['estructuras', 'bim']
+      case 'intermedia': return ['estructuras', 'bim', 'montaje', 'revestimiento', 'techumbre', 'ventanas']
       case 'completa':
-      case 'noki': return ['estructuras', 'montaje', 'revestimiento', 'techumbre', 'ventanas', 'completa']
+      case 'noki': return ['estructuras', 'bim', 'montaje', 'revestimiento', 'techumbre', 'ventanas', 'completa']
       default: return []
     }
   })()
@@ -104,6 +108,22 @@ export function ufM2Proyecto(p: BaseValor, ind: Indicadores): number | null {
 export function ufProyecto(p: ProyectoComercial, ind: Indicadores): number | null {
   const tarifa = ufM2Proyecto(p, ind)
   return tarifa != null && p.m2 ? tarifa * p.m2 : null
+}
+
+// Cobros: 50% antes del pedido de madera (con el presupuesto de cierre) y 50% al cerrar el
+// montaje. Si no hay pedido de madera, el anticipo cae al entrar a fábrica.
+export const PORCENTAJE_ANTICIPO = 0.5
+
+export function cobrosProyecto(p: ProyectoComercial, ind: Indicadores): { mes: string; uf: number; concepto: 'anticipo' | 'saldo' }[] {
+  const uf = ufProyecto(p, ind)
+  if (!uf) return []
+  const primero = (tipo: TipoHito) => p.hitos.filter(h => h.tipo === tipo).map(h => h.desde).sort()[0]
+  const mesAnticipo = primero('pedidoMadera') || primero('fabrica')
+  const mesSaldo = p.hitos.filter(h => h.tipo === 'montaje').map(h => h.hasta || h.desde).sort().at(-1)
+  const res: { mes: string; uf: number; concepto: 'anticipo' | 'saldo' }[] = []
+  if (mesAnticipo) res.push({ mes: mesAnticipo, uf: uf * PORCENTAJE_ANTICIPO, concepto: 'anticipo' })
+  if (mesSaldo) res.push({ mes: mesSaldo, uf: uf * (1 - PORCENTAJE_ANTICIPO), concepto: 'saldo' })
+  return res
 }
 
 // Orden dentro de cada grupo: primero el montaje más próximo, luego la mayor probabilidad.
@@ -190,6 +210,20 @@ export function moverHito(h: Hito, delta: number, vista: 'meses' | 'semanas'): H
   const semanaHasta = (fin % SEMANAS_POR_MES) + 1
   if (inicio === fin) return { ...h, desde, semanaDesde, hasta: null, semanaHasta: null }
   return { ...h, desde, semanaDesde, hasta, semanaHasta }
+}
+
+// Duración por defecto al crear un hito: el pedido de madera toma 3 semanas.
+export const SEMANAS_POR_DEFECTO: Partial<Record<TipoHito, number>> = { pedidoMadera: 3 }
+
+export function conDuracionPorDefecto(h: Hito): Hito {
+  const semanas = SEMANAS_POR_DEFECTO[h.tipo]
+  if (!semanas || h.hasta) return h
+  const inicio = aNumero(h.desde) * SEMANAS_POR_MES + (h.semanaDesde || 1) - 1
+  const fin = inicio + semanas - 1
+  return {
+    ...h, semanaDesde: (inicio % SEMANAS_POR_MES) + 1,
+    hasta: aMes(Math.floor(fin / SEMANAS_POR_MES)), semanaHasta: (fin % SEMANAS_POR_MES) + 1,
+  }
 }
 
 export function textoPeriodo(h: Hito) {

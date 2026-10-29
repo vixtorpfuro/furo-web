@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
   HITOS, INDICADORES_TEXTO, RANGO_EDICION, RANGO_VISIBLE, SEMANAS_POR_MES, TIPOS_PROYECTO,
-  columnasHito, compararProyectos, formatoUF, mesesEntre, mesMontaje, moverHito, nombreMes, nuevaClave, semanaDeDia, textoPeriodo,
+  cobrosProyecto, columnasHito, compararProyectos, conDuracionPorDefecto, formatoUF, mesesEntre, mesMontaje, moverHito, nombreMes, nuevaClave, semanaDeDia, textoPeriodo,
   desgloseProyecto, ufM2Proyecto, ufProyecto,
   type Hito, type Indicadores, type ProyectoComercial, type TipoHito, type TipoProyecto,
 } from '@/lib/comercial/modelo'
@@ -125,6 +125,14 @@ export default function BoardComercial({ proyectos: iniciales, indicadores, hoy,
     return cuenta
   }
   const porMesTotales = contarMontajes('meses')
+  // Cobros ponderados por probabilidad: 50% anticipo (pedido de madera) y 50% saldo (fin del montaje).
+  const cobrosPorMes = meses.map(() => 0)
+  for (const p of filtrados) {
+    for (const c of cobrosProyecto(p, ind)) {
+      const i = meses.indexOf(c.mes)
+      if (i >= 0) cobrosPorMes[i] += c.uf * (p.probabilidad ?? 0) / 100
+    }
+  }
   const porSemana = vista === 'semanas' ? contarMontajes('semanas') : []
 
   const sinMontaje = filtrados.filter(p => !mesMontaje(p)).length
@@ -222,8 +230,9 @@ export default function BoardComercial({ proyectos: iniciales, indicadores, hoy,
           {/* Encabezado */}
           <div style={{ display: 'flex', position: 'sticky', top: 0, zIndex: 5, background: C.fondo, paddingBottom: 8 }}>
             <div style={{ width: ANCHO_BANDA + ANCHO_NOMBRE + 8, flexShrink: 0, position: 'sticky', left: 0, background: C.fondo, zIndex: 6, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', fontSize: 11, color: C.muted, paddingLeft: 4, paddingBottom: vista === 'semanas' ? 18 : 0 }}>
-              <span>Bajo cada mes: montajes · m² · UF ponderada</span>
-              <span style={{ marginTop: 2 }}>UF en el mes de inicio del montaje{sinMontaje > 0 ? ` · ${sinMontaje} sin mes de montaje` : ''}</span>
+              <span>Bajo cada mes: montajes · m² · UF ponderada (inicio de montaje)</span>
+              <span style={{ marginTop: 2 }}>Cobros ponderados: 50% en pedido de madera, 50% al cerrar montaje</span>
+              {sinMontaje > 0 && <span style={{ marginTop: 2 }}>{sinMontaje} sin mes de montaje</span>}
             </div>
             <div style={{ display: 'flex', gap: 0 }}>
               {meses.map((mes, iMes) => (
@@ -238,7 +247,7 @@ export default function BoardComercial({ proyectos: iniciales, indicadores, hoy,
                   >
                     {vista === 'semanas' ? nombreMes(mes, true) : nombreMes(mes)}
                   </button>
-                  <TotalMes t={porMesTotales[iMes]} oscuro={mes === mesHoy} />
+                  <TotalMes t={porMesTotales[iMes]} cobro={cobrosPorMes[iMes]} oscuro={mes === mesHoy} />
                   {vista === 'semanas' && (
                     <div style={{ display: 'flex' }}>
                       {Array.from({ length: SEMANAS_POR_MES }, (_, s) => (
@@ -302,7 +311,7 @@ export default function BoardComercial({ proyectos: iniciales, indicadores, hoy,
   )
 }
 
-function TotalMes({ t, oscuro }: { t: { n: number; m2: number; uf: number }; oscuro: boolean }) {
+function TotalMes({ t, cobro, oscuro }: { t: { n: number; m2: number; uf: number }; cobro: number; oscuro: boolean }) {
   return (
     <div style={{
       background: oscuro ? '#2a2622' : 'rgba(255,255,255,0.55)', color: oscuro ? '#fff' : C.dark, opacity: t.n ? 1 : 0.5,
@@ -310,6 +319,7 @@ function TotalMes({ t, oscuro }: { t: { n: number; m2: number; uf: number }; osc
     }}>
       <div><strong style={{ fontWeight: 500 }}>{t.n}</strong> montaje{t.n === 1 ? '' : 's'} · {Math.round(t.m2).toLocaleString('es-CL')} m²</div>
       <div style={{ color: oscuro ? '#d6cdea' : C.purpleMid }}>{t.uf > 0 ? formatoUF(t.uf) : '0 UF'}</div>
+      <div style={{ color: oscuro ? '#cfe3d4' : '#3f6e4b', opacity: cobro > 0 ? 1 : 0.5 }}>Cobro {formatoUF(cobro)}</div>
     </div>
   )
 }
@@ -544,11 +554,11 @@ function Editor({ edicion, meses, ind, onCerrar }: { edicion: Edicion; meses: st
 
   const setCampo = <K extends keyof typeof form>(k: K, v: (typeof form)[K]) => setForm(f => ({ ...f, [k]: v }))
   const setHito = (key: string, cambios: Partial<Hito>) =>
-    setForm(f => ({ ...f, hitos: f.hitos.map(h => (h._key === key ? { ...h, ...cambios } : h)) }))
+    setForm(f => ({ ...f, hitos: f.hitos.map(h => (h._key !== key ? h : cambios.tipo ? conDuracionPorDefecto({ ...h, ...cambios }) : { ...h, ...cambios })) }))
   const agregarHito = (tipo: TipoHito) => {
     const mesActual = new Date().toISOString().slice(0, 7)
     const desde = meses.includes(mesActual) ? mesActual : meses[0]
-    setForm(f => ({ ...f, hitos: [...f.hitos, { _key: nuevaClave(), tipo, desde, hecho: false, semanaDesde: semanaDeDia(new Date().getDate()) }] }))
+    setForm(f => ({ ...f, hitos: [...f.hitos, conDuracionPorDefecto({ _key: nuevaClave(), tipo, desde, hecho: false, semanaDesde: semanaDeDia(new Date().getDate()) })] }))
   }
 
   const llamar = async (url: string, method: string, body?: unknown) => {

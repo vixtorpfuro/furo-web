@@ -6,6 +6,7 @@ const indicadoresComerciales = {
   type: 'document',
   fields: [
     { name: 'estructuras', title: 'Solo estructuras (UF/m²)', type: 'number' },
+    { name: 'bim', title: 'BIM, modelación y cálculo (UF/m²)', type: 'number' },
     { name: 'montaje', title: 'Montaje de estructuras (UF/m²)', type: 'number' },
     { name: 'revestimiento', title: 'Revestimiento exterior (UF/m², intermedia)', type: 'number' },
     { name: 'techumbre', title: 'Techumbre (UF/m², intermedia)', type: 'number' },
