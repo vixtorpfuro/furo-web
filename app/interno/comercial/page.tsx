@@ -2,7 +2,8 @@ import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { obtenerSesionInterno } from '@/lib/interno/sesion'
-import { listarProyectos } from '@/lib/comercial/datos'
+import { leerIndicadores, listarProyectos } from '@/lib/comercial/datos'
+import { INDICADORES_BASE } from '@/lib/comercial/modelo'
 import { PROYECTOS_SEMILLA } from '@/lib/comercial/semilla'
 import InternoHeader from '../InternoHeader'
 import BoardComercial from './BoardComercial'
@@ -21,9 +22,10 @@ export default async function PlanificacionComercialPage() {
   if (!sesion) redirect('/interno/login?next=/interno/comercial')
 
   let proyectos: Awaited<ReturnType<typeof listarProyectos>> = []
+  let indicadores = INDICADORES_BASE
   let error = ''
   try {
-    proyectos = await listarProyectos()
+    ;[proyectos, indicadores] = await Promise.all([listarProyectos(), leerIndicadores()])
   } catch (e) {
     error = e instanceof Error ? e.message : 'No se pudo cargar el board.'
   }
@@ -41,7 +43,7 @@ export default async function PlanificacionComercialPage() {
             <p style={{ fontSize: 14, color: '#c0392b', margin: 0 }}>{error}</p>
           </div>
         ) : (
-          <BoardComercial proyectos={proyectos} hoy={new Date().toISOString().slice(0, 10)} totalSemilla={PROYECTOS_SEMILLA.length} />
+          <BoardComercial proyectos={proyectos} indicadores={indicadores} hoy={new Date().toISOString().slice(0, 10)} totalSemilla={PROYECTOS_SEMILLA.length} />
         )}
       </div>
     </main>

@@ -47,8 +47,55 @@ export type ProyectoComercial = {
   m2: number | null
   estado: string
   hitos: Hito[]
+  // Probabilidad de éxito en % (0-100). Primer paso hacia el "camino de la confianza".
+  probabilidad: number | null
+  zona: string
+  // UF/m² de logística para la zona del proyecto; null = usa el indicador general (mínimo Santiago).
+  logistica: number | null
+  // UF/m² fijado a mano; null = se calcula con los indicadores según el tipo.
+  ufM2: number | null
   mondayItemId?: string | null
   actualizadoPor?: string | null
+}
+
+// Indicadores comerciales en UF/m². Se editan desde la cabecera del board.
+export type Indicadores = { estructuras: number; montaje: number; completa: number; logistica: number }
+export const INDICADORES_BASE: Indicadores = { estructuras: 1.56, montaje: 1, completa: 3.5, logistica: 0.1 }
+export const INDICADORES_TEXTO: Record<keyof Indicadores, { etiqueta: string; detalle: string }> = {
+  estructuras: { etiqueta: 'Solo estructuras', detalle: 'Fabricación de paneles' },
+  montaje: { etiqueta: 'Montaje estructuras', detalle: 'Se suma en intermedia' },
+  completa: { etiqueta: 'Obra completa', detalle: 'También Noki' },
+  logistica: { etiqueta: 'Logística', detalle: 'Mínimo Santiago; por zona en cada proyecto' },
+}
+
+// UF/m² del proyecto: fijo a mano o según tipo + logística de su zona.
+// Intermedia = estructura montada (estructuras + montaje). Noki se valoriza como obra completa.
+export function ufM2Proyecto(p: Pick<ProyectoComercial, 'tipo' | 'logistica' | 'ufM2'>, ind: Indicadores): number | null {
+  if (p.ufM2 != null) return p.ufM2
+  const logistica = p.logistica ?? ind.logistica
+  switch (p.tipo) {
+    case 'estructuras': return ind.estructuras + logistica
+    case 'intermedia': return ind.estructuras + ind.montaje + logistica
+    case 'completa':
+    case 'noki': return ind.completa + logistica
+    default: return null
+  }
+}
+
+export function ufProyecto(p: ProyectoComercial, ind: Indicadores): number | null {
+  const tarifa = ufM2Proyecto(p, ind)
+  return tarifa != null && p.m2 ? tarifa * p.m2 : null
+}
+
+// Orden dentro de cada grupo: primero el montaje más próximo, luego la mayor probabilidad.
+export function compararProyectos(a: ProyectoComercial, b: ProyectoComercial) {
+  return (mesMontaje(a) || '9999').localeCompare(mesMontaje(b) || '9999')
+    || (b.probabilidad ?? -1) - (a.probabilidad ?? -1)
+    || a.nombre.localeCompare(b.nombre)
+}
+
+export function formatoUF(n: number) {
+  return `${Math.round(n).toLocaleString('es-CL')} UF`
 }
 
 export const SEMANAS_POR_MES = 4
@@ -102,6 +149,28 @@ export function columnasHito(h: Hito, meses: string[], vista: 'meses' | 'semanas
     }
   }
   return { inicio, fin: Math.max(inicio, fin), cortaInicio: iDesde < 0, cortaFin: iHasta >= meses.length }
+}
+
+const aNumero = (mes: string) => { const [y, m] = mes.split('-').map(Number); return y * 12 + m - 1 }
+const aMes = (n: number) => `${Math.floor(n / 12)}-${String((n % 12) + 1).padStart(2, '0')}`
+
+// Desplaza un hito `delta` columnas. En meses mantiene las semanas; en semanas el hito pasa a
+// tener semana de inicio y fin (si era de mes completo, ocupa S1-S4 antes de moverse).
+export function moverHito(h: Hito, delta: number, vista: 'meses' | 'semanas'): Hito {
+  if (!delta) return h
+  if (vista === 'meses') {
+    return { ...h, desde: aMes(aNumero(h.desde) + delta), hasta: h.hasta ? aMes(aNumero(h.hasta) + delta) : h.hasta }
+  }
+  const finMes = h.hasta || h.desde
+  const semFin = h.semanaHasta || (h.hasta ? SEMANAS_POR_MES : h.semanaDesde || SEMANAS_POR_MES)
+  const inicio = aNumero(h.desde) * SEMANAS_POR_MES + (h.semanaDesde || 1) - 1 + delta
+  const fin = aNumero(finMes) * SEMANAS_POR_MES + semFin - 1 + delta
+  const desde = aMes(Math.floor(inicio / SEMANAS_POR_MES))
+  const hasta = aMes(Math.floor(fin / SEMANAS_POR_MES))
+  const semanaDesde = (inicio % SEMANAS_POR_MES) + 1
+  const semanaHasta = (fin % SEMANAS_POR_MES) + 1
+  if (inicio === fin) return { ...h, desde, semanaDesde, hasta: null, semanaHasta: null }
+  return { ...h, desde, semanaDesde, hasta, semanaHasta }
 }
 
 export function textoPeriodo(h: Hito) {

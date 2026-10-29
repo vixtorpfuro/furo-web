@@ -21,6 +21,10 @@ const proyectoComercial = {
     { name: 'superficie', title: 'Superficie (texto de referencia)', type: 'string' },
     { name: 'm2', title: 'm²', type: 'number' },
     { name: 'estado', title: 'Estado / condición', type: 'text', rows: 3 },
+    { name: 'probabilidad', title: 'Probabilidad de éxito (%)', type: 'number' },
+    { name: 'zona', title: 'Zona', type: 'string' },
+    { name: 'logistica', title: 'Logística UF/m² (vacío = indicador general)', type: 'number' },
+    { name: 'ufM2', title: 'UF/m² manual (vacío = según tipo)', type: 'number' },
     {
       name: 'hitos', title: 'Hitos', type: 'array',
       of: [{

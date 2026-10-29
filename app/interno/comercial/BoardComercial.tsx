@@ -2,9 +2,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
-  HITOS, RANGO_EDICION, RANGO_VISIBLE, SEMANAS_POR_MES, TIPOS_PROYECTO,
-  columnasHito, mesesEntre, mesMontaje, nombreMes, nuevaClave, semanaDeDia, textoPeriodo,
-  type Hito, type ProyectoComercial, type TipoHito, type TipoProyecto,
+  HITOS, INDICADORES_TEXTO, RANGO_EDICION, RANGO_VISIBLE, SEMANAS_POR_MES, TIPOS_PROYECTO,
+  columnasHito, compararProyectos, formatoUF, mesesEntre, mesMontaje, moverHito, nombreMes, nuevaClave, semanaDeDia, textoPeriodo,
+  ufM2Proyecto, ufProyecto,
+  type Hito, type Indicadores, type ProyectoComercial, type TipoHito, type TipoProyecto,
 } from '@/lib/comercial/modelo'
 
 const C = { dark: '#141210', off: '#f5f3ee', fondo: '#efece5', muted: '#8a8278', linea: 'rgba(20,18,16,0.10)', purpleMid: '#52448a', rojo: '#c0392b' }
@@ -12,7 +13,7 @@ const C = { dark: '#141210', off: '#f5f3ee', fondo: '#efece5', muted: '#8a8278',
 type Vista = 'meses' | 'semanas'
 const ANCHO_COL = { meses: 132, semanas: 46 }
 const ANCHO_BANDA = 34
-const ANCHO_NOMBRE = 230
+const ANCHO_NOMBRE = 270
 const ALTO_PILDORA = 26
 const ORDEN_TIPOS = Object.keys(TIPOS_PROYECTO) as TipoProyecto[]
 
@@ -33,8 +34,26 @@ function carriles(hitos: Hito[], meses: string[], vista: Vista) {
   return { items: res, n: Math.max(1, finCarril.length) }
 }
 
-export default function BoardComercial({ proyectos, hoy, totalSemilla }: { proyectos: ProyectoComercial[]; hoy: string; totalSemilla: number }) {
+const PROBABILIDADES = Array.from({ length: 11 }, (_, i) => i * 10)
+
+// Lo que viaja al PUT: el proyecto completo sin campos de solo lectura.
+function datosParaGuardar(p: ProyectoComercial) {
+  const { _id, actualizadoPor, ...datos } = p
+  void _id; void actualizadoPor
+  return datos
+}
+
+export default function BoardComercial({ proyectos: iniciales, indicadores, hoy, totalSemilla }: {
+  proyectos: ProyectoComercial[]; indicadores: Indicadores; hoy: string; totalSemilla: number
+}) {
   const router = useRouter()
+  // Copia local para que mover un hito o cambiar la probabilidad se vea al instante; se
+  // reemplaza cuando llegan los datos del servidor.
+  const [proyectos, setProyectos] = useState(iniciales)
+  useEffect(() => setProyectos(iniciales), [iniciales])
+  const [ind, setInd] = useState(indicadores)
+  useEffect(() => setInd(indicadores), [indicadores])
+  const [errorGuardado, setErrorGuardado] = useState('')
   const [vista, setVista] = useState<Vista>('meses')
   const [tiposVisibles, setTiposVisibles] = useState<Set<TipoProyecto>>(new Set(ORDEN_TIPOS))
   const [buscar, setBuscar] = useState('')
@@ -63,6 +82,19 @@ export default function BoardComercial({ proyectos, hoy, totalSemilla }: { proye
     ? (meses.indexOf(mesHoy) + (Number(hoy.slice(8, 10)) - 1) / 31) * porMes * col
     : null
 
+  const guardarProyecto = async (p: ProyectoComercial) => {
+    setProyectos(prev => prev.map(x => (x._id === p._id ? p : x)))
+    setErrorGuardado('')
+    try {
+      const res = await fetch(`/api/interno/comercial/${p._id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(datosParaGuardar(p)) })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok || !data.ok) throw new Error(data.error || `Error ${res.status}`)
+    } catch (e) {
+      setErrorGuardado(`No se guardó "${p.nombre}": ${e instanceof Error ? e.message : 'error'}`)
+    }
+    router.refresh()
+  }
+
   const filtrados = proyectos.filter(p =>
     tiposVisibles.has(p.tipo) &&
     (!buscar.trim() || `${p.nombre} ${p.cliente}`.toLowerCase().includes(buscar.trim().toLowerCase()))
@@ -72,23 +104,26 @@ export default function BoardComercial({ proyectos, hoy, totalSemilla }: { proye
       tipo,
       filas: filtrados
         .filter(p => p.tipo === tipo)
-        .sort((a, b) => (mesMontaje(a) || '9999').localeCompare(mesMontaje(b) || '9999') || a.nombre.localeCompare(b.nombre)),
+        .sort(compararProyectos),
     }))
     .filter(g => g.filas.length)
 
   // Montajes por columna, para ver cómo se carga cada mes/semana.
   const montajes = useMemo(() => {
     const total = meses.length * porMes
-    const cuenta = Array.from({ length: total }, () => ({ n: 0, m2: 0 }))
+    const cuenta = Array.from({ length: total }, () => ({ n: 0, m2: 0, uf: 0 }))
     for (const p of filtrados) {
-      for (const h of p.hitos.filter(x => x.tipo === 'montaje')) {
+      // La UF ponderada del proyecto se asigna a la columna donde parte su primer montaje.
+      const montajes = p.hitos.filter(x => x.tipo === 'montaje').sort((a, b) => a.desde.localeCompare(b.desde))
+      montajes.forEach((h, j) => {
         const pos = columnasHito(h, meses, vista)
-        if (!pos) continue
+        if (!pos) return
         for (let i = pos.inicio; i <= pos.fin; i++) { cuenta[i].n++; cuenta[i].m2 += p.m2 || 0 }
-      }
+        if (j === 0 && !pos.cortaInicio) cuenta[pos.inicio].uf += (ufProyecto(p, ind) || 0) * (p.probabilidad ?? 0) / 100
+      })
     }
     return cuenta
-  }, [filtrados, meses, vista, porMes])
+  }, [filtrados, meses, vista, porMes, ind])
 
   const sinMontaje = filtrados.filter(p => !mesMontaje(p)).length
 
@@ -133,13 +168,15 @@ export default function BoardComercial({ proyectos, hoy, totalSemilla }: { proye
           <button onClick={() => setEdicion({ proyecto: null })} style={botonSecundario}>Empezar con un proyecto nuevo</button>
         </div>
         {errorCarga && <p style={{ color: C.rojo, fontSize: 13, marginTop: 12 }}>{errorCarga}</p>}
-        {edicion && <Editor edicion={edicion} meses={meses} onCerrar={() => setEdicion(null)} />}
+        {edicion && <Editor edicion={edicion} meses={meses} ind={ind} onCerrar={() => setEdicion(null)} />}
       </div>
     )
   }
 
   return (
     <div>
+      <PanelIndicadores ind={ind} onCambio={setInd} proyectos={filtrados} />
+
       {/* Barra de herramientas */}
       <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 10, marginBottom: 14 }}>
         <button onClick={() => setEdicion({ proyecto: null })} style={botonPrimario}>+ Proyecto</button>
@@ -174,8 +211,9 @@ export default function BoardComercial({ proyectos, hoy, totalSemilla }: { proye
             {HITOS[t].etiqueta}
           </span>
         ))}
-        <span>· Clic en una celda vacía para agregar un hito · Clic en un mes para verlo por semanas</span>
+        <span>· Clic en una celda vacía para agregar un hito · Arrastra un hito para moverlo · Clic en un mes para verlo por semanas</span>
       </div>
+      {errorGuardado && <p style={{ color: C.rojo, fontSize: 13, margin: '0 0 10px' }}>{errorGuardado}</p>}
 
       <div ref={scrollRef} style={{ overflowX: 'auto', paddingBottom: 6 }}>
         <div style={{ width: ANCHO_BANDA + ANCHO_NOMBRE + 8 + anchoGrilla, position: 'relative' }}>
@@ -226,9 +264,11 @@ export default function BoardComercial({ proyectos, hoy, totalSemilla }: { proye
               <div style={{ display: 'flex', flexDirection: 'column' }}>
                 {g.filas.map(p => (
                   <Fila
-                    key={p._id} p={p} meses={meses} vista={vista} col={col} anchoGrilla={anchoGrilla}
+                    key={p._id} p={p} meses={meses} vista={vista} col={col} anchoGrilla={anchoGrilla} ind={ind}
                     onEditar={enfocarHito => setEdicion({ proyecto: p, enfocarHito })}
                     onCelda={c => abrirCelda(p, c)}
+                    onProbabilidad={v => guardarProyecto({ ...p, probabilidad: v })}
+                    onMover={(key, delta) => guardarProyecto({ ...p, hitos: p.hitos.map(h => (h._key === key ? moverHito(h, delta, vista) : h)) })}
                   />
                 ))}
               </div>
@@ -239,7 +279,7 @@ export default function BoardComercial({ proyectos, hoy, totalSemilla }: { proye
           <div style={{ display: 'flex', marginTop: 6, borderTop: `2px solid ${C.dark}`, paddingTop: 8 }}>
             <div style={{ width: ANCHO_BANDA + ANCHO_NOMBRE + 8, flexShrink: 0, position: 'sticky', left: 0, background: C.fondo, zIndex: 3, fontSize: 12, paddingLeft: 4 }}>
               <strong style={{ fontWeight: 500 }}>Montajes</strong>
-              <div style={{ color: C.muted, fontSize: 11, marginTop: 2 }}>proyectos · m² conocidos</div>
+              <div style={{ color: C.muted, fontSize: 11, marginTop: 2 }}>proyectos · m² · UF ponderada (inicio montaje)</div>
               {sinMontaje > 0 && <div style={{ color: C.muted, fontSize: 11, marginTop: 2 }}>{sinMontaje} sin mes de montaje</div>}
             </div>
             <div style={{ display: 'flex' }}>
@@ -247,6 +287,7 @@ export default function BoardComercial({ proyectos, hoy, totalSemilla }: { proye
                 <div key={i} style={{ width: col, textAlign: 'center', fontSize: 11, color: m.n ? C.dark : C.muted, opacity: m.n ? 1 : 0.4 }}>
                   <div style={{ fontSize: vista === 'meses' ? 18 : 13 }}>{m.n}</div>
                   {vista === 'meses' && m.m2 > 0 && <div style={{ color: C.muted }}>{Math.round(m.m2).toLocaleString('es-CL')} m²</div>}
+                  {vista === 'meses' && m.uf > 0 && <div style={{ color: C.purpleMid }}>{formatoUF(m.uf)}</div>}
                 </div>
               ))}
             </div>
@@ -254,35 +295,109 @@ export default function BoardComercial({ proyectos, hoy, totalSemilla }: { proye
         </div>
       </div>
 
-      {edicion && <Editor edicion={edicion} meses={meses} onCerrar={() => setEdicion(null)} />}
+      {edicion && <Editor edicion={edicion} meses={meses} ind={ind} onCerrar={() => setEdicion(null)} />}
     </div>
   )
 }
 
-function Fila({ p, meses, vista, col, anchoGrilla, onEditar, onCelda }: {
-  p: ProyectoComercial; meses: string[]; vista: Vista; col: number; anchoGrilla: number
+function PanelIndicadores({ ind, onCambio, proyectos }: { ind: Indicadores; onCambio: (i: Indicadores) => void; proyectos: ProyectoComercial[] }) {
+  const [textos, setTextos] = useState(() => Object.fromEntries(Object.entries(ind).map(([k, v]) => [k, String(v).replace('.', ',')])) as Record<keyof Indicadores, string>)
+  const [estado, setEstado] = useState('')
+
+  const guardar = async (k: keyof Indicadores) => {
+    const v = Number(textos[k].replace(',', '.'))
+    if (!Number.isFinite(v) || v < 0 || v > 100) { setEstado('Valor no válido'); return }
+    if (v === ind[k]) return
+    const nuevos = { ...ind, [k]: v }
+    onCambio(nuevos)
+    setEstado('Guardando…')
+    try {
+      const res = await fetch('/api/interno/comercial/indicadores', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(nuevos) })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok || !data.ok) throw new Error(data.error || `Error ${res.status}`)
+      setEstado('Guardado')
+    } catch (e) {
+      setEstado(e instanceof Error ? e.message : 'No se pudo guardar')
+    }
+  }
+
+  let total = 0, ponderado = 0, sinValor = 0
+  for (const p of proyectos) {
+    const uf = ufProyecto(p, ind)
+    if (uf == null) { sinValor++; continue }
+    total += uf
+    ponderado += uf * (p.probabilidad ?? 0) / 100
+  }
+  const sinProb = proyectos.filter(p => p.probabilidad == null).length
+
+  return (
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 16 }}>
+      {(Object.keys(INDICADORES_TEXTO) as (keyof Indicadores)[]).map(k => (
+        <label key={k} style={{ background: '#fff', borderRadius: 10, padding: '10px 14px', minWidth: 150, flex: '1 1 150px' }}>
+          <span style={{ display: 'block', fontSize: 11, color: C.muted, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{INDICADORES_TEXTO[k].etiqueta}</span>
+          <span style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginTop: 4 }}>
+            <input
+              inputMode="decimal" value={textos[k]}
+              onChange={e => setTextos(t => ({ ...t, [k]: e.target.value }))}
+              onBlur={() => guardar(k)} onKeyDown={e => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur() }}
+              style={{ width: 64, fontSize: 24, fontFamily: 'inherit', border: 'none', borderBottom: `1px dashed ${C.linea}`, background: 'transparent', color: C.dark, padding: 0 }}
+            />
+            <span style={{ fontSize: 12, color: C.muted }}>UF/m²</span>
+          </span>
+          <span style={{ display: 'block', fontSize: 11, color: C.muted, marginTop: 2 }}>{INDICADORES_TEXTO[k].detalle}</span>
+        </label>
+      ))}
+      <div style={{ background: C.dark, color: '#fff', borderRadius: 10, padding: '10px 16px', minWidth: 220, flex: '1 1 220px' }}>
+        <span style={{ display: 'block', fontSize: 11, opacity: 0.7, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Cartera visible</span>
+        <div style={{ fontSize: 24, marginTop: 4 }}>{formatoUF(ponderado)} <span style={{ fontSize: 12, opacity: 0.7 }}>ponderado</span></div>
+        <div style={{ fontSize: 12, opacity: 0.75, marginTop: 2 }}>
+          {formatoUF(total)} total{sinValor ? ` · ${sinValor} sin valorizar` : ''}{sinProb ? ` · ${sinProb} sin %` : ''}
+        </div>
+        {estado && <div style={{ fontSize: 11, opacity: 0.7, marginTop: 2 }}>Indicadores: {estado}</div>}
+      </div>
+    </div>
+  )
+}
+
+function Fila({ p, meses, vista, col, anchoGrilla, ind, onEditar, onCelda, onProbabilidad, onMover }: {
+  p: ProyectoComercial; meses: string[]; vista: Vista; col: number; anchoGrilla: number; ind: Indicadores
   onEditar: (hito?: string) => void; onCelda: (columna: number) => void
+  onProbabilidad: (v: number | null) => void; onMover: (key: string, delta: number) => void
 }) {
   const { items, n } = carriles(p.hitos, meses, vista)
+  // Arrastre de hitos: se mueve en pantalla y al soltar se ajusta a la columna más cercana.
+  const [arrastre, setArrastre] = useState<{ key: string; x0: number; dx: number } | null>(null)
+  const uf = ufProyecto(p, ind)
   const alto = Math.max(46, n * (ALTO_PILDORA + 6) + 14)
   const fuera = p.hitos.filter(h => !columnasHito(h, meses, vista))
   const porMes = vista === 'semanas' ? SEMANAS_POR_MES : 1
   return (
     <div style={{ display: 'flex', alignItems: 'stretch', flex: 1, borderBottom: `1px solid ${C.linea}` }}>
-      <button
-        onClick={() => onEditar()}
-        style={{
-          width: ANCHO_NOMBRE, flexShrink: 0, position: 'sticky', left: ANCHO_BANDA + 4, zIndex: 2, textAlign: 'left', cursor: 'pointer', fontFamily: 'inherit',
-          background: `color-mix(in srgb, ${TIPOS_PROYECTO[p.tipo].color} 55%, #fff)`, border: 'none', borderBottom: `3px solid ${C.fondo}`,
-          padding: '8px 12px', marginRight: 4, color: C.dark,
-        }}
-      >
-        <div style={{ fontSize: 13, fontWeight: 500, lineHeight: 1.25 }}>{p.nombre}</div>
-        <div style={{ fontSize: 11, color: '#5e574e', marginTop: 2 }}>
-          {[p.cliente, p.m2 ? `${p.m2.toLocaleString('es-CL')} m²` : ''].filter(Boolean).join(' · ') || '—'}
-        </div>
-        {fuera.length > 0 && <div style={{ fontSize: 10, color: C.muted, marginTop: 2 }}>+{fuera.length} hito(s) fuera de nov–jun</div>}
-      </button>
+      <div style={{
+        width: ANCHO_NOMBRE, flexShrink: 0, position: 'sticky', left: ANCHO_BANDA + 4, zIndex: 2, display: 'flex', alignItems: 'stretch',
+        background: `color-mix(in srgb, ${TIPOS_PROYECTO[p.tipo].color} 55%, #fff)`, borderBottom: `3px solid ${C.fondo}`, marginRight: 4,
+      }}>
+        <button onClick={() => onEditar()} style={{ flex: 1, minWidth: 0, textAlign: 'left', cursor: 'pointer', fontFamily: 'inherit', background: 'none', border: 'none', padding: '8px 4px 8px 12px', color: C.dark }}>
+          <div style={{ fontSize: 13, fontWeight: 500, lineHeight: 1.25 }}>{p.nombre}</div>
+          <div style={{ fontSize: 11, color: '#5e574e', marginTop: 2 }}>
+            {[p.cliente, p.m2 ? `${p.m2.toLocaleString('es-CL')} m²` : '', p.zona].filter(Boolean).join(' · ') || '—'}
+          </div>
+          {uf != null && <div style={{ fontSize: 11, color: C.purpleMid, marginTop: 2 }}>{formatoUF(uf)}</div>}
+          {fuera.length > 0 && <div style={{ fontSize: 10, color: C.muted, marginTop: 2 }}>+{fuera.length} hito(s) fuera de nov–jun</div>}
+        </button>
+        <label title="Probabilidad de éxito" style={{ display: 'flex', alignItems: 'center', paddingRight: 8 }}>
+          <select
+            value={p.probabilidad ?? ''} onChange={e => onProbabilidad(e.target.value === '' ? null : Number(e.target.value))}
+            style={{
+              fontFamily: 'inherit', fontSize: 12, fontWeight: 500, border: 'none', borderRadius: 999, padding: '4px 6px', cursor: 'pointer',
+              background: p.probabilidad == null ? 'rgba(255,255,255,0.6)' : colorProbabilidad(p.probabilidad), color: p.probabilidad != null && p.probabilidad >= 60 ? '#fff' : C.dark,
+            }}
+          >
+            <option value="">— %</option>
+            {PROBABILIDADES.map(v => <option key={v} value={v}>{v}%</option>)}
+          </select>
+        </label>
+      </div>
       <div style={{ position: 'relative', width: anchoGrilla, minHeight: alto }}>
         {/* Celdas clicables y líneas guía */}
         {Array.from({ length: meses.length * porMes }, (_, i) => (
@@ -301,10 +416,21 @@ function Fila({ p, meses, vista, col, anchoGrilla, onEditar, onCelda }: {
           const estilo = HITOS[h.tipo]
           const texto = h.etiqueta || (vista === 'semanas' && pos.fin === pos.inicio ? estilo.corto.slice(0, 6) : estilo.corto)
           const revisar = h.nota?.toLowerCase().includes('revisar')
+          const dx = arrastre?.key === h._key ? arrastre.dx : 0
           return (
             <button
               key={h._key}
-              onClick={e => { e.stopPropagation(); onEditar(h._key) }}
+              onClick={e => e.stopPropagation()}
+              onPointerDown={e => { if (e.button !== 0) return; e.currentTarget.setPointerCapture(e.pointerId); setArrastre({ key: h._key, x0: e.clientX, dx: 0 }) }}
+              onPointerMove={e => { if (arrastre?.key === h._key) setArrastre({ ...arrastre, dx: e.clientX - arrastre.x0 }) }}
+              onPointerCancel={() => setArrastre(null)}
+              onPointerUp={() => {
+                if (arrastre?.key !== h._key) return
+                const delta = Math.round(arrastre.dx / col)
+                setArrastre(null)
+                if (Math.abs(arrastre.dx) < 4) onEditar(h._key)
+                else if (delta) onMover(h._key, delta)
+              }}
               title={`${h.etiqueta || estilo.etiqueta} · ${textoPeriodo(h)}${h.hecho ? ' · cumplido' : ''}${h.nota ? ` · ${h.nota}` : ''}`}
               style={{
                 position: 'absolute', zIndex: 1,
@@ -314,7 +440,8 @@ function Fila({ p, meses, vista, col, anchoGrilla, onEditar, onCelda }: {
                 background: estilo.fondo, color: estilo.texto, opacity: h.hecho ? 0.55 : 1,
                 border: h.tipo === 'otro' ? `1px solid ${C.linea}` : revisar ? '1px dashed rgba(20,18,16,0.45)' : 'none',
                 fontSize: 11, fontWeight: 500, letterSpacing: '0.04em', textTransform: 'uppercase', fontFamily: 'inherit',
-                whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', padding: '0 8px', cursor: 'pointer',
+                whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', padding: '0 8px', cursor: dx ? 'grabbing' : 'grab',
+                transform: dx ? `translateX(${dx}px)` : undefined, boxShadow: dx ? '0 4px 12px rgba(0,0,0,0.2)' : undefined, touchAction: 'none',
               }}
             >
               {h.hecho ? '✓ ' : ''}{texto}
@@ -326,6 +453,15 @@ function Fila({ p, meses, vista, col, anchoGrilla, onEditar, onCelda }: {
   )
 }
 
+// Rojo suave → morado FURŌ a medida que sube la probabilidad.
+function colorProbabilidad(v: number) {
+  if (v >= 80) return '#3a2d5e'
+  if (v >= 60) return '#52448a'
+  if (v >= 40) return '#c9c3e0'
+  if (v >= 20) return '#f2d3c2'
+  return '#f3c6c0'
+}
+
 const inputStyle: React.CSSProperties = {
   padding: '8px 10px', fontSize: 13, fontFamily: 'DM Sans, sans-serif', border: `1px solid ${C.linea}`, borderRadius: 6, background: '#fff', color: C.dark,
 }
@@ -335,6 +471,14 @@ const botonPrimario: React.CSSProperties = {
 }
 const botonSecundario: React.CSSProperties = {
   background: 'transparent', color: C.dark, border: `1px solid ${C.dark}`, padding: '9px 16px', fontSize: 13, borderRadius: 999, cursor: 'pointer', fontFamily: 'DM Sans, sans-serif',
+}
+
+// Lee números escritos a mano ("1,56", "1.200"). `miles` trata el punto como separador de miles.
+function numero(texto: string, miles = false): number | null {
+  const t = texto.trim()
+  if (!t) return null
+  const v = Number((miles ? t.replace(/\./g, '') : t).replace(',', '.'))
+  return Number.isFinite(v) ? v : null
 }
 
 function Etiqueta({ children }: { children: React.ReactNode }) {
@@ -361,7 +505,7 @@ function SelectorPeriodo({ mes, semana, onMes, onSemana, opcional }: {
   )
 }
 
-function Editor({ edicion, meses, onCerrar }: { edicion: Edicion; meses: string[]; onCerrar: () => void }) {
+function Editor({ edicion, meses, ind, onCerrar }: { edicion: Edicion; meses: string[]; ind: Indicadores; onCerrar: () => void }) {
   const router = useRouter()
   const base = edicion.proyecto
   const [form, setForm] = useState(() => ({
@@ -371,6 +515,10 @@ function Editor({ edicion, meses, onCerrar }: { edicion: Edicion; meses: string[
     superficie: base?.superficie || '',
     m2: base?.m2?.toString() || '',
     estado: base?.estado || '',
+    probabilidad: base?.probabilidad?.toString() ?? '',
+    zona: base?.zona || '',
+    logistica: base?.logistica?.toString().replace('.', ',') ?? '',
+    ufM2: base?.ufM2?.toString().replace('.', ',') ?? '',
     hitos: [...(base?.hitos || []), ...(edicion.hitoNuevo ? [edicion.hitoNuevo] : [])] as Hito[],
   }))
   const [guardando, setGuardando] = useState(false)
@@ -404,11 +552,18 @@ function Editor({ edicion, meses, onCerrar }: { edicion: Edicion; meses: string[
   }
 
   const guardar = () => {
-    const m2 = form.m2.trim() ? Number(form.m2.replace(/\./g, '').replace(',', '.')) : null
-    const datos = { ...form, m2, mondayItemId: base?.mondayItemId || null }
+    const datos = {
+      ...form, m2: numero(form.m2, true), probabilidad: numero(form.probabilidad), logistica: numero(form.logistica), ufM2: numero(form.ufM2),
+      mondayItemId: base?.mondayItemId || null,
+    }
     if (base) llamar(`/api/interno/comercial/${base._id}`, 'PUT', datos)
     else llamar('/api/interno/comercial', 'POST', datos)
   }
+
+  const vista = { tipo: form.tipo, logistica: numero(form.logistica), ufM2: numero(form.ufM2) }
+  const tarifa = ufM2Proyecto(vista, ind)
+  const tarifaCalculada = ufM2Proyecto({ ...vista, ufM2: null }, ind)
+  const m2 = numero(form.m2, true)
 
   const hitosOrdenados = [...form.hitos].sort((a, b) => a.desde.localeCompare(b.desde) || (a.semanaDesde || 0) - (b.semanaDesde || 0))
 
@@ -438,6 +593,26 @@ function Editor({ edicion, meses, onCerrar }: { edicion: Edicion; meses: string[
           <label><Etiqueta>Superficie (detalle)</Etiqueta>
             <input value={form.superficie} onChange={e => setCampo('superficie', e.target.value)} placeholder="Ej: 210 m² + 100 m² terraza" style={{ ...inputStyle, width: '100%' }} />
           </label>
+          <label><Etiqueta>Probabilidad de éxito</Etiqueta>
+            <select value={form.probabilidad} onChange={e => setCampo('probabilidad', e.target.value)} style={{ ...inputStyle, width: '100%' }}>
+              <option value="">Sin definir</option>
+              {PROBABILIDADES.map(v => <option key={v} value={v}>{v}%</option>)}
+            </select>
+          </label>
+          <label><Etiqueta>Zona</Etiqueta>
+            <input value={form.zona} onChange={e => setCampo('zona', e.target.value)} placeholder="Ej: Santiago, Pucón" style={{ ...inputStyle, width: '100%' }} />
+          </label>
+          <label><Etiqueta>Logística UF/m²</Etiqueta>
+            <input inputMode="decimal" value={form.logistica} onChange={e => setCampo('logistica', e.target.value)} placeholder={`${String(ind.logistica).replace('.', ',')} (Santiago)`} style={{ ...inputStyle, width: '100%' }} />
+          </label>
+          <label><Etiqueta>UF/m² manual</Etiqueta>
+            <input inputMode="decimal" value={form.ufM2} onChange={e => setCampo('ufM2', e.target.value)} placeholder={tarifaCalculada != null ? `${tarifaCalculada.toFixed(2).replace('.', ',')} según tipo` : 'Define el tipo'} style={{ ...inputStyle, width: '100%' }} />
+          </label>
+          <p style={{ gridColumn: '1 / -1', fontSize: 12, color: C.muted, margin: 0 }}>
+            {tarifa != null
+              ? <>Valor estimado: <strong style={{ color: C.dark, fontWeight: 500 }}>{tarifa.toFixed(2).replace('.', ',')} UF/m²</strong>{m2 ? <> × {m2.toLocaleString('es-CL')} m² = <strong style={{ color: C.dark, fontWeight: 500 }}>{formatoUF(tarifa * m2)}</strong></> : ' (faltan m²)'}</>
+              : 'Sin valor estimado: elige un tipo o escribe un UF/m² manual.'}
+          </p>
           <label style={{ gridColumn: '1 / -1' }}><Etiqueta>Estado / condición</Etiqueta>
             <textarea value={form.estado} onChange={e => setCampo('estado', e.target.value)} rows={2} style={{ ...inputStyle, width: '100%', resize: 'vertical' }} />
           </label>

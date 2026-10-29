@@ -29,7 +29,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
 
   try {
     const doc = aDocumento(datos, sesion.nombre)
-    const vacios = ['cliente', 'superficie', 'm2', 'estado', 'mondayItemId'].filter(k => !(k in doc))
+    const vacios = ['cliente', 'superficie', 'm2', 'estado', 'probabilidad', 'zona', 'logistica', 'ufM2', 'mondayItemId'].filter(k => !(k in doc))
     await writeClient.patch(id).set(doc).unset(vacios).commit()
     return NextResponse.json({ ok: true })
   } catch (e) {
