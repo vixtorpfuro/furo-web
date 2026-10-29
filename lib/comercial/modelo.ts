@@ -54,32 +54,51 @@ export type ProyectoComercial = {
   logistica: number | null
   // UF/m² fijado a mano; null = se calcula con los indicadores según el tipo.
   ufM2: number | null
+  // Solo estructuras: si el presupuesto suma el montaje.
+  conMontaje: boolean
   mondayItemId?: string | null
   actualizadoPor?: string | null
 }
 
-// Indicadores comerciales en UF/m². Se editan desde la cabecera del board.
-export type Indicadores = { estructuras: number; montaje: number; completa: number; logistica: number }
-export const INDICADORES_BASE: Indicadores = { estructuras: 1.56, montaje: 1, completa: 3.5, logistica: 0.1 }
+// Indicadores comerciales en UF/m². Se editan desde la cabecera del board. Cada tipo de
+// proyecto suma los anteriores: estructuras → + montaje → + partidas intermedia → + obra completa.
+export type Indicadores = {
+  estructuras: number; montaje: number; revestimiento: number; techumbre: number; ventanas: number; completa: number; logistica: number
+}
+// Revestimiento, techumbre y ventanas parten en 0 hasta que se definan sus valores.
+export const INDICADORES_BASE: Indicadores = { estructuras: 1.56, montaje: 1, revestimiento: 0, techumbre: 0, ventanas: 0, completa: 3.5, logistica: 0.1 }
 export const INDICADORES_TEXTO: Record<keyof Indicadores, { etiqueta: string; detalle: string }> = {
   estructuras: { etiqueta: 'Solo estructuras', detalle: 'Fabricación de paneles' },
-  montaje: { etiqueta: 'Montaje estructuras', detalle: 'Se suma en intermedia' },
-  completa: { etiqueta: 'Obra completa', detalle: 'También Noki' },
+  montaje: { etiqueta: 'Montaje estructuras', detalle: 'Opcional en solo estructuras' },
+  revestimiento: { etiqueta: 'Revestimiento ext.', detalle: 'Partida intermedia' },
+  techumbre: { etiqueta: 'Techumbre', detalle: 'Partida intermedia' },
+  ventanas: { etiqueta: 'Ventanas', detalle: 'Partida intermedia' },
+  completa: { etiqueta: 'Obra completa', detalle: 'Se suma a todo lo anterior' },
   logistica: { etiqueta: 'Logística', detalle: 'Mínimo Santiago; por zona en cada proyecto' },
 }
 
-// UF/m² del proyecto: fijo a mano o según tipo + logística de su zona.
-// Intermedia = estructura montada (estructuras + montaje). Noki se valoriza como obra completa.
-export function ufM2Proyecto(p: Pick<ProyectoComercial, 'tipo' | 'logistica' | 'ufM2'>, ind: Indicadores): number | null {
+type BaseValor = Pick<ProyectoComercial, 'tipo' | 'logistica' | 'ufM2' | 'conMontaje'>
+
+// Partidas que suma cada tipo. Noki se valoriza como obra completa.
+export function desgloseProyecto(p: BaseValor, ind: Indicadores): { concepto: keyof Indicadores; uf: number }[] {
+  const partidas: (keyof Indicadores)[] = (() => {
+    switch (p.tipo) {
+      case 'estructuras': return p.conMontaje ? ['estructuras', 'montaje'] : ['estructuras']
+      case 'intermedia': return ['estructuras', 'montaje', 'revestimiento', 'techumbre', 'ventanas']
+      case 'completa':
+      case 'noki': return ['estructuras', 'montaje', 'revestimiento', 'techumbre', 'ventanas', 'completa']
+      default: return []
+    }
+  })()
+  if (!partidas.length) return []
+  return [...partidas.map(k => ({ concepto: k, uf: ind[k] })), { concepto: 'logistica' as const, uf: p.logistica ?? ind.logistica }]
+}
+
+// UF/m² del proyecto: fijo a mano o la suma de sus partidas.
+export function ufM2Proyecto(p: BaseValor, ind: Indicadores): number | null {
   if (p.ufM2 != null) return p.ufM2
-  const logistica = p.logistica ?? ind.logistica
-  switch (p.tipo) {
-    case 'estructuras': return ind.estructuras + logistica
-    case 'intermedia': return ind.estructuras + ind.montaje + logistica
-    case 'completa':
-    case 'noki': return ind.completa + logistica
-    default: return null
-  }
+  const partidas = desgloseProyecto(p, ind)
+  return partidas.length ? partidas.reduce((t, x) => t + x.uf, 0) : null
 }
 
 export function ufProyecto(p: ProyectoComercial, ind: Indicadores): number | null {

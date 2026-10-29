@@ -2,7 +2,7 @@ import 'server-only'
 import { writeClient } from '@/sanity/lib/writeClient'
 import { HITOS, INDICADORES_BASE, TIPOS_PROYECTO, nuevaClave, type Hito, type Indicadores, type ProyectoComercial, type TipoHito, type TipoProyecto } from './modelo'
 
-const CAMPOS = `_id, nombre, cliente, tipo, superficie, m2, estado, hitos, probabilidad, zona, logistica, ufM2, mondayItemId, actualizadoPor`
+const CAMPOS = `_id, nombre, cliente, tipo, superficie, m2, estado, hitos, probabilidad, zona, logistica, ufM2, conMontaje, mondayItemId, actualizadoPor`
 const ID_INDICADORES = 'comercial.indicadores'
 
 export async function listarProyectos(): Promise<ProyectoComercial[]> {
@@ -22,6 +22,7 @@ export async function listarProyectos(): Promise<ProyectoComercial[]> {
     zona: d.zona || '',
     logistica: typeof d.logistica === 'number' ? d.logistica : null,
     ufM2: typeof d.ufM2 === 'number' ? d.ufM2 : null,
+    conMontaje: d.conMontaje === true,
     mondayItemId: d.mondayItemId || null,
     actualizadoPor: d.actualizadoPor || null,
   }))
@@ -98,6 +99,7 @@ export function limpiarProyecto(entrada: unknown): DatosProyecto | null {
     zona: texto(o.zona, 80),
     logistica: ufm2(o.logistica),
     ufM2: ufm2(o.ufM2),
+    conMontaje: o.conMontaje === true,
     mondayItemId: typeof o.mondayItemId === 'string' && /^\d+$/.test(o.mondayItemId) ? o.mondayItemId : null,
   }
 }

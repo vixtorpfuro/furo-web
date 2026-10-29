@@ -24,6 +24,7 @@ const proyectoComercial = {
     { name: 'probabilidad', title: 'Probabilidad de éxito (%)', type: 'number' },
     { name: 'zona', title: 'Zona', type: 'string' },
     { name: 'logistica', title: 'Logística UF/m² (vacío = indicador general)', type: 'number' },
+    { name: 'conMontaje', title: 'Solo estructuras: incluye montaje', type: 'boolean' },
     { name: 'ufM2', title: 'UF/m² manual (vacío = según tipo)', type: 'number' },
     {
       name: 'hitos', title: 'Hitos', type: 'array',

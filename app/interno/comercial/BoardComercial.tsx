@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import {
   HITOS, INDICADORES_TEXTO, RANGO_EDICION, RANGO_VISIBLE, SEMANAS_POR_MES, TIPOS_PROYECTO,
   columnasHito, compararProyectos, formatoUF, mesesEntre, mesMontaje, moverHito, nombreMes, nuevaClave, semanaDeDia, textoPeriodo,
-  ufM2Proyecto, ufProyecto,
+  desgloseProyecto, ufM2Proyecto, ufProyecto,
   type Hito, type Indicadores, type ProyectoComercial, type TipoHito, type TipoProyecto,
 } from '@/lib/comercial/modelo'
 
@@ -344,7 +344,7 @@ function PanelIndicadores({ ind, onCambio, proyectos }: { ind: Indicadores; onCa
             />
             <span style={{ fontSize: 12, color: C.muted }}>UF/m²</span>
           </span>
-          <span style={{ display: 'block', fontSize: 11, color: C.muted, marginTop: 2 }}>{INDICADORES_TEXTO[k].detalle}</span>
+          <span style={{ display: 'block', fontSize: 11, color: ind[k] === 0 ? C.rojo : C.muted, marginTop: 2 }}>{ind[k] === 0 ? 'Por definir' : INDICADORES_TEXTO[k].detalle}</span>
         </label>
       ))}
       <div style={{ background: C.dark, color: '#fff', borderRadius: 10, padding: '10px 16px', minWidth: 220, flex: '1 1 220px' }}>
@@ -519,6 +519,7 @@ function Editor({ edicion, meses, ind, onCerrar }: { edicion: Edicion; meses: st
     zona: base?.zona || '',
     logistica: base?.logistica?.toString().replace('.', ',') ?? '',
     ufM2: base?.ufM2?.toString().replace('.', ',') ?? '',
+    conMontaje: base?.conMontaje ?? false,
     hitos: [...(base?.hitos || []), ...(edicion.hitoNuevo ? [edicion.hitoNuevo] : [])] as Hito[],
   }))
   const [guardando, setGuardando] = useState(false)
@@ -560,7 +561,8 @@ function Editor({ edicion, meses, ind, onCerrar }: { edicion: Edicion; meses: st
     else llamar('/api/interno/comercial', 'POST', datos)
   }
 
-  const vista = { tipo: form.tipo, logistica: numero(form.logistica), ufM2: numero(form.ufM2) }
+  const vista = { tipo: form.tipo, logistica: numero(form.logistica), ufM2: numero(form.ufM2), conMontaje: form.conMontaje }
+  const desglose = desgloseProyecto(vista, ind)
   const tarifa = ufM2Proyecto(vista, ind)
   const tarifaCalculada = ufM2Proyecto({ ...vista, ufM2: null }, ind)
   const m2 = numero(form.m2, true)
@@ -608,6 +610,16 @@ function Editor({ edicion, meses, ind, onCerrar }: { edicion: Edicion; meses: st
           <label><Etiqueta>UF/m² manual</Etiqueta>
             <input inputMode="decimal" value={form.ufM2} onChange={e => setCampo('ufM2', e.target.value)} placeholder={tarifaCalculada != null ? `${tarifaCalculada.toFixed(2).replace('.', ',')} según tipo` : 'Define el tipo'} style={{ ...inputStyle, width: '100%' }} />
           </label>
+          {form.tipo === 'estructuras' && (
+            <label style={{ gridColumn: '1 / -1', display: 'flex', alignItems: 'center', gap: 6, fontSize: 13 }}>
+              <input type="checkbox" checked={form.conMontaje} onChange={e => setCampo('conMontaje', e.target.checked)} /> Incluye montaje de estructuras
+            </label>
+          )}
+          {form.ufM2.trim() === '' && desglose.length > 0 && (
+            <p style={{ gridColumn: '1 / -1', fontSize: 12, color: C.muted, margin: 0, lineHeight: 1.6 }}>
+              {desglose.map(d => `${INDICADORES_TEXTO[d.concepto].etiqueta} ${d.uf.toFixed(2).replace('.', ',')}`).join(' + ')}
+            </p>
+          )}
           <p style={{ gridColumn: '1 / -1', fontSize: 12, color: C.muted, margin: 0 }}>
             {tarifa != null
               ? <>Valor estimado: <strong style={{ color: C.dark, fontWeight: 500 }}>{tarifa.toFixed(2).replace('.', ',')} UF/m²</strong>{m2 ? <> × {m2.toLocaleString('es-CL')} m² = <strong style={{ color: C.dark, fontWeight: 500 }}>{formatoUF(tarifa * m2)}</strong></> : ' (faltan m²)'}</>

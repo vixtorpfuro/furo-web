@@ -14,7 +14,7 @@ const REVISAR = 'Croquera, revisar'
 const p = (
   nombre: string, cliente: string, tipo: DatosProyecto['tipo'], superficie: string, m2: number | null,
   estado: string, hitos: Hito[] = [],
-): DatosProyecto => ({ nombre, cliente, tipo, superficie, m2, estado, hitos, probabilidad: null, zona: '', logistica: null, ufM2: null, mondayItemId: null })
+): DatosProyecto => ({ nombre, cliente, tipo, superficie, m2, estado, hitos, probabilidad: null, zona: '', logistica: null, ufM2: null, conMontaje: false, mondayItemId: null })
 
 export const PROYECTOS_SEMILLA: DatosProyecto[] = [
   p('Club de Polo / Driving', '', 'porDefinir', '380 m² (CRM)', 380, 'Horizonte CRM: oct.-dic. 2026. Validar cambios y terrazas.', [
