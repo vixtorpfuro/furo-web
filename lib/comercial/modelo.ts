@@ -110,20 +110,44 @@ export function ufProyecto(p: ProyectoComercial, ind: Indicadores): number | nul
   return tarifa != null && p.m2 ? tarifa * p.m2 : null
 }
 
-// Cobros: 50% antes del pedido de madera (con el presupuesto de cierre) y 50% al cerrar el
-// montaje. Si no hay pedido de madera, el anticipo cae al entrar a fábrica.
+// Cobros: el BIM se cobra 50% al inicio y 50% al final del hito BIM. El resto del presupuesto,
+// 50% antes del pedido de madera (con el presupuesto de cierre; si no hay pedido, al entrar a
+// fábrica) y 50% al cerrar el montaje.
 export const PORCENTAJE_ANTICIPO = 0.5
 
-export function cobrosProyecto(p: ProyectoComercial, ind: Indicadores): { mes: string; uf: number; concepto: 'anticipo' | 'saldo' }[] {
+export type Cobro = { mes: string; uf: number; concepto: 'bimInicio' | 'bimFin' | 'anticipo' | 'saldo' }
+
+export function cobrosProyecto(p: ProyectoComercial, ind: Indicadores): Cobro[] {
   const uf = ufProyecto(p, ind)
-  if (!uf) return []
+  if (!uf || !p.m2) return []
+  const ufBim = desgloseProyecto(p, ind).some(d => d.concepto === 'bim') || p.ufM2 != null ? Math.min(uf, ind.bim * p.m2) : 0
+  const resto = uf - ufBim
   const primero = (tipo: TipoHito) => p.hitos.filter(h => h.tipo === tipo).map(h => h.desde).sort()[0]
+  const ultimo = (tipo: TipoHito) => p.hitos.filter(h => h.tipo === tipo).map(h => h.hasta || h.desde).sort().at(-1)
   const mesAnticipo = primero('pedidoMadera') || primero('fabrica')
-  const mesSaldo = p.hitos.filter(h => h.tipo === 'montaje').map(h => h.hasta || h.desde).sort().at(-1)
-  const res: { mes: string; uf: number; concepto: 'anticipo' | 'saldo' }[] = []
-  if (mesAnticipo) res.push({ mes: mesAnticipo, uf: uf * PORCENTAJE_ANTICIPO, concepto: 'anticipo' })
-  if (mesSaldo) res.push({ mes: mesSaldo, uf: uf * (1 - PORCENTAJE_ANTICIPO), concepto: 'saldo' })
+  const mesSaldo = ultimo('montaje')
+  const res: Cobro[] = []
+  if (ufBim > 0) {
+    const inicio = primero('calculo'), fin = ultimo('calculo')
+    if (inicio) res.push({ mes: inicio, uf: ufBim / 2, concepto: 'bimInicio' })
+    if (fin) res.push({ mes: fin, uf: ufBim / 2, concepto: 'bimFin' })
+  }
+  if (mesAnticipo) res.push({ mes: mesAnticipo, uf: resto * PORCENTAJE_ANTICIPO, concepto: 'anticipo' })
+  if (mesSaldo) res.push({ mes: mesSaldo, uf: resto * (1 - PORCENTAJE_ANTICIPO), concepto: 'saldo' })
   return res
+}
+
+// Rangos de probabilidad para repartir los totales de cada mes.
+export const RANGOS_PROBABILIDAD = [
+  { clave: 'alta', etiqueta: '70-100%', color: '#3a2d5e', min: 70 },
+  { clave: 'media', etiqueta: '40-60%', color: '#8f84bd', min: 40 },
+  { clave: 'baja', etiqueta: '0-30%', color: '#d9d3ea', min: 0 },
+  { clave: 'sin', etiqueta: 'Sin %', color: '#d8d3cb', min: -1 },
+] as const
+
+export function rangoProbabilidad(prob: number | null) {
+  if (prob == null) return 3
+  return RANGOS_PROBABILIDAD.findIndex(r => prob >= r.min)
 }
 
 // Orden dentro de cada grupo: primero el montaje más próximo, luego la mayor probabilidad.

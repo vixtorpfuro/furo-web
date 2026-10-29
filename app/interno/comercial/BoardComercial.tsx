@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
   HITOS, INDICADORES_TEXTO, RANGO_EDICION, RANGO_VISIBLE, SEMANAS_POR_MES, TIPOS_PROYECTO,
-  cobrosProyecto, columnasHito, compararProyectos, conDuracionPorDefecto, formatoUF, mesesEntre, mesMontaje, moverHito, nombreMes, nuevaClave, semanaDeDia, textoPeriodo,
+  RANGOS_PROBABILIDAD, cobrosProyecto, columnasHito, rangoProbabilidad, compararProyectos, conDuracionPorDefecto, formatoUF, mesesEntre, mesMontaje, moverHito, nombreMes, nuevaClave, semanaDeDia, textoPeriodo,
   desgloseProyecto, ufM2Proyecto, ufProyecto,
   type Hito, type Indicadores, type ProyectoComercial, type TipoHito, type TipoProyecto,
 } from '@/lib/comercial/modelo'
@@ -111,7 +111,7 @@ export default function BoardComercial({ proyectos: iniciales, indicadores, hoy,
   // Montajes por columna, para ver cómo se carga cada mes/semana. Los totales por mes van en el
   // encabezado; en vista de semanas además se cuentan montajes por semana al pie.
   const contarMontajes = (v: Vista) => {
-    const cuenta = Array.from({ length: meses.length * (v === 'semanas' ? SEMANAS_POR_MES : 1) }, () => ({ n: 0, m2: 0, uf: 0 }))
+    const cuenta = Array.from({ length: meses.length * (v === 'semanas' ? SEMANAS_POR_MES : 1) }, () => ({ n: 0, m2: 0, uf: 0, ufRangos: RANGOS_PROBABILIDAD.map(() => 0) }))
     for (const p of filtrados) {
       // La UF ponderada del proyecto se asigna a la columna donde parte su primer montaje.
       const montajes = p.hitos.filter(x => x.tipo === 'montaje').sort((a, b) => a.desde.localeCompare(b.desde))
@@ -119,18 +119,24 @@ export default function BoardComercial({ proyectos: iniciales, indicadores, hoy,
         const pos = columnasHito(h, meses, v)
         if (!pos) return
         for (let i = pos.inicio; i <= pos.fin; i++) { cuenta[i].n++; cuenta[i].m2 += p.m2 || 0 }
-        if (j === 0 && !pos.cortaInicio) cuenta[pos.inicio].uf += (ufProyecto(p, ind) || 0) * (p.probabilidad ?? 0) / 100
+        if (j === 0 && !pos.cortaInicio) {
+          const uf = ufProyecto(p, ind) || 0
+          cuenta[pos.inicio].uf += uf * (p.probabilidad ?? 0) / 100
+          cuenta[pos.inicio].ufRangos[rangoProbabilidad(p.probabilidad)] += uf
+        }
       })
     }
     return cuenta
   }
   const porMesTotales = contarMontajes('meses')
-  // Cobros ponderados por probabilidad: 50% anticipo (pedido de madera) y 50% saldo (fin del montaje).
-  const cobrosPorMes = meses.map(() => 0)
+  // Cobros del mes: ponderados por probabilidad y, sin ponderar, repartidos por rango de probabilidad.
+  const cobrosPorMes = meses.map(() => ({ ponderado: 0, rangos: RANGOS_PROBABILIDAD.map(() => 0) }))
   for (const p of filtrados) {
     for (const c of cobrosProyecto(p, ind)) {
       const i = meses.indexOf(c.mes)
-      if (i >= 0) cobrosPorMes[i] += c.uf * (p.probabilidad ?? 0) / 100
+      if (i < 0) continue
+      cobrosPorMes[i].ponderado += c.uf * (p.probabilidad ?? 0) / 100
+      cobrosPorMes[i].rangos[rangoProbabilidad(p.probabilidad)] += c.uf
     }
   }
   const porSemana = vista === 'semanas' ? contarMontajes('semanas') : []
@@ -230,8 +236,15 @@ export default function BoardComercial({ proyectos: iniciales, indicadores, hoy,
           {/* Encabezado */}
           <div style={{ display: 'flex', position: 'sticky', top: 0, zIndex: 5, background: C.fondo, paddingBottom: 8 }}>
             <div style={{ width: ANCHO_BANDA + ANCHO_NOMBRE + 8, flexShrink: 0, position: 'sticky', left: 0, background: C.fondo, zIndex: 6, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', fontSize: 11, color: C.muted, paddingLeft: 4, paddingBottom: vista === 'semanas' ? 18 : 0 }}>
-              <span>Bajo cada mes: montajes · m² · UF ponderada (inicio de montaje)</span>
-              <span style={{ marginTop: 2 }}>Cobros ponderados: 50% en pedido de madera, 50% al cerrar montaje</span>
+              <span>Bajo cada mes: montajes · m² · UF de montajes que parten · cobros del mes</span>
+              <span style={{ marginTop: 2 }}>Cifras: total · ponderado por probabilidad. Barras: total por rango</span>
+              <span style={{ marginTop: 3, display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                {RANGOS_PROBABILIDAD.map(r => (
+                  <span key={r.clave} style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                    <span style={{ width: 10, height: 8, background: r.color, borderRadius: 2 }} />{r.etiqueta}
+                  </span>
+                ))}
+              </span>
               {sinMontaje > 0 && <span style={{ marginTop: 2 }}>{sinMontaje} sin mes de montaje</span>}
             </div>
             <div style={{ display: 'flex', gap: 0 }}>
@@ -311,15 +324,34 @@ export default function BoardComercial({ proyectos: iniciales, indicadores, hoy,
   )
 }
 
-function TotalMes({ t, cobro, oscuro }: { t: { n: number; m2: number; uf: number }; cobro: number; oscuro: boolean }) {
+const miles = (n: number) => Math.round(n).toLocaleString('es-CL')
+
+// Barra apilada con el total repartido por rango de probabilidad.
+function BarraRangos({ valores, titulo }: { valores: number[]; titulo: string }) {
+  const total = valores.reduce((a, b) => a + b, 0)
+  const detalle = RANGOS_PROBABILIDAD.map((r, i) => `${r.etiqueta}: ${formatoUF(valores[i])}`).join('\n')
+  return (
+    <div title={`${titulo}\n${detalle}`} style={{ display: 'flex', height: 7, borderRadius: 4, overflow: 'hidden', background: 'rgba(20,18,16,0.06)', margin: '3px 2px 2px' }}>
+      {total > 0 && valores.map((v, i) => v > 0 && <div key={i} style={{ width: `${(v / total) * 100}%`, background: RANGOS_PROBABILIDAD[i].color }} />)}
+    </div>
+  )
+}
+
+function TotalMes({ t, cobro, oscuro }: {
+  t: { n: number; m2: number; uf: number; ufRangos: number[] }; cobro: { ponderado: number; rangos: number[] }; oscuro: boolean
+}) {
+  const totalUf = t.ufRangos.reduce((a, b) => a + b, 0)
+  const totalCobro = cobro.rangos.reduce((a, b) => a + b, 0)
   return (
     <div style={{
-      background: oscuro ? '#2a2622' : 'rgba(255,255,255,0.55)', color: oscuro ? '#fff' : C.dark, opacity: t.n ? 1 : 0.5,
+      background: oscuro ? '#2a2622' : 'rgba(255,255,255,0.55)', color: oscuro ? '#fff' : C.dark, opacity: t.n || totalCobro ? 1 : 0.5,
       textAlign: 'center', fontSize: 11, padding: '5px 4px 6px', lineHeight: 1.45,
     }}>
       <div><strong style={{ fontWeight: 500 }}>{t.n}</strong> montaje{t.n === 1 ? '' : 's'} · {Math.round(t.m2).toLocaleString('es-CL')} m²</div>
-      <div style={{ color: oscuro ? '#d6cdea' : C.purpleMid }}>{t.uf > 0 ? formatoUF(t.uf) : '0 UF'}</div>
-      <div style={{ color: oscuro ? '#cfe3d4' : '#3f6e4b', opacity: cobro > 0 ? 1 : 0.5 }}>Cobro {formatoUF(cobro)}</div>
+      <div style={{ color: oscuro ? '#d6cdea' : C.purpleMid, whiteSpace: 'nowrap' }}>{miles(totalUf)} <span style={{ opacity: 0.7 }}>· {miles(t.uf)}</span> UF</div>
+      <BarraRangos valores={t.ufRangos} titulo="UF de montajes que parten este mes" />
+      <div style={{ color: oscuro ? '#cfe3d4' : '#3f6e4b', opacity: totalCobro > 0 ? 1 : 0.5, marginTop: 2, whiteSpace: 'nowrap' }}>Cobro {miles(totalCobro)} <span style={{ opacity: 0.7 }}>· {miles(cobro.ponderado)}</span> UF</div>
+      <BarraRangos valores={cobro.rangos} titulo="Cobros del mes" />
     </div>
   )
 }
