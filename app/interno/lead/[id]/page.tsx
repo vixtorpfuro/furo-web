@@ -56,7 +56,7 @@ export default async function LeadDetallePage({ params }: { params: Promise<{ id
       <div style={{ maxWidth: 640, margin: '0 auto' }}>
         <InternoHeader nombre={sesion.nombre} />
 
-        <Link href="/interno" style={{ fontSize: 13, color: C.muted, textDecoration: 'none' }}>← Mis leads</Link>
+        <Link href="/interno/leads" style={{ fontSize: 13, color: C.muted, textDecoration: 'none' }}>← Mis leads</Link>
         <h1 style={{ fontSize: 26, fontWeight: 400, margin: '12px 0 4px' }}>{lead.nombre}</h1>
         {lead.estado && <p style={{ fontSize: 13, color: C.purpleMid, marginBottom: 28 }}>{lead.estado}</p>}
 
