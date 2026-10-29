@@ -108,22 +108,24 @@ export default function BoardComercial({ proyectos: iniciales, indicadores, hoy,
     }))
     .filter(g => g.filas.length)
 
-  // Montajes por columna, para ver cómo se carga cada mes/semana.
-  const montajes = useMemo(() => {
-    const total = meses.length * porMes
-    const cuenta = Array.from({ length: total }, () => ({ n: 0, m2: 0, uf: 0 }))
+  // Montajes por columna, para ver cómo se carga cada mes/semana. Los totales por mes van en el
+  // encabezado; en vista de semanas además se cuentan montajes por semana al pie.
+  const contarMontajes = (v: Vista) => {
+    const cuenta = Array.from({ length: meses.length * (v === 'semanas' ? SEMANAS_POR_MES : 1) }, () => ({ n: 0, m2: 0, uf: 0 }))
     for (const p of filtrados) {
       // La UF ponderada del proyecto se asigna a la columna donde parte su primer montaje.
       const montajes = p.hitos.filter(x => x.tipo === 'montaje').sort((a, b) => a.desde.localeCompare(b.desde))
       montajes.forEach((h, j) => {
-        const pos = columnasHito(h, meses, vista)
+        const pos = columnasHito(h, meses, v)
         if (!pos) return
         for (let i = pos.inicio; i <= pos.fin; i++) { cuenta[i].n++; cuenta[i].m2 += p.m2 || 0 }
         if (j === 0 && !pos.cortaInicio) cuenta[pos.inicio].uf += (ufProyecto(p, ind) || 0) * (p.probabilidad ?? 0) / 100
       })
     }
     return cuenta
-  }, [filtrados, meses, vista, porMes, ind])
+  }
+  const porMesTotales = contarMontajes('meses')
+  const porSemana = vista === 'semanas' ? contarMontajes('semanas') : []
 
   const sinMontaje = filtrados.filter(p => !mesMontaje(p)).length
 
@@ -219,9 +221,12 @@ export default function BoardComercial({ proyectos: iniciales, indicadores, hoy,
         <div style={{ width: ANCHO_BANDA + ANCHO_NOMBRE + 8 + anchoGrilla, position: 'relative' }}>
           {/* Encabezado */}
           <div style={{ display: 'flex', position: 'sticky', top: 0, zIndex: 5, background: C.fondo, paddingBottom: 8 }}>
-            <div style={{ width: ANCHO_BANDA + ANCHO_NOMBRE + 8, flexShrink: 0, position: 'sticky', left: 0, background: C.fondo, zIndex: 6 }} />
+            <div style={{ width: ANCHO_BANDA + ANCHO_NOMBRE + 8, flexShrink: 0, position: 'sticky', left: 0, background: C.fondo, zIndex: 6, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', fontSize: 11, color: C.muted, paddingLeft: 4, paddingBottom: vista === 'semanas' ? 18 : 0 }}>
+              <span>Bajo cada mes: montajes · m² · UF ponderada</span>
+              <span style={{ marginTop: 2 }}>UF en el mes de inicio del montaje{sinMontaje > 0 ? ` · ${sinMontaje} sin mes de montaje` : ''}</span>
+            </div>
             <div style={{ display: 'flex', gap: 0 }}>
-              {meses.map(mes => (
+              {meses.map((mes, iMes) => (
                 <div key={mes} style={{ width: porMes * col, flexShrink: 0, paddingRight: 4 }}>
                   <button
                     onClick={() => { if (vista === 'meses') { mesAEnfocar.current = mes; setVista('semanas') } else setVista('meses') }}
@@ -233,6 +238,7 @@ export default function BoardComercial({ proyectos: iniciales, indicadores, hoy,
                   >
                     {vista === 'semanas' ? nombreMes(mes, true) : nombreMes(mes)}
                   </button>
+                  <TotalMes t={porMesTotales[iMes]} oscuro={mes === mesHoy} />
                   {vista === 'semanas' && (
                     <div style={{ display: 'flex' }}>
                       {Array.from({ length: SEMANAS_POR_MES }, (_, s) => (
@@ -275,27 +281,35 @@ export default function BoardComercial({ proyectos: iniciales, indicadores, hoy,
             </div>
           ))}
 
-          {/* Montajes por columna */}
-          <div style={{ display: 'flex', marginTop: 6, borderTop: `2px solid ${C.dark}`, paddingTop: 8 }}>
-            <div style={{ width: ANCHO_BANDA + ANCHO_NOMBRE + 8, flexShrink: 0, position: 'sticky', left: 0, background: C.fondo, zIndex: 3, fontSize: 12, paddingLeft: 4 }}>
-              <strong style={{ fontWeight: 500 }}>Montajes</strong>
-              <div style={{ color: C.muted, fontSize: 11, marginTop: 2 }}>proyectos · m² · UF ponderada (inicio montaje)</div>
-              {sinMontaje > 0 && <div style={{ color: C.muted, fontSize: 11, marginTop: 2 }}>{sinMontaje} sin mes de montaje</div>}
+          {/* Montajes por semana */}
+          {vista === 'semanas' && (
+            <div style={{ display: 'flex', marginTop: 6, borderTop: `2px solid ${C.dark}`, paddingTop: 8 }}>
+              <div style={{ width: ANCHO_BANDA + ANCHO_NOMBRE + 8, flexShrink: 0, position: 'sticky', left: 0, background: C.fondo, zIndex: 3, fontSize: 12, paddingLeft: 4 }}>
+                <strong style={{ fontWeight: 500 }}>Montajes por semana</strong>
+              </div>
+              <div style={{ display: 'flex' }}>
+                {porSemana.map((m, i) => (
+                  <div key={i} style={{ width: col, textAlign: 'center', fontSize: 13, color: m.n ? C.dark : C.muted, opacity: m.n ? 1 : 0.4 }}>{m.n}</div>
+                ))}
+              </div>
             </div>
-            <div style={{ display: 'flex' }}>
-              {montajes.map((m, i) => (
-                <div key={i} style={{ width: col, textAlign: 'center', fontSize: 11, color: m.n ? C.dark : C.muted, opacity: m.n ? 1 : 0.4 }}>
-                  <div style={{ fontSize: vista === 'meses' ? 18 : 13 }}>{m.n}</div>
-                  {vista === 'meses' && m.m2 > 0 && <div style={{ color: C.muted }}>{Math.round(m.m2).toLocaleString('es-CL')} m²</div>}
-                  {vista === 'meses' && m.uf > 0 && <div style={{ color: C.purpleMid }}>{formatoUF(m.uf)}</div>}
-                </div>
-              ))}
-            </div>
-          </div>
+          )}
         </div>
       </div>
 
       {edicion && <Editor edicion={edicion} meses={meses} ind={ind} onCerrar={() => setEdicion(null)} />}
+    </div>
+  )
+}
+
+function TotalMes({ t, oscuro }: { t: { n: number; m2: number; uf: number }; oscuro: boolean }) {
+  return (
+    <div style={{
+      background: oscuro ? '#2a2622' : 'rgba(255,255,255,0.55)', color: oscuro ? '#fff' : C.dark, opacity: t.n ? 1 : 0.5,
+      textAlign: 'center', fontSize: 11, padding: '5px 4px 6px', lineHeight: 1.45,
+    }}>
+      <div><strong style={{ fontWeight: 500 }}>{t.n}</strong> montaje{t.n === 1 ? '' : 's'} · {Math.round(t.m2).toLocaleString('es-CL')} m²</div>
+      <div style={{ color: oscuro ? '#d6cdea' : C.purpleMid }}>{t.uf > 0 ? formatoUF(t.uf) : '0 UF'}</div>
     </div>
   )
 }
