@@ -22,6 +22,7 @@ const OTROS: Acceso[] = [
   { href: '/interno/leads', titulo: 'Mis leads', detalle: 'Leads de Monday asignados a ti.', color: '#e6cfa6' },
   // El cotizador es HTML servido por un route handler: va con <a>, no con <Link>.
   { href: '/interno/cotizador', titulo: 'Cotizador obra gruesa', detalle: 'Cotizador V3 por volúmenes.', color: '#cdc7bf', html: true },
+  { href: '/interno/cubicador', titulo: 'Cubicador', detalle: 'Sube el DXF de plantas y elevaciones y obtén superficies, fachadas, vanos y cubierta.', color: '#b9d3c4' },
   { href: '/interno/planificacion', titulo: 'Planificación de fábrica', detalle: 'Fechas calculadas desde Monday: modelación, madera, fábrica y montaje.', color: '#bccbe0' },
 ]
 
