@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
   HITOS, INDICADORES_TEXTO, RANGO_EDICION, RANGO_VISIBLE, SEMANAS_POR_MES, TIPOS_PROYECTO,
-  RANGOS_PROBABILIDAD, cobrosProyecto, columnasHito, rangoProbabilidad, compararProyectos, conDuracionPorDefecto, formatoUF, mesesEntre, mesMontaje, moverHito, nombreMes, nuevaClave, semanaDeDia, textoPeriodo,
+  RANGOS_PROBABILIDAD, cobrosProyecto, columnasHito, rangoProbabilidad, compararProyectos, conDuracionPorDefecto, formatoUF, mesesEntre, mesMontaje, moverHito, nombreMes, nuevaClave, semanaDeDia, textoPeriodo, inicioTrasPedidoMadera,
   desgloseProyecto, ufM2Proyecto, ufProyecto,
   type Hito, type Indicadores, type ProyectoComercial, type TipoHito, type TipoProyecto,
 } from '@/lib/comercial/modelo'
@@ -78,6 +78,12 @@ export default function BoardComercial({ proyectos: iniciales, indicadores, hoy,
   }, [vista, meses, col])
 
   const mesHoy = hoy.slice(0, 7)
+  // Al abrir, el mes actual queda en la primera columna visible.
+  useEffect(() => {
+    const i = meses.indexOf(mesHoy)
+    if (i > 0 && scrollRef.current) scrollRef.current.scrollLeft = i * col
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
   const xHoy = meses.includes(mesHoy)
     ? (meses.indexOf(mesHoy) + (Number(hoy.slice(8, 10)) - 1) / 31) * porMes * col
     : null
@@ -162,7 +168,7 @@ export default function BoardComercial({ proyectos: iniciales, indicadores, hoy,
     const mes = meses[Math.floor(columna / porMes)]
     const semana = vista === 'semanas' ? (columna % porMes) + 1 : null
     const tipo: TipoHito = p.hitos.some(h => h.tipo === 'montaje') ? 'fabrica' : 'montaje'
-    setEdicion({ proyecto: p, hitoNuevo: { _key: nuevaClave(), tipo, desde: mes, semanaDesde: semana, hecho: false } })
+    setEdicion({ proyecto: p, hitoNuevo: conDuracionPorDefecto({ _key: nuevaClave(), tipo, desde: mes, semanaDesde: semana, hecho: false }, p.tipo) })
   }
 
   const toggleTipo = (t: TipoProyecto) => setTiposVisibles(prev => {
@@ -231,7 +237,8 @@ export default function BoardComercial({ proyectos: iniciales, indicadores, hoy,
       </div>
       {errorGuardado && <p style={{ color: C.rojo, fontSize: 13, margin: '0 0 10px' }}>{errorGuardado}</p>}
 
-      <div ref={scrollRef} style={{ overflowX: 'auto', paddingBottom: 6 }}>
+      {/* Scroll propio en ambos ejes: el encabezado de meses queda fijo al bajar y los nombres al correr a la derecha. */}
+      <div ref={scrollRef} style={{ overflow: 'auto', maxHeight: 'calc(100vh - 24px)', paddingBottom: 6, overscrollBehavior: 'contain' }}>
         <div style={{ width: ANCHO_BANDA + ANCHO_NOMBRE + 8 + anchoGrilla, position: 'relative' }}>
           {/* Encabezado */}
           <div style={{ display: 'flex', position: 'sticky', top: 0, zIndex: 5, background: C.fondo, paddingBottom: 8 }}>
@@ -259,6 +266,8 @@ export default function BoardComercial({ proyectos: iniciales, indicadores, hoy,
                     }}
                   >
                     {vista === 'semanas' ? nombreMes(mes, true) : nombreMes(mes)}
+                    {/* Con más de un año a la vista, el año va en el primer mes y en cada enero. */}
+                    {vista === 'meses' && (iMes === 0 || mes.endsWith('-01')) && <span style={{ fontSize: 10, opacity: 0.6, letterSpacing: 0 }}> ’{mes.slice(2, 4)}</span>}
                   </button>
                   <TotalMes t={porMesTotales[iMes]} cobro={cobrosPorMes[iMes]} oscuro={mes === mesHoy} />
                   {vista === 'semanas' && (
@@ -439,7 +448,7 @@ function Fila({ p, meses, vista, col, anchoGrilla, ind, onEditar, onCelda, onPro
             {[p.cliente, p.m2 ? `${p.m2.toLocaleString('es-CL')} m²` : '', p.zona].filter(Boolean).join(' · ') || '—'}
           </div>
           {uf != null && <div style={{ fontSize: 11, color: C.purpleMid, marginTop: 2 }}>{formatoUF(uf)}</div>}
-          {fuera.length > 0 && <div style={{ fontSize: 10, color: C.muted, marginTop: 2 }}>+{fuera.length} hito(s) fuera de nov–jun</div>}
+          {fuera.length > 0 && <div style={{ fontSize: 10, color: C.muted, marginTop: 2 }}>+{fuera.length} hito(s) fuera de {nombreMes(meses[0], true)}–{nombreMes(meses[meses.length - 1], true)}</div>}
         </button>
         <label title="Probabilidad de éxito" style={{ display: 'flex', alignItems: 'center', paddingRight: 8 }}>
           <select
@@ -586,11 +595,15 @@ function Editor({ edicion, meses, ind, onCerrar }: { edicion: Edicion; meses: st
 
   const setCampo = <K extends keyof typeof form>(k: K, v: (typeof form)[K]) => setForm(f => ({ ...f, [k]: v }))
   const setHito = (key: string, cambios: Partial<Hito>) =>
-    setForm(f => ({ ...f, hitos: f.hitos.map(h => (h._key !== key ? h : cambios.tipo ? conDuracionPorDefecto({ ...h, ...cambios }) : { ...h, ...cambios })) }))
+    setForm(f => ({ ...f, hitos: f.hitos.map(h => (h._key !== key ? h : cambios.tipo ? conDuracionPorDefecto({ ...h, ...cambios }, f.tipo) : { ...h, ...cambios })) }))
   const agregarHito = (tipo: TipoHito) => {
     const mesActual = new Date().toISOString().slice(0, 7)
     const desde = meses.includes(mesActual) ? mesActual : meses[0]
-    setForm(f => ({ ...f, hitos: [...f.hitos, conDuracionPorDefecto({ _key: nuevaClave(), tipo, desde, hecho: false, semanaDesde: semanaDeDia(new Date().getDate()) })] }))
+    setForm(f => {
+      // La fábrica parte la semana siguiente al pedido de madera, si ya hay uno.
+      const inicio = (tipo === 'fabrica' && inicioTrasPedidoMadera(f.hitos)) || { desde, semanaDesde: semanaDeDia(new Date().getDate()) }
+      return { ...f, hitos: [...f.hitos, conDuracionPorDefecto({ _key: nuevaClave(), tipo, hecho: false, ...inicio }, f.tipo)] }
+    })
   }
 
   const llamar = async (url: string, method: string, body?: unknown) => {
