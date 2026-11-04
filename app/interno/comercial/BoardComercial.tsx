@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
   HITOS, INDICADORES_TEXTO, RANGO_EDICION, RANGO_VISIBLE, SEMANAS_POR_MES, TIPOS_PROYECTO,
-  RANGOS_PROBABILIDAD, cobrosProyecto, columnasHito, rangoProbabilidad, compararProyectos, conDuracionPorDefecto, formatoUF, mesesEntre, mesMontaje, moverHito, nombreMes, nuevaClave, semanaDeDia, textoPeriodo, inicioTrasPedidoMadera,
+  RANGOS_PROBABILIDAD, cobrosProyecto, columnasHito, rangoProbabilidad, compararProyectos, conDuracionPorDefecto, formatoUF, mesesEntre, mesMontaje, moverHito, nombreMes, nuevaClave, semanaDeDia, textoPeriodo, inicioTrasAnterior, partidasDe, rellenarAntesDeFabrica, tieneIndicadoresPropios,
   desgloseProyecto, ufM2Proyecto, ufProyecto,
   type Hito, type Indicadores, type ProyectoComercial, type TipoHito, type TipoProyecto,
 } from '@/lib/comercial/modelo'
@@ -168,7 +168,7 @@ export default function BoardComercial({ proyectos: iniciales, indicadores, hoy,
     const mes = meses[Math.floor(columna / porMes)]
     const semana = vista === 'semanas' ? (columna % porMes) + 1 : null
     const tipo: TipoHito = p.hitos.some(h => h.tipo === 'montaje') ? 'fabrica' : 'montaje'
-    setEdicion({ proyecto: p, hitoNuevo: conDuracionPorDefecto({ _key: nuevaClave(), tipo, desde: mes, semanaDesde: semana, hecho: false }, p.tipo) })
+    setEdicion({ proyecto: p, hitoNuevo: conDuracionPorDefecto({ _key: nuevaClave(), tipo, desde: mes, semanaDesde: semana, hecho: false }) })
   }
 
   const toggleTipo = (t: TipoProyecto) => setTiposVisibles(prev => {
@@ -409,7 +409,9 @@ function PanelIndicadores({ ind, onCambio, proyectos }: { ind: Indicadores; onCa
             />
             <span style={{ fontSize: 12, color: C.muted }}>UF/m²</span>
           </span>
-          <span style={{ display: 'block', fontSize: 11, color: ind[k] === 0 ? C.rojo : C.muted, marginTop: 2 }}>{ind[k] === 0 ? 'Por definir' : INDICADORES_TEXTO[k].detalle}</span>
+          <span style={{ display: 'block', fontSize: 11, color: C.muted, marginTop: 2 }}>
+            {INDICADORES_TEXTO[k].detalle}{ind[k] === 0 && <span style={{ color: C.rojo }}> · por definir</span>}
+          </span>
         </label>
       ))}
       <div style={{ background: C.dark, color: '#fff', borderRadius: 10, padding: '10px 16px', minWidth: 220, flex: '1 1 220px' }}>
@@ -447,7 +449,7 @@ function Fila({ p, meses, vista, col, anchoGrilla, ind, onEditar, onCelda, onPro
           <div style={{ fontSize: 11, color: '#5e574e', marginTop: 2 }}>
             {[p.cliente, p.m2 ? `${p.m2.toLocaleString('es-CL')} m²` : '', p.zona].filter(Boolean).join(' · ') || '—'}
           </div>
-          {uf != null && <div style={{ fontSize: 11, color: C.purpleMid, marginTop: 2 }}>{formatoUF(uf)}</div>}
+          {uf != null && <div style={{ fontSize: 11, color: C.purpleMid, marginTop: 2 }}>{formatoUF(uf)}{tieneIndicadoresPropios(p) && <span title="Este proyecto tiene indicadores propios" style={{ color: C.muted }}> · indicadores propios</span>}</div>}
           {fuera.length > 0 && <div style={{ fontSize: 10, color: C.muted, marginTop: 2 }}>+{fuera.length} hito(s) fuera de {nombreMes(meses[0], true)}–{nombreMes(meses[meses.length - 1], true)}</div>}
         </button>
         <label title="Probabilidad de éxito" style={{ display: 'flex', alignItems: 'center', paddingRight: 8 }}>
@@ -570,6 +572,12 @@ function SelectorPeriodo({ mes, semana, onMes, onSemana, opcional }: {
   )
 }
 
+// Agrega un hito y, si es Fábrica, los hitos anteriores que falten con su tiempo base.
+function conRelleno(hitos: Hito[], nuevo?: Hito): Hito[] {
+  if (!nuevo) return hitos
+  return [...hitos, ...(nuevo.tipo === 'fabrica' ? rellenarAntesDeFabrica(hitos, nuevo) : []), nuevo]
+}
+
 function Editor({ edicion, meses, ind, onCerrar }: { edicion: Edicion; meses: string[]; ind: Indicadores; onCerrar: () => void }) {
   const router = useRouter()
   const base = edicion.proyecto
@@ -582,10 +590,14 @@ function Editor({ edicion, meses, ind, onCerrar }: { edicion: Edicion; meses: st
     estado: base?.estado || '',
     probabilidad: base?.probabilidad?.toString() ?? '',
     zona: base?.zona || '',
-    logistica: base?.logistica?.toString().replace('.', ',') ?? '',
+    // Indicadores propios como texto; vacío = usa el general. La logística antigua se trae acá.
+    indicadores: Object.fromEntries((Object.keys(ind) as (keyof Indicadores)[]).map(k => {
+      const v = k === 'logistica' ? base?.indicadores?.logistica ?? base?.logistica : base?.indicadores?.[k]
+      return [k, v != null ? String(v).replace('.', ',') : '']
+    })) as Record<keyof Indicadores, string>,
     ufM2: base?.ufM2?.toString().replace('.', ',') ?? '',
     conMontaje: base?.conMontaje ?? false,
-    hitos: [...(base?.hitos || []), ...(edicion.hitoNuevo ? [edicion.hitoNuevo] : [])] as Hito[],
+    hitos: conRelleno(base?.hitos || [], edicion.hitoNuevo),
   }))
   const [guardando, setGuardando] = useState(false)
   const [error, setError] = useState('')
@@ -595,14 +607,21 @@ function Editor({ edicion, meses, ind, onCerrar }: { edicion: Edicion; meses: st
 
   const setCampo = <K extends keyof typeof form>(k: K, v: (typeof form)[K]) => setForm(f => ({ ...f, [k]: v }))
   const setHito = (key: string, cambios: Partial<Hito>) =>
-    setForm(f => ({ ...f, hitos: f.hitos.map(h => (h._key !== key ? h : cambios.tipo ? conDuracionPorDefecto({ ...h, ...cambios }, f.tipo) : { ...h, ...cambios })) }))
+    setForm(f => {
+      const otros = f.hitos.filter(h => h._key !== key)
+      const actual = f.hitos.find(h => h._key === key)!
+      const nuevo = cambios.tipo ? conDuracionPorDefecto({ ...actual, ...cambios, hasta: null, semanaHasta: null }) : { ...actual, ...cambios }
+      // Al pasar un hito a Fábrica se completan los anteriores que falten.
+      if (cambios.tipo === 'fabrica') return { ...f, hitos: conRelleno(otros, nuevo) }
+      return { ...f, hitos: f.hitos.map(h => (h._key === key ? nuevo : h)) }
+    })
   const agregarHito = (tipo: TipoHito) => {
     const mesActual = new Date().toISOString().slice(0, 7)
     const desde = meses.includes(mesActual) ? mesActual : meses[0]
     setForm(f => {
-      // La fábrica parte la semana siguiente al pedido de madera, si ya hay uno.
-      const inicio = (tipo === 'fabrica' && inicioTrasPedidoMadera(f.hitos)) || { desde, semanaDesde: semanaDeDia(new Date().getDate()) }
-      return { ...f, hitos: [...f.hitos, conDuracionPorDefecto({ _key: nuevaClave(), tipo, hecho: false, ...inicio }, f.tipo)] }
+      // Parte la semana siguiente al hito anterior de la secuencia, si ya está (fábrica tras madera, etc.).
+      const inicio = inicioTrasAnterior(f.hitos, tipo) || { desde, semanaDesde: semanaDeDia(new Date().getDate()) }
+      return { ...f, hitos: conRelleno(f.hitos, conDuracionPorDefecto({ _key: nuevaClave(), tipo, hecho: false, ...inicio })) }
     })
   }
 
@@ -623,14 +642,17 @@ function Editor({ edicion, meses, ind, onCerrar }: { edicion: Edicion; meses: st
 
   const guardar = () => {
     const datos = {
-      ...form, m2: numero(form.m2, true), probabilidad: numero(form.probabilidad), logistica: numero(form.logistica), ufM2: numero(form.ufM2),
+      ...form, m2: numero(form.m2, true), probabilidad: numero(form.probabilidad), logistica: null, indicadores: indicadoresForm, ufM2: numero(form.ufM2),
       mondayItemId: base?.mondayItemId || null,
     }
     if (base) llamar(`/api/interno/comercial/${base._id}`, 'PUT', datos)
     else llamar('/api/interno/comercial', 'POST', datos)
   }
 
-  const vista = { tipo: form.tipo, logistica: numero(form.logistica), ufM2: numero(form.ufM2), conMontaje: form.conMontaje }
+  const indicadoresForm = Object.fromEntries(
+    Object.entries(form.indicadores).map(([k, v]) => [k, numero(v)]).filter(([, v]) => v != null)
+  ) as Partial<Indicadores>
+  const vista = { tipo: form.tipo, logistica: null, indicadores: indicadoresForm, ufM2: numero(form.ufM2), conMontaje: form.conMontaje }
   const desglose = desgloseProyecto(vista, ind)
   const tarifa = ufM2Proyecto(vista, ind)
   const tarifaCalculada = ufM2Proyecto({ ...vista, ufM2: null }, ind)
@@ -673,9 +695,6 @@ function Editor({ edicion, meses, ind, onCerrar }: { edicion: Edicion; meses: st
           <label><Etiqueta>Zona</Etiqueta>
             <input value={form.zona} onChange={e => setCampo('zona', e.target.value)} placeholder="Ej: Santiago, Pucón" style={{ ...inputStyle, width: '100%' }} />
           </label>
-          <label><Etiqueta>Logística UF/m²</Etiqueta>
-            <input inputMode="decimal" value={form.logistica} onChange={e => setCampo('logistica', e.target.value)} placeholder={`${String(ind.logistica).replace('.', ',')} (Santiago)`} style={{ ...inputStyle, width: '100%' }} />
-          </label>
           <label><Etiqueta>UF/m² manual</Etiqueta>
             <input inputMode="decimal" value={form.ufM2} onChange={e => setCampo('ufM2', e.target.value)} placeholder={tarifaCalculada != null ? `${tarifaCalculada.toFixed(2).replace('.', ',')} según tipo` : 'Define el tipo'} style={{ ...inputStyle, width: '100%' }} />
           </label>
@@ -683,6 +702,24 @@ function Editor({ edicion, meses, ind, onCerrar }: { edicion: Edicion; meses: st
             <label style={{ gridColumn: '1 / -1', display: 'flex', alignItems: 'center', gap: 6, fontSize: 13 }}>
               <input type="checkbox" checked={form.conMontaje} onChange={e => setCampo('conMontaje', e.target.checked)} /> Incluye montaje de estructuras
             </label>
+          )}
+          {partidasDe(form).length > 0 && (
+            <div style={{ gridColumn: '1 / -1' }}>
+              <Etiqueta>Indicadores del proyecto (UF/m², vacío = general)</Etiqueta>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: 8 }}>
+                {partidasDe(form).map(k => (
+                  <label key={k} style={{ fontSize: 12, color: C.muted }}>
+                    {INDICADORES_TEXTO[k].etiqueta}
+                    <input
+                      inputMode="decimal" value={form.indicadores[k]}
+                      onChange={e => setForm(f => ({ ...f, indicadores: { ...f.indicadores, [k]: e.target.value } }))}
+                      placeholder={`${String(ind[k]).replace('.', ',')} general`}
+                      style={{ ...inputStyle, width: '100%', marginTop: 3, borderColor: form.indicadores[k].trim() ? C.purpleMid : C.linea }}
+                    />
+                  </label>
+                ))}
+              </div>
+            </div>
           )}
           {form.ufM2.trim() === '' && desglose.length > 0 && (
             <p style={{ gridColumn: '1 / -1', fontSize: 12, color: C.muted, margin: 0, lineHeight: 1.6 }}>

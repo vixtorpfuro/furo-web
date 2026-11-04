@@ -2,7 +2,7 @@ import 'server-only'
 import { writeClient } from '@/sanity/lib/writeClient'
 import { HITOS, INDICADORES_BASE, TIPOS_PROYECTO, nuevaClave, type Hito, type Indicadores, type ProyectoComercial, type TipoHito, type TipoProyecto } from './modelo'
 
-const CAMPOS = `_id, nombre, cliente, tipo, superficie, m2, estado, hitos, probabilidad, zona, logistica, ufM2, conMontaje, mondayItemId, actualizadoPor`
+const CAMPOS = `_id, nombre, cliente, tipo, superficie, m2, estado, hitos, probabilidad, zona, logistica, indicadores, ufM2, conMontaje, mondayItemId, actualizadoPor`
 const ID_INDICADORES = 'comercial.indicadores'
 
 export async function listarProyectos(): Promise<ProyectoComercial[]> {
@@ -21,6 +21,7 @@ export async function listarProyectos(): Promise<ProyectoComercial[]> {
     probabilidad: typeof d.probabilidad === 'number' ? d.probabilidad : null,
     zona: d.zona || '',
     logistica: typeof d.logistica === 'number' ? d.logistica : null,
+    indicadores: limpiarIndicadoresPropios(d.indicadores),
     ufM2: typeof d.ufM2 === 'number' ? d.ufM2 : null,
     conMontaje: d.conMontaje === true,
     mondayItemId: d.mondayItemId || null,
@@ -39,6 +40,23 @@ export function limpiarIndicadores(entrada: unknown): Indicadores | null {
   const o = entrada as Record<string, unknown>
   const res = { ...INDICADORES_BASE }
   for (const k of Object.keys(res) as (keyof Indicadores)[]) {
+    const v = o[k]
+    if (typeof v === 'number' && Number.isFinite(v) && v >= 0 && v <= 100) res[k] = v
+  }
+  // Antes la envolvente eran tres partidas (revestimiento, techumbre y ventanas).
+  if (typeof o.envolvente !== 'number') {
+    const antes = ['revestimiento', 'techumbre', 'ventanas'].map(k => o[k]).filter((v): v is number => typeof v === 'number' && v >= 0)
+    if (antes.length) res.envolvente = Math.min(100, antes.reduce((a, b) => a + b, 0))
+  }
+  return res
+}
+
+// Indicadores propios de un proyecto: solo los válidos; el resto usa el general.
+export function limpiarIndicadoresPropios(entrada: unknown): Partial<Indicadores> {
+  if (!entrada || typeof entrada !== 'object') return {}
+  const o = entrada as Record<string, unknown>
+  const res: Partial<Indicadores> = {}
+  for (const k of Object.keys(INDICADORES_BASE) as (keyof Indicadores)[]) {
     const v = o[k]
     if (typeof v === 'number' && Number.isFinite(v) && v >= 0 && v <= 100) res[k] = v
   }
@@ -98,6 +116,7 @@ export function limpiarProyecto(entrada: unknown): DatosProyecto | null {
     probabilidad: typeof o.probabilidad === 'number' && Number.isFinite(o.probabilidad) ? Math.min(100, Math.max(0, Math.round(o.probabilidad))) : null,
     zona: texto(o.zona, 80),
     logistica: ufm2(o.logistica),
+    indicadores: limpiarIndicadoresPropios(o.indicadores),
     ufM2: ufm2(o.ufM2),
     conMontaje: o.conMontaje === true,
     mondayItemId: typeof o.mondayItemId === 'string' && /^\d+$/.test(o.mondayItemId) ? o.mondayItemId : null,
@@ -107,7 +126,8 @@ export function limpiarProyecto(entrada: unknown): DatosProyecto | null {
 // Sanity no guarda null: los campos vacíos se omiten.
 export function aDocumento(datos: DatosProyecto, usuario: string) {
   const hitos = datos.hitos.map(h => Object.fromEntries(Object.entries({ ...h, _type: 'hito' }).filter(([, v]) => v !== null && v !== undefined)))
+  const indicadores = Object.keys(datos.indicadores).length ? { ...datos.indicadores, _type: 'indicadoresProyecto' } : null
   return Object.fromEntries(
-    Object.entries({ ...datos, hitos, actualizadoPor: usuario }).filter(([, v]) => v !== null && v !== undefined)
+    Object.entries({ ...datos, hitos, indicadores, actualizadoPor: usuario }).filter(([, v]) => v !== null && v !== undefined)
   )
 }
