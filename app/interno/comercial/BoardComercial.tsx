@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
   HITOS, INDICADORES_TEXTO, RANGO_EDICION, RANGO_VISIBLE, SEMANAS_POR_MES, TIPOS_PROYECTO,
@@ -8,7 +8,8 @@ import {
   type Hito, type Indicadores, type ProyectoComercial, type TipoHito, type TipoProyecto,
 } from '@/lib/comercial/modelo'
 
-const C = { dark: '#141210', off: '#f5f3ee', fondo: '#efece5', muted: '#8a8278', linea: 'rgba(20,18,16,0.10)', purpleMid: '#52448a', rojo: '#c0392b' }
+const C = { dark: '#141210', off: '#f5f3ee', fondo: '#efece5', muted: '#8a8278', linea: 'rgba(20,18,16,0.10)', purpleMid: '#52448a', rojo: '#c0392b', trimestre: '#c99a5b' }
+const PROBABILIDAD_SEGURA = 70
 
 type Vista = 'meses' | 'semanas'
 const ANCHO_COL = { meses: 132, semanas: 46 }
@@ -116,9 +117,9 @@ export default function BoardComercial({ proyectos: iniciales, indicadores, hoy,
 
   // Montajes por columna, para ver cómo se carga cada mes/semana. Los totales por mes van en el
   // encabezado; en vista de semanas además se cuentan montajes por semana al pie.
-  const contarMontajes = (v: Vista) => {
+  const contarMontajes = (v: Vista, lista = filtrados) => {
     const cuenta = Array.from({ length: meses.length * (v === 'semanas' ? SEMANAS_POR_MES : 1) }, () => ({ n: 0, m2: 0, uf: 0, ufRangos: RANGOS_PROBABILIDAD.map(() => 0) }))
-    for (const p of filtrados) {
+    for (const p of lista) {
       // La UF ponderada del proyecto se asigna a la columna donde parte su primer montaje.
       const montajes = p.hitos.filter(x => x.tipo === 'montaje').sort((a, b) => a.desde.localeCompare(b.desde))
       montajes.forEach((h, j) => {
@@ -134,17 +135,28 @@ export default function BoardComercial({ proyectos: iniciales, indicadores, hoy,
     }
     return cuenta
   }
-  const porMesTotales = contarMontajes('meses')
+  // Arriba de cada mes van solo los proyectos con 70% o más; el resto se suma al pie del board.
+  const seguros = filtrados.filter(p => (p.probabilidad ?? -1) >= PROBABILIDAD_SEGURA)
+  const inciertos = filtrados.filter(p => (p.probabilidad ?? -1) < PROBABILIDAD_SEGURA)
   // Cobros del mes: ponderados por probabilidad y, sin ponderar, repartidos por rango de probabilidad.
-  const cobrosPorMes = meses.map(() => ({ ponderado: 0, rangos: RANGOS_PROBABILIDAD.map(() => 0) }))
-  for (const p of filtrados) {
-    for (const c of cobrosProyecto(p, ind)) {
-      const i = meses.indexOf(c.mes)
-      if (i < 0) continue
-      cobrosPorMes[i].ponderado += c.uf * (p.probabilidad ?? 0) / 100
-      cobrosPorMes[i].rangos[rangoProbabilidad(p.probabilidad)] += c.uf
+  const cobrosDe = (lista: ProyectoComercial[]) => {
+    const res = meses.map(() => ({ ponderado: 0, rangos: RANGOS_PROBABILIDAD.map(() => 0) }))
+    for (const p of lista) {
+      for (const c of cobrosProyecto(p, ind)) {
+        const i = meses.indexOf(c.mes)
+        if (i < 0) continue
+        res[i].ponderado += c.uf * (p.probabilidad ?? 0) / 100
+        res[i].rangos[rangoProbabilidad(p.probabilidad)] += c.uf
+      }
     }
+    return res
   }
+  const totalesSeguros = contarMontajes('meses', seguros)
+  const cobrosSeguros = cobrosDe(seguros)
+  const totalesInciertos = contarMontajes('meses', inciertos)
+  const cobrosInciertos = cobrosDe(inciertos)
+  // Líneas trimestrales: al inicio de enero, abril, julio y octubre.
+  const inicioTrimestre = meses.flatMap((m, i) => (['01', '04', '07', '10'].includes(m.slice(5)) ? [i] : []))
   const porSemana = vista === 'semanas' ? contarMontajes('semanas') : []
 
   const sinMontaje = filtrados.filter(p => !mesMontaje(p)).length
@@ -243,15 +255,8 @@ export default function BoardComercial({ proyectos: iniciales, indicadores, hoy,
           {/* Encabezado */}
           <div style={{ display: 'flex', position: 'sticky', top: 0, zIndex: 5, background: C.fondo, paddingBottom: 8 }}>
             <div style={{ width: ANCHO_BANDA + ANCHO_NOMBRE + 8, flexShrink: 0, position: 'sticky', left: 0, background: C.fondo, zIndex: 6, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', fontSize: 11, color: C.muted, paddingLeft: 4, paddingBottom: vista === 'semanas' ? 18 : 0 }}>
-              <span>Bajo cada mes: montajes · m² · UF de montajes que parten · cobros del mes</span>
-              <span style={{ marginTop: 2 }}>Cifras: total · ponderado por probabilidad. Barras: total por rango</span>
-              <span style={{ marginTop: 3, display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                {RANGOS_PROBABILIDAD.map(r => (
-                  <span key={r.clave} style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-                    <span style={{ width: 10, height: 8, background: r.color, borderRadius: 2 }} />{r.etiqueta}
-                  </span>
-                ))}
-              </span>
+              <span>Bajo cada mes, solo proyectos con <strong style={{ fontWeight: 500, color: C.dark }}>70% o más</strong>: montajes · m² · UF de montajes que parten · cobros del mes</span>
+              <span style={{ marginTop: 2 }}>Cifras: total · ponderado por probabilidad. Los proyectos bajo 70% se suman al pie</span>
               {sinMontaje > 0 && <span style={{ marginTop: 2 }}>{sinMontaje} sin mes de montaje</span>}
             </div>
             <div style={{ display: 'flex', gap: 0 }}>
@@ -269,7 +274,7 @@ export default function BoardComercial({ proyectos: iniciales, indicadores, hoy,
                     {/* Con más de un año a la vista, el año va en el primer mes y en cada enero. */}
                     {vista === 'meses' && (iMes === 0 || mes.endsWith('-01')) && <span style={{ fontSize: 10, opacity: 0.6, letterSpacing: 0 }}> ’{mes.slice(2, 4)}</span>}
                   </button>
-                  <TotalMes t={porMesTotales[iMes]} cobro={cobrosPorMes[iMes]} oscuro={mes === mesHoy} />
+                  <TotalMes t={totalesSeguros[iMes]} cobro={cobrosSeguros[iMes]} oscuro={mes === mesHoy} />
                   {vista === 'semanas' && (
                     <div style={{ display: 'flex' }}>
                       {Array.from({ length: SEMANAS_POR_MES }, (_, s) => (
@@ -281,6 +286,11 @@ export default function BoardComercial({ proyectos: iniciales, indicadores, hoy,
               ))}
             </div>
           </div>
+
+          {/* Líneas trimestrales */}
+          {inicioTrimestre.map(i => (
+            <div key={i} style={{ position: 'absolute', top: 0, bottom: 0, left: ANCHO_BANDA + ANCHO_NOMBRE + 8 + i * porMes * col - 1, borderLeft: `2px dashed ${C.trimestre}`, zIndex: 1, pointerEvents: 'none' }} />
+          ))}
 
           {/* Línea de hoy */}
           {xHoy !== null && (
@@ -311,6 +321,28 @@ export default function BoardComercial({ proyectos: iniciales, indicadores, hoy,
               </div>
             </div>
           ))}
+
+          {/* Proyectos bajo 70%: mismos totales que arriba, con la barra por rango */}
+          <div style={{ display: 'flex', marginTop: 6, borderTop: `2px solid ${C.dark}`, paddingTop: 8 }}>
+            <div style={{ width: ANCHO_BANDA + ANCHO_NOMBRE + 8, flexShrink: 0, position: 'sticky', left: 0, background: C.fondo, zIndex: 3, fontSize: 12, paddingLeft: 4, display: 'flex', flexDirection: 'column', gap: 3 }}>
+              <strong style={{ fontWeight: 500 }}>Proyectos bajo 70% · {inciertos.length}</strong>
+              <span style={{ fontSize: 11, color: C.muted }}>Montajes · m² · UF que parten · cobros. Barras por rango:</span>
+              <span style={{ display: 'flex', flexWrap: 'wrap', gap: 8, fontSize: 11, color: C.muted }}>
+                {RANGOS_PROBABILIDAD.filter(r => r.min < PROBABILIDAD_SEGURA).map(r => (
+                  <span key={r.clave} style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                    <span style={{ width: 10, height: 8, background: r.color, borderRadius: 2 }} />{r.etiqueta}
+                  </span>
+                ))}
+              </span>
+            </div>
+            <div style={{ display: 'flex' }}>
+              {meses.map((mes, iMes) => (
+                <div key={mes} style={{ width: porMes * col, flexShrink: 0, paddingRight: 4 }}>
+                  <TotalMes t={totalesInciertos[iMes]} cobro={cobrosInciertos[iMes]} oscuro={false} barras />
+                </div>
+              ))}
+            </div>
+          </div>
 
           {/* Montajes por semana */}
           {vista === 'semanas' && (
@@ -346,8 +378,8 @@ function BarraRangos({ valores, titulo }: { valores: number[]; titulo: string })
   )
 }
 
-function TotalMes({ t, cobro, oscuro }: {
-  t: { n: number; m2: number; uf: number; ufRangos: number[] }; cobro: { ponderado: number; rangos: number[] }; oscuro: boolean
+function TotalMes({ t, cobro, oscuro, barras = false }: {
+  t: { n: number; m2: number; uf: number; ufRangos: number[] }; cobro: { ponderado: number; rangos: number[] }; oscuro: boolean; barras?: boolean
 }) {
   const totalUf = t.ufRangos.reduce((a, b) => a + b, 0)
   const totalCobro = cobro.rangos.reduce((a, b) => a + b, 0)
@@ -358,9 +390,9 @@ function TotalMes({ t, cobro, oscuro }: {
     }}>
       <div><strong style={{ fontWeight: 500 }}>{t.n}</strong> montaje{t.n === 1 ? '' : 's'} · {Math.round(t.m2).toLocaleString('es-CL')} m²</div>
       <div style={{ color: oscuro ? '#d6cdea' : C.purpleMid, whiteSpace: 'nowrap' }}>{miles(totalUf)} <span style={{ opacity: 0.7 }}>· {miles(t.uf)}</span> UF</div>
-      <BarraRangos valores={t.ufRangos} titulo="UF de montajes que parten este mes" />
+      {barras && <BarraRangos valores={t.ufRangos} titulo="UF de montajes que parten este mes" />}
       <div style={{ color: oscuro ? '#cfe3d4' : '#3f6e4b', opacity: totalCobro > 0 ? 1 : 0.5, marginTop: 2, whiteSpace: 'nowrap' }}>Cobro {miles(totalCobro)} <span style={{ opacity: 0.7 }}>· {miles(cobro.ponderado)}</span> UF</div>
-      <BarraRangos valores={cobro.rangos} titulo="Cobros del mes" />
+      {barras && <BarraRangos valores={cobro.rangos} titulo="Cobros del mes" />}
     </div>
   )
 }
@@ -387,11 +419,15 @@ function PanelIndicadores({ ind, onCambio, proyectos }: { ind: Indicadores; onCa
   }
 
   let total = 0, ponderado = 0, sinValor = 0
+  const porRango = RANGOS_PROBABILIDAD.map(() => ({ uf: 0, n: 0 }))
   for (const p of proyectos) {
     const uf = ufProyecto(p, ind)
     if (uf == null) { sinValor++; continue }
     total += uf
     ponderado += uf * (p.probabilidad ?? 0) / 100
+    const r = porRango[rangoProbabilidad(p.probabilidad)]
+    r.uf += uf
+    r.n++
   }
   const sinProb = proyectos.filter(p => p.probabilidad == null).length
 
@@ -414,13 +450,30 @@ function PanelIndicadores({ ind, onCambio, proyectos }: { ind: Indicadores; onCa
           </span>
         </label>
       ))}
-      <div style={{ background: C.dark, color: '#fff', borderRadius: 10, padding: '10px 16px', minWidth: 220, flex: '1 1 220px' }}>
-        <span style={{ display: 'block', fontSize: 11, opacity: 0.7, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Cartera visible</span>
-        <div style={{ fontSize: 24, marginTop: 4 }}>{formatoUF(ponderado)} <span style={{ fontSize: 12, opacity: 0.7 }}>ponderado</span></div>
-        <div style={{ fontSize: 12, opacity: 0.75, marginTop: 2 }}>
-          {formatoUF(total)} total{sinValor ? ` · ${sinValor} sin valorizar` : ''}{sinProb ? ` · ${sinProb} sin %` : ''}
+      <div style={{ background: C.dark, color: '#fff', borderRadius: 10, padding: '10px 16px', minWidth: 460, flex: '2 1 460px', display: 'flex', gap: 24, flexWrap: 'wrap' }}>
+        <div style={{ flex: '1 1 180px' }}>
+          <span style={{ display: 'block', fontSize: 11, opacity: 0.7, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Cartera visible</span>
+          <div style={{ fontSize: 24, marginTop: 4 }}>{formatoUF(ponderado)} <span style={{ fontSize: 12, opacity: 0.7 }}>ponderado</span></div>
+          <div style={{ fontSize: 12, opacity: 0.75, marginTop: 2 }}>
+            {formatoUF(total)} total{sinValor ? ` · ${sinValor} sin valorizar` : ''}{sinProb ? ` · ${sinProb} sin %` : ''}
+          </div>
+          {estado && <div style={{ fontSize: 11, opacity: 0.7, marginTop: 2 }}>Indicadores: {estado}</div>}
         </div>
-        {estado && <div style={{ fontSize: 11, opacity: 0.7, marginTop: 2 }}>Indicadores: {estado}</div>}
+        {/* Total sin ponderar por rango de probabilidad */}
+        <div style={{ flex: '1 1 220px', borderLeft: '1px solid rgba(255,255,255,0.15)', paddingLeft: 20 }}>
+          <span style={{ display: 'block', fontSize: 11, opacity: 0.7, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Total por probabilidad</span>
+          <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr auto', columnGap: 10, rowGap: 2, marginTop: 6, fontSize: 13, alignItems: 'center' }}>
+            {RANGOS_PROBABILIDAD.map((r, i) => (
+              <Fragment key={r.clave}>
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                  <span style={{ width: 10, height: 10, background: r.color, borderRadius: 2, border: '1px solid rgba(255,255,255,0.3)' }} />{r.etiqueta}
+                </span>
+                <span style={{ fontSize: 11, opacity: 0.6 }}>{porRango[i].n} proy.</span>
+                <span style={{ textAlign: 'right' }}>{formatoUF(porRango[i].uf)}</span>
+              </Fragment>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   )
