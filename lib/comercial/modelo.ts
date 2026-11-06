@@ -132,9 +132,18 @@ export function ufProyecto(p: ProyectoComercial, ind: Indicadores): number | nul
 // - Obra (envolvente y obra completa): mes a mes desde el inicio del montaje hasta el fin de
 //   terminaciones (o de la envolvente). Si todo cae en un solo mes se asumen DURACION_OBRA_MESES.
 export const DURACION_OBRA_MESES = 5
-const PARTIDAS_OBRA: (keyof Indicadores)[] = ['envolvente', 'completa']
 
-export type Cobro = { mes: string; uf: number; concepto: string }
+// Categorías para resumir cada mes: cobros y m² de los hitos que están en curso.
+export const CATEGORIAS = [
+  { clave: 'bim', etiqueta: 'BIM', hitos: ['calculo'] },
+  { clave: 'madera', etiqueta: 'Mad.+Fáb.', hitos: ['pedidoMadera', 'fabrica'] },
+  { clave: 'montaje', etiqueta: 'Mont.+Log.', hitos: ['montaje'] },
+  { clave: 'envolvente', etiqueta: 'Envolvente', hitos: ['envolvente'] },
+  { clave: 'completa', etiqueta: 'Obra', hitos: ['terminaciones'] },
+] as const
+export type Categoria = (typeof CATEGORIAS)[number]['clave']
+
+export type Cobro = { mes: string; uf: number; concepto: string; categoria: Categoria }
 
 export function cobrosProyecto(p: ProyectoComercial, ind: Indicadores): Cobro[] {
   const uf = ufProyecto(p, ind)
@@ -143,15 +152,15 @@ export function cobrosProyecto(p: ProyectoComercial, ind: Indicadores): Cobro[] 
   const inicio = (tipo: TipoHito) => p.hitos.filter(h => h.tipo === tipo).map(h => h.desde).sort()[0]
   const fin = (tipo: TipoHito) => p.hitos.filter(h => h.tipo === tipo).map(h => h.hasta || h.desde).sort().at(-1)
   const res: Cobro[] = []
-  const cobrar = (mes: string | undefined, monto: number, concepto: string) => { if (mes && monto > 0) res.push({ mes, uf: monto, concepto }) }
+  const cobrar = (mes: string | undefined, monto: number, concepto: string, categoria: Categoria) => { if (mes && monto > 0) res.push({ mes, uf: monto, concepto, categoria }) }
   const mesMadera = inicio('pedidoMadera') || inicio('fabrica')
 
   const desglose = desgloseProyecto(p, ind)
   const suma = desglose.reduce((t, d) => t + d.uf, 0)
   if (!suma) {
     // Sin tipo definido (solo UF/m² manual): mitad con el pedido de madera, mitad al cerrar el montaje.
-    cobrar(mesMadera, uf / 2, 'Anticipo')
-    cobrar(fin('montaje'), uf / 2, 'Saldo')
+    cobrar(mesMadera, uf / 2, 'Anticipo', 'madera')
+    cobrar(fin('montaje'), uf / 2, 'Saldo', 'montaje')
     return res
   }
   // Con UF/m² manual se mantiene el reparto por partida, escalado al valor manual.
@@ -159,42 +168,67 @@ export function cobrosProyecto(p: ProyectoComercial, ind: Indicadores): Cobro[] 
   const monto = (...ks: (keyof Indicadores)[]) => desglose.filter(d => ks.includes(d.concepto)).reduce((t, d) => t + d.uf, 0) * factor * m2
 
   const bim = monto('bim')
-  cobrar(inicio('calculo'), bim / 2, 'BIM · inicio')
-  cobrar(fin('calculo'), bim / 2, 'BIM · fin')
+  cobrar(inicio('calculo'), bim / 2, 'BIM · inicio', 'bim')
+  cobrar(fin('calculo'), bim / 2, 'BIM · fin', 'bim')
 
   const est = monto('estructuras')
-  cobrar(mesMadera, est * 0.5, 'Estructuras · pedido de madera')
-  cobrar(inicio('fabrica') || mesMadera, est * 0.25, 'Estructuras · madera en fábrica')
-  cobrar(fin('fabrica') || mesMadera, est * 0.25, 'Estructuras · despacho a obra')
+  cobrar(mesMadera, est * 0.5, 'Estructuras · pedido de madera', 'madera')
+  cobrar(inicio('fabrica') || mesMadera, est * 0.25, 'Estructuras · madera en fábrica', 'madera')
+  cobrar(fin('fabrica') || mesMadera, est * 0.25, 'Estructuras · despacho a obra', 'madera')
 
   // Sin hito de montaje (solo estructuras sin montaje), la logística se cobra con el despacho.
   const despacho = fin('fabrica') || mesMadera
   const montaje = monto('montaje', 'logistica')
-  cobrar(inicio('montaje') || despacho, montaje / 2, 'Montaje y logística · inicio')
-  cobrar(fin('montaje') || despacho, montaje / 2, 'Montaje y logística · término')
+  cobrar(inicio('montaje') || despacho, montaje / 2, 'Montaje y logística · inicio', 'montaje')
+  cobrar(fin('montaje') || despacho, montaje / 2, 'Montaje y logística · término', 'montaje')
 
-  const obra = monto(...PARTIDAS_OBRA)
+  const envolvente = monto('envolvente')
+  const completa = monto('completa')
   const iniMontaje = inicio('montaje')
-  if (iniMontaje && obra > 0) {
+  if (iniMontaje && envolvente + completa > 0) {
     const finObra = [fin('montaje'), fin('envolvente'), fin('terminaciones')].filter((m): m is string => !!m).sort().at(-1)!
     const meses = finObra > iniMontaje
       ? mesesEntre(iniMontaje, finObra)
       : mesesEntre(iniMontaje, aMes(aNumero(iniMontaje) + DURACION_OBRA_MESES - 1))
-    meses.forEach((mes, i) => cobrar(mes, obra / meses.length, `Obra · mes ${i + 1} de ${meses.length}`))
+    meses.forEach((mes, i) => {
+      cobrar(mes, envolvente / meses.length, `Envolvente · mes ${i + 1} de ${meses.length}`, 'envolvente')
+      cobrar(mes, completa / meses.length, `Obra completa · mes ${i + 1} de ${meses.length}`, 'completa')
+    })
   }
   return res
 }
 
-// Rangos de probabilidad para repartir los totales de cada mes.
+export type ResumenMes = { filas: Record<Categoria, { m2: number; uf: number }>; total: number }
+
+// Por categoría: UF que se cobran en el mes y m² de los proyectos con hito en curso o cobro en ese
+// mes. Un proyecto cuenta una vez por categoría, pero puede estar en varias a la vez, por eso los m²
+// no se suman entre categorías.
+export function resumenMes(proyectos: ProyectoComercial[], ind: Indicadores, mes: string): ResumenMes {
+  const filas = Object.fromEntries(CATEGORIAS.map(c => [c.clave, { m2: 0, uf: 0 }])) as ResumenMes['filas']
+  let total = 0
+  for (const p of proyectos) {
+    const cobros = cobrosProyecto(p, ind).filter(c => c.mes === mes)
+    for (const c of cobros) { filas[c.categoria].uf += c.uf; total += c.uf }
+    for (const cat of CATEGORIAS) {
+      const enCurso = p.hitos.some(h => (cat.hitos as readonly TipoHito[]).includes(h.tipo) && h.desde <= mes && mes <= (h.hasta || h.desde))
+      if (enCurso || cobros.some(c => c.categoria === cat.clave)) filas[cat.clave].m2 += p.m2 || 0
+    }
+  }
+  return { filas, total }
+}
+
+// Rangos de probabilidad. El límite inferior entra en el rango (50% va en 50-70%). Un proyecto sin
+// probabilidad definida cuenta en el último rango.
 export const RANGOS_PROBABILIDAD = [
   { clave: 'alta', etiqueta: '70-100%', color: '#3a2d5e', min: 70 },
-  { clave: 'media', etiqueta: '40-60%', color: '#8f84bd', min: 40 },
-  { clave: 'baja', etiqueta: '0-30%', color: '#d9d3ea', min: 0 },
-  { clave: 'sin', etiqueta: 'Sin %', color: '#d8d3cb', min: -1 },
+  { clave: 'media', etiqueta: '50-70%', color: '#6a5da3', min: 50 },
+  { clave: 'baja', etiqueta: '30-50%', color: '#8f84bd', min: 30 },
+  { clave: 'minima', etiqueta: '10-30%', color: '#b9b0d8', min: 10 },
+  { clave: 'cero', etiqueta: '0% o sin %', color: '#d8d3cb', min: 0 },
 ] as const
 
 export function rangoProbabilidad(prob: number | null) {
-  if (prob == null) return 3
+  if (prob == null) return RANGOS_PROBABILIDAD.length - 1
   return RANGOS_PROBABILIDAD.findIndex(r => prob >= r.min)
 }
 
