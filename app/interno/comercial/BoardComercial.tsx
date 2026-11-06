@@ -453,7 +453,7 @@ function PanelIndicadores({ ind, onCambio, proyectos }: { ind: Indicadores; onCa
       <div style={{ background: C.dark, color: '#fff', borderRadius: 10, padding: '10px 16px', minWidth: 460, flex: '2 1 460px', display: 'flex', gap: 24, flexWrap: 'wrap' }}>
         <div style={{ flex: '1 1 180px' }}>
           <span style={{ display: 'block', fontSize: 11, opacity: 0.7, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Cartera visible</span>
-          <div style={{ fontSize: 24, marginTop: 4 }}>{formatoUF(seguro)} <span style={{ fontSize: 12, opacity: 0.7 }}>70-100%</span></div>
+          <div style={{ fontSize: 24, marginTop: 4 }}>{formatoUF(seguro)} <span style={{ fontSize: 12, opacity: 0.7 }}>70-100%{total > 0 ? ` · ${Math.round(seguro / total * 100)}% del total` : ''}</span></div>
           <div style={{ fontSize: 13, marginTop: 2 }}>{formatoUF(total - seguro)} <span style={{ fontSize: 12, opacity: 0.7 }}>bajo 70%{sinProb ? `, incluye ${sinProb} sin %` : ''}</span></div>
           <div style={{ fontSize: 12, opacity: 0.75, marginTop: 2 }}>
             {formatoUF(total)} total{sinValor ? ` · ${sinValor} sin valorizar` : ''}
