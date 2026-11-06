@@ -78,6 +78,22 @@ export default function BoardComercial({ proyectos: iniciales, indicadores, hoy,
     }
   }, [vista, meses, col])
 
+  // Con el cursor sobre los nombres, la rueda mueve la página completa; sobre la grilla, el board.
+  // Va con un listener nativo porque React registra la rueda como pasiva y no deja cancelarla.
+  const hayBoard = proyectos.length > 0
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!el) return
+    const alGirar = (e: WheelEvent) => {
+      if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return
+      if (!(e.target as Element).closest?.('[data-zona-pagina]')) return
+      e.preventDefault()
+      window.scrollBy({ top: e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY })
+    }
+    el.addEventListener('wheel', alGirar, { passive: false })
+    return () => el.removeEventListener('wheel', alGirar)
+  }, [hayBoard])
+
   const mesHoy = hoy.slice(0, 7)
   // Al abrir, el mes actual queda en la primera columna visible.
   useEffect(() => {
@@ -254,7 +270,7 @@ export default function BoardComercial({ proyectos: iniciales, indicadores, hoy,
         <div style={{ width: ANCHO_BANDA + ANCHO_NOMBRE + 8 + anchoGrilla, position: 'relative' }}>
           {/* Encabezado */}
           <div style={{ display: 'flex', position: 'sticky', top: 0, zIndex: 5, background: C.fondo, paddingBottom: 8 }}>
-            <div style={{ width: ANCHO_BANDA + ANCHO_NOMBRE + 8, flexShrink: 0, position: 'sticky', left: 0, background: C.fondo, zIndex: 6, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', fontSize: 11, color: C.muted, paddingLeft: 4, paddingBottom: vista === 'semanas' ? 18 : 0 }}>
+            <div data-zona-pagina style={{ width: ANCHO_BANDA + ANCHO_NOMBRE + 8, flexShrink: 0, position: 'sticky', left: 0, background: C.fondo, zIndex: 6, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', fontSize: 11, color: C.muted, paddingLeft: 4, paddingBottom: vista === 'semanas' ? 18 : 0 }}>
               <span>Bajo cada mes, solo proyectos con <strong style={{ fontWeight: 500, color: C.dark }}>70% o más</strong>: montajes · m² · UF de montajes que parten · cobros del mes</span>
               <span style={{ marginTop: 2 }}>Cifras: total · ponderado por probabilidad. Los proyectos bajo 70% se suman al pie</span>
               {sinMontaje > 0 && <span style={{ marginTop: 2 }}>{sinMontaje} sin mes de montaje</span>}
@@ -300,7 +316,7 @@ export default function BoardComercial({ proyectos: iniciales, indicadores, hoy,
           {grupos.map(g => (
             <div key={g.tipo} style={{ display: 'flex', marginBottom: 10 }}>
               {/* Banda del grupo, como en la referencia */}
-              <div style={{
+              <div data-zona-pagina style={{
                 width: ANCHO_BANDA, flexShrink: 0, position: 'sticky', left: 0, zIndex: 3, background: TIPOS_PROYECTO[g.tipo].color,
                 display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: 4,
               }}>
@@ -324,7 +340,7 @@ export default function BoardComercial({ proyectos: iniciales, indicadores, hoy,
 
           {/* Proyectos bajo 70%: mismos totales que arriba, con la barra por rango */}
           <div style={{ display: 'flex', marginTop: 6, borderTop: `2px solid ${C.dark}`, paddingTop: 8 }}>
-            <div style={{ width: ANCHO_BANDA + ANCHO_NOMBRE + 8, flexShrink: 0, position: 'sticky', left: 0, background: C.fondo, zIndex: 3, fontSize: 12, paddingLeft: 4, display: 'flex', flexDirection: 'column', gap: 3 }}>
+            <div data-zona-pagina style={{ width: ANCHO_BANDA + ANCHO_NOMBRE + 8, flexShrink: 0, position: 'sticky', left: 0, background: C.fondo, zIndex: 3, fontSize: 12, paddingLeft: 4, display: 'flex', flexDirection: 'column', gap: 3 }}>
               <strong style={{ fontWeight: 500 }}>Proyectos bajo 70% · {inciertos.length}</strong>
               <span style={{ fontSize: 11, color: C.muted }}>Montajes · m² · UF que parten · cobros. Barras por rango:</span>
               <span style={{ display: 'flex', flexWrap: 'wrap', gap: 8, fontSize: 11, color: C.muted }}>
@@ -347,7 +363,7 @@ export default function BoardComercial({ proyectos: iniciales, indicadores, hoy,
           {/* Montajes por semana */}
           {vista === 'semanas' && (
             <div style={{ display: 'flex', marginTop: 6, borderTop: `2px solid ${C.dark}`, paddingTop: 8 }}>
-              <div style={{ width: ANCHO_BANDA + ANCHO_NOMBRE + 8, flexShrink: 0, position: 'sticky', left: 0, background: C.fondo, zIndex: 3, fontSize: 12, paddingLeft: 4 }}>
+              <div data-zona-pagina style={{ width: ANCHO_BANDA + ANCHO_NOMBRE + 8, flexShrink: 0, position: 'sticky', left: 0, background: C.fondo, zIndex: 3, fontSize: 12, paddingLeft: 4 }}>
                 <strong style={{ fontWeight: 500 }}>Montajes por semana</strong>
               </div>
               <div style={{ display: 'flex' }}>
@@ -494,7 +510,7 @@ function Fila({ p, meses, vista, col, anchoGrilla, ind, onEditar, onCelda, onPro
   const porMes = vista === 'semanas' ? SEMANAS_POR_MES : 1
   return (
     <div style={{ display: 'flex', alignItems: 'stretch', flex: 1, borderBottom: `1px solid ${C.linea}` }}>
-      <div style={{
+      <div data-zona-pagina style={{
         width: ANCHO_NOMBRE, flexShrink: 0, position: 'sticky', left: ANCHO_BANDA + 4, zIndex: 2, display: 'flex', alignItems: 'stretch',
         background: `color-mix(in srgb, ${TIPOS_PROYECTO[p.tipo].color} 55%, #fff)`, borderBottom: `3px solid ${C.fondo}`, marginRight: 4,
       }}>
