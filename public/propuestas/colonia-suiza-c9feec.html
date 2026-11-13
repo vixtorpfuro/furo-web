@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Colonia Suiza · Propuesta FURŌ</title>
+<link rel="icon" href="/icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap">
+<style>
+/* Layout: visor 3D a la izquierda (llena la pantalla), panel de alcance a la derecha; en teléfono se apilan. */
+:root{
+  --dark:#141210; --off:#f5f3ee; --purple:#3a2d5e; --purple-mid:#52448a; --muted:#8a8278;
+  --bg:#f5f3ee; --panel:#fbfaf6; --fg:#141210; --line:#dcd6cb; --soft:#ebe7de; --accent:#3a2d5e; --accent-fg:#f5f3ee;
+  --ok:#3d6b45; --pv:#9a6a1f; --out:#8a8278;
+  --display:"DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --body:"DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141210; --panel:#1c1916; --fg:#f0ede6; --line:#3a352f; --soft:#26221e; --accent:#a99be0; --accent-fg:#141210;
+  --ok:#8fc39a; --pv:#e0b066; --out:#a39b90; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141210; --panel:#1c1916; --fg:#f0ede6; --line:#3a352f; --soft:#26221e; --accent:#a99be0; --accent-fg:#141210;
+  --ok:#8fc39a; --pv:#e0b066; --out:#a39b90; color-scheme:dark}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:14px;line-height:1.45}
+.app{display:grid;grid-template-columns:minmax(0,1fr) 400px;height:100%}
+.stage{position:relative;min-width:0;background:var(--soft);overflow:hidden}
+#c{display:block;width:100%;height:100%;touch-action:none}
+.panel{overflow-y:auto;background:var(--panel);border-left:1px solid var(--line);
+  padding-block:20px 32px;padding-left:max(20px, env(safe-area-inset-left,0px));padding-right:max(20px, env(safe-area-inset-right,0px));
+  display:flex;flex-direction:column;gap:22px;min-width:0}
+.eyebrow{font-size:11px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--purple-mid);margin:0 0 10px}
+h1{font-family:var(--display);font-weight:300;font-size:32px;line-height:1.1;letter-spacing:-.01em;margin:0;text-wrap:balance}
+h2{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 8px;font-weight:600}
+.sub{color:var(--muted);margin:6px 0 0}
+.seg{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{all:unset;cursor:pointer;padding:9px 10px;text-align:center;font-weight:500}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-fg)}
+.seg button:focus-visible,.chip:focus-visible,.layer input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.hint{font-size:12.5px;color:var(--muted);margin:8px 0 0}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:13px}
+td{padding:5px 0;border-bottom:1px solid var(--line);vertical-align:top}
+td:last-child{text-align:right;white-space:nowrap;padding-left:10px}
+tr.total td{font-weight:600;border-bottom:none;padding-top:8px}
+.layers{display:flex;flex-direction:column;gap:2px}
+.layer{display:grid;grid-template-columns:18px 14px 1fr auto;gap:8px;align-items:center;padding:5px 0;cursor:pointer}
+.layer input{margin:0;accent-color:var(--purple-mid)}
+.sw{width:14px;height:14px;border-radius:3px;border:1px solid rgba(0,0,0,.18)}
+.layer .q{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}
+.layer.out .nm{color:var(--out)}
+.tag{font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:2px 6px;border-radius:4px;margin-left:6px;vertical-align:1px}
+.tag.in{background:color-mix(in srgb,var(--ok) 16%,transparent);color:var(--ok)}
+.tag.pv{background:color-mix(in srgb,var(--pv) 18%,transparent);color:var(--pv)}
+.tag.out{background:color-mix(in srgb,var(--out) 18%,transparent);color:var(--out)}
+ul.lst{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
+.steps{display:flex;flex-direction:column;gap:8px}
+.step{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;padding:10px;border:1px solid var(--line);border-radius:8px;cursor:pointer;background:transparent;color:inherit;font:inherit;text-align:left}
+.step[aria-pressed="true"]{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,transparent)}
+.step b{display:block}
+.step .n{font-family:var(--display);font-size:22px;line-height:1;color:var(--accent);font-weight:300}
+.step small{color:var(--muted)}
+.flow{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:6px;align-items:center;font-size:12px;text-align:center}
+.flow div{border:1px solid var(--line);border-radius:6px;padding:7px 4px}
+.flow .a{color:var(--muted)}
+.note{font-size:12.5px;color:var(--fg);background:var(--soft);border-radius:8px;padding:12px 14px}
+.note p{margin:0 0 6px}.note p:last-child{margin:0}
+/* overlay sobre el visor */
+.toolbar{position:absolute;left:calc(12px + env(safe-area-inset-left,0px));top:12px;display:flex;flex-wrap:wrap;gap:6px;max-width:calc(100% - 24px)}
+.chip{all:unset;cursor:pointer;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:500}
+.chip[aria-pressed="true"]{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
+.explode{position:absolute;left:calc(12px + env(safe-area-inset-left,0px));bottom:12px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 12px;display:flex;gap:10px;align-items:center;font-size:12.5px}
+.explode input{width:140px;accent-color:var(--purple-mid)}
+.labels{position:absolute;inset:0;pointer-events:none}
+.lbl{font-family:var(--body);position:absolute;transform:translate(-50%,-100%);white-space:nowrap;font-size:11.5px;font-weight:500;color:#141210;
+  background:rgba(251,250,246,.94);border:1px solid rgba(20,18,16,.18);border-radius:5px;padding:3px 7px;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.lbl::after{content:"";position:absolute;left:50%;bottom:-7px;width:1px;height:7px;background:rgba(20,18,16,.5)}
+.lbl.out{color:#5d5750;font-style:italic;background:rgba(235,231,222,.92)}
+.lbl.big{font-family:var(--display);font-size:13px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:#3a2d5e}
+.badge{position:absolute;right:calc(12px + env(safe-area-inset-right,0px));top:12px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:12px;color:var(--muted);max-width:46%}
+@media (max-width:1180px){.badge{display:none}}
+@media (max-width:860px){
+  .app{grid-template-columns:1fr;grid-template-rows:62vh auto;height:auto}
+  html,body{height:auto}
+  .panel{border-left:none;border-top:1px solid var(--line);overflow:visible}
+  .badge{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <section class="stage" aria-label="Modelo 3D de los 3 pareos">
+    <canvas id="c"></canvas>
+    <div class="labels" id="labels"></div>
+    <div class="toolbar" role="group" aria-label="Vistas">
+      <button class="chip" id="v-all" aria-pressed="true">Conjunto 3 pareos</button>
+      <button class="chip" id="v-one" aria-pressed="false">Un pareo de cerca</button>
+      <button class="chip" id="v-lbl" aria-pressed="true">Rótulos</button>
+    </div>
+    <div class="badge" id="badge">Arrastra para girar · clic derecho o Mayús para desplazar · rueda o pellizco para acercar</div>
+    <label class="explode" for="ex">Separar capas <input id="ex" type="range" min="0" max="1" step="0.01" value="0"></label>
+  </section>
+
+  <aside class="panel">
+    <header>
+      <p class="eyebrow">FURŌ · Propuesta comercial</p>
+      <h1>Colonia Suiza · alcance de la propuesta</h1>
+      <p class="sub">Bravo Izquierdo · Punta Arenas · 3 pareos, 6 viviendas. Estructura en madera laminada, entregada dimensionada en la fábrica de Santiago.</p>
+    </header>
+
+    <div>
+      <h2>Alternativa estructural</h2>
+      <div class="seg" role="group" aria-label="Alternativa">
+        <button id="alt-marco" aria-pressed="true">Marco</button>
+        <button id="alt-arco" aria-pressed="false">Arco</button>
+      </div>
+      <p class="hint" id="alt-hint"></p>
+      <table id="alt-table" aria-label="Cantidades por pareo"></table>
+    </div>
+
+    <div>
+      <h2>Qué se ve en el modelo</h2>
+      <div class="layers" id="layers"></div>
+      <p class="hint">Cantidades por pareo, según la propuesta del 10/11. Lo gris y transparente queda fuera del alcance.</p>
+    </div>
+
+    <div>
+      <h2>Etapas del trabajo</h2>
+      <div class="steps">
+        <button class="step" id="st1" aria-pressed="false"><span class="n">1</span><span><b>Modelación BIM + cálculo estructural</b><small>Se modela un pareo tipo (187,6 m² × 1 UF/m² = 187,60 UF) y se replica sin costo en los otros dos. 60% anticipo, 40% contra entrega del cálculo y el IFC. Plazo 4 a 6 semanas.</small></span></button>
+        <button class="step" id="st2" aria-pressed="true"><span class="n">2</span><span><b>Suministro: materiales + dimensionado</b><small>Piezas cortadas, preparadas y rotuladas por componente y pareo para los 3 pareos, en una sola tanda. 100% anticipado. Dimensionado en 2 a 3 días.</small></span></button>
+      </div>
+    </div>
+
+    <div>
+      <h2>Dónde termina el alcance</h2>
+      <div class="flow" aria-label="Recorrido de las piezas">
+        <div><b>Fábrica Santiago</b><br><span class="tag in">Incluido</span></div><span class="a">→</span>
+        <div><b>Envío a Punta Arenas</b><br><span class="tag pv">P/V</span></div><span class="a">→</span>
+        <div><b>Armado y montaje</b><br><span class="tag out">Cliente</span></div>
+      </div>
+    </div>
+
+    <div>
+      <h2>Incluido <span class="tag in">en el total</span></h2>
+      <ul class="lst">
+        <li>Materiales cubicados desde el modelo: vigas laminadas, cadenetas, OSB HWR 11,1 mm, Top Notch 18 mm, fijaciones, conectores y herrajes. Lana de oveja 50 mm en rollos, sin cortar.</li>
+        <li>Dimensionado en fábrica según planos de fabricación.</li>
+        <li>Cálculo estructural firmado, resistencia al fuego, planos de fundaciones, BIM LOD 350, cubicación, planos de armado y montaje, IFC final.</li>
+      </ul>
+    </div>
+    <div>
+      <h2>Servicios adicionales <span class="tag pv">por valorizar</span></h2>
+      <ul class="lst">
+        <li>Capacitación de montaje y armado</li>
+        <li>Seguimiento en obra</li>
+        <li>Logística y envío a Punta Arenas</li>
+        <li>Certificación de estructuras montadas</li>
+        <li>Armado de marcos antes de la obra (referencial: <span id="armado"></span>)</li>
+      </ul>
+    </div>
+    <div>
+      <h2>Fuera del alcance <span class="tag out">exclusiones</span></h2>
+      <ul class="lst">
+        <li>Montaje en obra (lo hace el cliente con los planos FURŌ)</li>
+        <li>Transporte, flete marítimo, carga, descarga y seguros</li>
+        <li>Fundaciones, radieres y obras civiles</li>
+        <li>Terminaciones, revestimientos, ventanas y puertas</li>
+        <li>Arquitectura, especialidades y trámite municipal</li>
+        <li>Topografía y mecánica de suelos</li>
+        <li>Viajes y viáticos del equipo FURŌ</li>
+      </ul>
+    </div>
+
+    <div class="note">
+      <h2>Medidas del modelo</h2>
+      <p><b>De los planos</b> (anteproyecto Colonia Suiza, PDF): sitios de 8,00 × 18,30 m; antejardín 4,50 m; ancho de vivienda 4,95 m; franja lateral de estacionamiento 3,05 m; altura piso a piso 2,65 m; vivienda pareada con estacionamiento hacia afuera, calle Lucerna.</p>
+      <p><b>De la propuesta</b>: muro 15 piezas por 76,5 ml (5,10 m de alto); techo 10 por 57,1 ml (5,71 m); piso 18 por 102,78 ml; colectoras de 9 m (fondo de la vivienda); vigas de entrepiso de 5,4 m; medianero de 270 mm.</p>
+      <p><b>Referencial</b>: separación de marcos, alero, espesor de muros exteriores y fondo de 9,0 m según la modulación FURŌ; se confirman en la etapa de modelación BIM y cálculo. Este esquema explica el alcance y no reemplaza los planos de fabricación.</p>
+    </div>
+  </aside>
+</div>
+
+<script>
+function showErr(m){const b=document.getElementById("badge"); if(b){b.style.display="block"; b.textContent="Error: "+m;}}
+try{(function(){
+const ALT = {
+  marco:{hint:"Con componente de piso: el marco se cierra abajo y forma un anillo completo.",
+    rows:[["Componente de piso","18 · 102,78 ml"],["Componentes de muro","15 · 76,5 ml"],["Componentes de techo","10 · 57,1 ml"],["Bastidores muro / techo","12 / 8"],["Vigas entrepiso 5,4 m + colectoras 9 m","48 + 4"],["Vigas laminadas","138 pzas · 10,04 m³"],["Lana de oveja","47 rollos"],["OSB HWR / Top Notch","218 / 34"],["Suministro por pareo","840,85 UF"],["Total 3 pareos + BIM (neto)","2.710,15 UF + IVA"]],
+    armado:"326,10 UF por pareo"},
+  arco:{hint:"Sin componente de piso: el marco se apoya directo en la fundación. Cerca de 23% menos por pareo.",
+    rows:[["Componente de piso","No"],["Componentes de muro","15 · 76,5 ml"],["Componentes de techo","10 · 57,1 ml"],["Bastidores muro / techo","12 / 8"],["Vigas entrepiso 5,4 m + colectoras 9 m","48 + 4"],["Vigas laminadas","102 pzas · 8,74 m³"],["Lana de oveja","35 rollos"],["OSB HWR / Top Notch","170 / 34"],["Suministro por pareo","649,68 UF"],["Total 3 pareos + BIM (neto)","2.136,64 UF + IVA"]],
+    armado:"228,46 UF por pareo"}
+};
+const LAYERS = [
+  {k:"piso",  nm:"Componente de piso", q:"18", col:"#d7ae73", on:true, marcoOnly:true},
+  {k:"muro",  nm:"Componentes de muro", q:"15", col:"#b9824a", on:true},
+  {k:"med",   nm:"Medianero 270 mm", q:"5", col:"#7e4e2a", on:true},
+  {k:"techo", nm:"Componentes de techo", q:"10", col:"#a06a38", on:true},
+  {k:"bast",  nm:"Bastidores muro / techo", q:"12 / 8", col:"#e2c9a0", on:true},
+  {k:"entre", nm:"Vigas de entrepiso y colectoras", q:"48 + 4", col:"#cf9a5c", on:true},
+  {k:"tn",    nm:"Placa Top Notch 18 mm", q:"34", col:"#c7a467", on:true},
+  {k:"osb",   nm:"Placas OSB HWR 11,1 mm", q:"218", col:"#d9c48e", on:false},
+  {k:"lana",  nm:"Aislación lana de oveja", q:"47 rollos", col:"#efe9dc", on:false},
+  {k:"fuera", nm:"Radier, estacionamiento y terreno", q:"fuera", col:"#a8a29a", on:true, out:true},
+  {k:"envol", nm:"Terminaciones, ventanas y revestimientos", q:"fuera", col:"#c9c4bb", on:false, out:true}
+];
+const ALPHA={osb:.55,lana:.85,fuera:.35,envol:.14,bast:.6};
+let alt="marco";
+const LM={}; LAYERS.forEach(l=>{LM[l.k]=l; const h=l.col.slice(1); l.rgb=[0,2,4].map(i=>parseInt(h.substr(i,2),16));});
+
+/* ---------- geometría: lista de cajas ---------- */
+const boxes=[];
+function box(layer,p,w,h,d,x,y,z,o={}){ const b={layer,p,w,h,d,x,y,z,lvl:o.lvl,edges:o.edges!==false,marcoOnly:!!o.marcoOnly,ground:layer==="fuera"&&y<0.01}; boxes.push(b); return b; }
+const LOT_W=8, LOT_D=18.3, FRONT=4.5, HW=4.95, HD=9.0, WH=5.1, EP=2.65, WT=0.2, MT=0.27, CPW=3.05;
+const X0=-24, Z0=-(FRONT+HD/2);
+const FR=5, BAY=HD/(FR-1);
+const X=x=>x+X0, Z=z=>z+Z0;
+for(let p=0;p<3;p++){
+  const p0=16*p, oL=p0+CPW, med=p0+8, oR=p0+8+HW;
+  const houses=[{x0:oL,x1:med,outer:oL,side:-1},{x0:med,x1:oR,outer:oR,side:1}];
+  // radier primero (siempre al fondo)
+  houses.forEach(h=>{const cx=(h.x0+h.x1)/2; box("fuera",p,h.x1-h.x0+0.3,0.15,HD+0.4,X(cx),-0.075,Z(FRONT+HD/2));});
+  for(let i=0;i<FR;i++){
+    const z=FRONT+i*BAY;
+    box("muro",p,WT,WH,WT,X(oL+WT/2),WH/2,Z(z));
+    box("muro",p,WT,WH,WT,X(oR-WT/2),WH/2,Z(z));
+    box("med",p,MT,WH,WT,X(med),WH/2,Z(z));
+  }
+  houses.forEach(h=>{
+    const w=h.x1-h.x0, cx=(h.x0+h.x1)/2;
+    const roofLen=w+0.4, rcx=cx+h.side*0.2;
+    for(let i=0;i<FR;i++) box("techo",p,roofLen,0.3,WT,X(rcx),WH+0.15,Z(FRONT+i*BAY));
+    for(let b=0;b<FR-1;b++) box("bast",p,w-0.1,0.16,BAY-WT-0.04,X(cx),WH+0.1,Z(FRONT+b*BAY+BAY/2),{lvl:3});
+    for(let j=0;j<9;j++) box("piso",p,w,0.24,WT,X(cx),0.12,Z(FRONT+j*HD/8));
+    const inL=h.x0+(h.side<0?WT:MT/2), inR=h.x1-(h.side<0?MT/2:WT);
+    box("entre",p,0.14,0.3,HD,X(inL+0.07),EP-0.39,Z(FRONT+HD/2));
+    box("entre",p,0.14,0.3,HD,X(inR-0.07),EP-0.39,Z(FRONT+HD/2));
+    for(let v=0;v<24;v++) box("entre",p,inR-inL-0.28,0.24,0.07,X((inL+inR)/2),EP-0.138,Z(FRONT+0.1+v*(HD-0.2)/23),{edges:false});
+    box("tn",p,inR-inL,0.018,HD,X((inL+inR)/2),EP-0.009,Z(FRONT+HD/2));
+    box("envol",p,w+0.05,WH+0.3,HD+0.3,X(cx),(WH+0.3)/2,Z(FRONT+HD/2),{edges:false});
+    box("osb",p,0.012,WH,HD+WT,X(h.outer+h.side*0.006),WH/2,Z(FRONT+HD/2),{edges:false});
+    box("osb",p,w+0.4,0.012,HD+WT,X(rcx),WH+0.31,Z(FRONT+HD/2),{edges:false,lvl:3});
+    box("osb",p,w,0.012,HD+WT,X(cx),0.006,Z(FRONT+HD/2),{edges:false,marcoOnly:true,lvl:0});
+    box("lana",p,w-0.2,0.05,HD-0.2,X(cx),WH+0.08,Z(FRONT+HD/2),{edges:false,lvl:3});
+  });
+  [oL+WT/2,med,oR-WT/2].forEach(x=>{
+    for(let b=0;b<FR-1;b++){
+      const zc=FRONT+b*BAY+BAY/2;
+      box("bast",p,0.12,WH-0.1,BAY-WT-0.04,X(x),WH/2,Z(zc));
+      box("lana",p,0.14,WH-0.4,BAY-WT-0.3,X(x),WH/2,Z(zc),{edges:false});
+    }
+  });
+  box("fuera",p,CPW-0.1,3.37,5.5,X(p0+CPW/2),3.37/2,Z(FRONT+2.75));
+  box("fuera",p,CPW-0.1,3.37,5.5,X(p0+8+HW+CPW/2),3.37/2,Z(FRONT+2.75));
+}
+
+/* ---------- cámara y proyección (dibujo 2D, sin WebGL) ---------- */
+const canvas=document.getElementById("c"), ctx=canvas.getContext("2d");
+const cam={tx:0,ty:1.5,tz:0,r:56,th:2.52,ph:1.0,fov:35*Math.PI/180};
+let C,R,U,Fw,W=1,H=1,FOC=1;
+function setupCam(){
+  const sp=Math.sin(cam.ph);
+  C=[cam.tx+cam.r*sp*Math.sin(cam.th), cam.ty+cam.r*Math.cos(cam.ph), cam.tz+cam.r*sp*Math.cos(cam.th)];
+  Fw=norm([cam.tx-C[0],cam.ty-C[1],cam.tz-C[2]]);
+  R=norm(cross(Fw,[0,1,0])); U=cross(R,Fw);
+  FOC=(H/2)/Math.tan(cam.fov/2);
+}
+function norm(v){const l=Math.hypot(v[0],v[1],v[2])||1;return [v[0]/l,v[1]/l,v[2]/l];}
+function cross(a,b){return [a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];}
+function proj(x,y,z){const dx=x-C[0],dy=y-C[1],dz=z-C[2];const zz=dx*Fw[0]+dy*Fw[1]+dz*Fw[2];if(zz<0.2)return null;
+  return [W/2+(dx*R[0]+dy*R[1]+dz*R[2])/zz*FOC, H/2-(dx*U[0]+dy*U[1]+dz*U[2])/zz*FOC, zz];}
+const LIGHT=norm([-0.45,1,0.55]);
+const FACES=[ // normal, 4 esquinas en signos (sx,sy,sz)
+  {n:[1,0,0], c:[[1,-1,-1],[1,1,-1],[1,1,1],[1,-1,1]]},
+  {n:[-1,0,0],c:[[-1,-1,1],[-1,1,1],[-1,1,-1],[-1,-1,-1]]},
+  {n:[0,1,0], c:[[-1,1,-1],[-1,1,1],[1,1,1],[1,1,-1]]},
+  {n:[0,-1,0],c:[[-1,-1,1],[-1,-1,-1],[1,-1,-1],[1,-1,1]]},
+  {n:[0,0,1], c:[[-1,-1,1],[1,-1,1],[1,1,1],[-1,1,1]]},
+  {n:[0,0,-1],c:[[1,-1,-1],[-1,-1,-1],[-1,1,-1],[1,1,-1]]}];
+
+/* ---------- estado ---------- */
+const state={labels:true, explode:0, stage:2, view:"all"};
+const EXP={piso:0, fuera:0, envol:0, muro:1, med:1, bast:1, lana:1, osb:1, entre:2, tn:2.06, techo:3};
+function layerVisible(k){const L=LM[k]; if(!L) return true; if(!L.on) return false; if(L.marcoOnly && alt!=="marco") return false; return true;}
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+let dirty=true;
+function draw(){
+  ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+  ctx.clearRect(0,0,W,H);
+  setupCam();
+  // terreno
+  const dark=matchMedia("(prefers-color-scheme: dark)").matches && document.documentElement.dataset.theme!=="light" || document.documentElement.dataset.theme==="dark";
+  poly([[X(-30),-0.16,Z(-12)],[X(78),-0.16,Z(-12)],[X(78),-0.16,Z(40)],[X(-30),-0.16,Z(40)]], dark?"#2b2723":"#e6e1d6");
+  poly([[X(-30),-0.155,Z(-8)],[X(78),-0.155,Z(-8)],[X(78),-0.155,Z(-0.6)],[X(-30),-0.155,Z(-0.6)]], dark?"#3a352f":"#c4beb3");
+  ctx.strokeStyle=dark?"#6d665d":"#8a8278"; ctx.lineWidth=1;
+  for(let i=0;i<=6;i++) line([X(i*LOT_W),-0.15,Z(0)],[X(i*LOT_W),-0.15,Z(LOT_D)]);
+  line([X(0),-0.15,Z(0)],[X(48),-0.15,Z(0)]); line([X(0),-0.15,Z(LOT_D)],[X(48),-0.15,Z(LOT_D)]);
+  // caras
+  const faces=[], first=[];
+  const ex=state.explode*5.5;
+  for(const b of boxes){
+    if(!layerVisible(b.layer)) continue;
+    if(b.marcoOnly && alt!=="marco") continue;
+    const oy=(b.lvl!=null?b.lvl:(EXP[b.layer]||0))*ex;
+    const dim = state.stage===1 && b.p!==1;
+    const L=LM[b.layer]; let a=ALPHA[b.layer]||1; if(dim) a=Math.min(a,.12);
+    for(const f of FACES){
+      const fc=[b.x+f.n[0]*b.w/2, b.y+oy+f.n[1]*b.h/2, b.z+f.n[2]*b.d/2];
+      if(f.n[0]*(C[0]-fc[0])+f.n[1]*(C[1]-fc[1])+f.n[2]*(C[2]-fc[2])<=0) continue;
+      const pts=[]; let ok=true;
+      for(const s of f.c){const q=proj(b.x+s[0]*b.w/2,b.y+oy+s[1]*b.h/2,b.z+s[2]*b.d/2); if(!q){ok=false;break;} pts.push(q);}
+      if(!ok) continue;
+      const sh=0.62+0.38*Math.max(0,f.n[0]*LIGHT[0]+f.n[1]*LIGHT[1]+f.n[2]*LIGHT[2]);
+      const col=`rgba(${L.rgb.map(v=>Math.round(v*sh)).join(",")},${a})`;
+      const dep=Math.hypot(C[0]-fc[0],C[1]-fc[1],C[2]-fc[2]);
+      (b.ground?first:faces).push({pts,col,dep,edge:b.edges&&!dim});
+    }
+  }
+  faces.sort((a,b)=>b.dep-a.dep);
+  const edgeCol=dark?"rgba(0,0,0,.45)":"rgba(20,18,16,.3)";
+  for(const f of first.concat(faces)){
+    ctx.beginPath(); f.pts.forEach((q,i)=>i?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1])); ctx.closePath();
+    ctx.fillStyle=f.col; ctx.fill();
+    if(f.edge){ctx.strokeStyle=edgeCol; ctx.lineWidth=0.6; ctx.stroke();}
+  }
+  placeLabels();
+}
+function poly(P,col){const q=P.map(p=>proj(...p)); if(q.some(v=>!v))return; ctx.beginPath(); q.forEach((v,i)=>i?ctx.lineTo(v[0],v[1]):ctx.moveTo(v[0],v[1])); ctx.closePath(); ctx.fillStyle=col; ctx.fill();}
+function line(a,b){const p=proj(...a),q=proj(...b); if(!p||!q)return; ctx.beginPath(); ctx.moveTo(p[0],p[1]); ctx.lineTo(q[0],q[1]); ctx.stroke();}
+
+/* ---------- rótulos ---------- */
+const p0=16;
+const LBL=[
+  {t:"Componentes de muro · pilar del marco 5,10 m", k:"muro", v:[X(p0+8+HW-0.1),WH*0.8,Z(FRONT)]},
+  {t:"Medianero 270 mm", k:"med", v:[X(p0+8),WH*0.62,Z(FRONT)]},
+  {t:"Componentes de techo · 5,71 m", k:"techo", v:[X(p0+CPW+1.2),WH+0.3,Z(FRONT)]},
+  {t:"Bastidores de muro", k:"bast", v:[X(p0+CPW),WH*0.45,Z(FRONT+BAY*1.5)]},
+  {t:"Bastidores de techo", k:"bast", lvl:3, v:[X(p0+8+HW/2),WH+0.2,Z(FRONT+BAY*2.5)]},
+  {t:"Vigas de entrepiso 5,4 m + colectoras 9 m", k:"entre", v:[X(p0+8+HW/2),EP-0.2,Z(FRONT)]},
+  {t:"Placa Top Notch 18 mm", k:"tn", v:[X(p0+CPW+HW/2),EP,Z(FRONT+0.4)]},
+  {t:"Componente de piso (solo Marco)", k:"piso", v:[X(p0+CPW+HW/2),0.25,Z(FRONT)]},
+  {t:"OSB HWR 11,1 mm", k:"osb", v:[X(p0+8+HW),WH*0.3,Z(FRONT+HD*0.6)]},
+  {t:"Lana de oveja 50 mm", k:"lana", v:[X(p0+CPW),WH*0.25,Z(FRONT+BAY*2.5)]},
+  {t:"Radier y fundaciones · fuera", k:"fuera", out:true, v:[X(p0+CPW+0.2),0,Z(FRONT+HD)]},
+  {t:"Estacionamiento lateral · fuera", k:"fuera", out:true, v:[X(p0+CPW/2),3.37,Z(FRONT+2.75)]},
+  {t:"Terminaciones, ventanas, revestimientos · fuera", k:"envol", out:true, v:[X(p0+8+HW/2),WH+0.5,Z(FRONT+HD/2)]},
+  {t:"Calle Lucerna", k:null, v:[X(24),0,Z(-4.5)]},
+  {t:"Pareo 1", big:true, set:"all", v:[X(40),WH+1.2,Z(FRONT)]},
+  {t:"Pareo 2", big:true, set:"all", v:[X(24),WH+1.2,Z(FRONT)]},
+  {t:"Pareo 3", big:true, set:"all", v:[X(8),WH+1.2,Z(FRONT)]},
+  {t:"Pareo tipo · se modela y calcula", big:true, set:"bim", v:[X(24),WH+1.2,Z(FRONT)]},
+  {t:"Se replica sin costo", set:"bim", out:true, v:[X(8),WH+1.2,Z(FRONT)]},
+  {t:"Se replica sin costo", set:"bim", out:true, v:[X(40),WH+1.2,Z(FRONT)]},
+];
+const host=document.getElementById("labels");
+LBL.forEach(l=>{ l.el=document.createElement("div"); l.el.className="lbl"+(l.out?" out":"")+(l.big?" big":""); l.el.textContent=l.t; host.appendChild(l.el); });
+function placeLabels(){
+  const ex=state.explode*5.5;
+  LBL.forEach(l=>{
+    let show=state.labels;
+    if(l.set==="all") show=show&&state.stage===2&&state.view==="all";
+    if(l.set==="bim") show=show&&state.stage===1;
+    if(l.k) show=show&&layerVisible(l.k)&&state.stage===2&&(state.view==="one"||state.explode>0.05);
+    if(!l.set&&!l.k) show=show&&state.view==="all";
+    let q=null;
+    if(show){ q=proj(l.v[0], l.v[1]+(l.k?(l.lvl!=null?l.lvl:(EXP[l.k]||0))*ex:0), l.v[2]); if(!q||q[0]<0||q[0]>W||q[1]<0||q[1]>H) show=false; }
+    l.el.hidden=!show;
+    if(show){ l.el.style.left=q[0]+"px"; l.el.style.top=(q[1]-6)+"px"; }
+  });
+}
+
+/* ---------- interacción ---------- */
+const pts=new Map(); let pinch=null, panMode=false;
+canvas.addEventListener("pointerdown",e=>{canvas.setPointerCapture(e.pointerId);pts.set(e.pointerId,{x:e.clientX,y:e.clientY});panMode=e.button===2||e.shiftKey;anim=null;});
+canvas.addEventListener("pointermove",e=>{
+  if(!pts.has(e.pointerId))return; const prev=pts.get(e.pointerId); pts.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  if(pts.size===2){const a=[...pts.values()];const d=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y);if(pinch){cam.r=clampR(cam.r*pinch/d);}pinch=d;dirty=true;return;}
+  const dx=e.clientX-prev.x, dy=e.clientY-prev.y;
+  if(panMode){const k=cam.r*0.0016; cam.tx+=(-dx*R[0]+dy*Fw[0]/Math.hypot(Fw[0],Fw[2]))*k; cam.tz+=(-dx*R[2]+dy*Fw[2]/Math.hypot(Fw[0],Fw[2]))*k;}
+  else {cam.th-=dx*0.006; cam.ph=Math.max(0.12,Math.min(1.5,cam.ph-dy*0.006));}
+  dirty=true;
+});
+const up=e=>{pts.delete(e.pointerId);if(pts.size<2)pinch=null;};
+canvas.addEventListener("pointerup",up); canvas.addEventListener("pointercancel",up);
+canvas.addEventListener("contextmenu",e=>e.preventDefault());
+const clampR=r=>Math.max(6,Math.min(160,r));
+canvas.addEventListener("wheel",e=>{e.preventDefault();cam.r=clampR(cam.r*Math.exp(e.deltaY*0.001));dirty=true;},{passive:false});
+
+/* ---------- UI ---------- */
+const lh=document.getElementById("layers");
+LAYERS.forEach(l=>{
+  const id="ly-"+l.k;
+  const row=document.createElement("label"); row.className="layer"+(l.out?" out":""); row.htmlFor=id;
+  const cb=document.createElement("input"); cb.type="checkbox"; cb.id=id; cb.checked=l.on;
+  const sw=document.createElement("span"); sw.className="sw"; sw.style.background=l.col;
+  const nm=document.createElement("span"); nm.className="nm"; nm.textContent=l.nm;
+  const q=document.createElement("span"); q.className="q"; q.textContent=l.q;
+  row.append(cb,sw,nm,q); l.row=row;
+  cb.addEventListener("change",e=>{l.on=e.target.checked; dirty=true;});
+  lh.appendChild(row);
+});
+function renderAlt(){
+  const a=ALT[alt];
+  document.getElementById("alt-hint").textContent=a.hint;
+  const t=document.getElementById("alt-table"); t.textContent="";
+  a.rows.forEach((r,i)=>{const tr=t.insertRow(); if(i===a.rows.length-1) tr.className="total"; tr.insertCell().textContent=r[0]; tr.insertCell().textContent=r[1];});
+  document.getElementById("armado").textContent=a.armado;
+  document.getElementById("alt-marco").setAttribute("aria-pressed",alt==="marco");
+  document.getElementById("alt-arco").setAttribute("aria-pressed",alt==="arco");
+  const pisoRow=LM.piso.row; pisoRow.style.opacity=alt==="marco"?1:.4;
+  pisoRow.querySelector(".q").textContent=alt==="marco"?"18":"no aplica";
+  LM.osb.row.querySelector(".q").textContent=alt==="marco"?"218":"170";
+  LM.lana.row.querySelector(".q").textContent=alt==="marco"?"47 rollos":"35 rollos";
+  dirty=true;
+}
+document.getElementById("alt-marco").onclick=()=>{alt="marco";renderAlt();};
+document.getElementById("alt-arco").onclick=()=>{alt="arco";renderAlt();};
+document.getElementById("ex").oninput=e=>{state.explode=+e.target.value; const B=VIEWS[state.view]; anim=null; cam.ty=B.ty+state.explode*8; cam.r=Math.max(cam.r,B.r+state.explode*(state.view==="one"?22:14)); dirty=true;};
+function setStage(s){state.stage=s; document.getElementById("st1").setAttribute("aria-pressed",s===1); document.getElementById("st2").setAttribute("aria-pressed",s===2);
+  document.getElementById("badge").textContent = s===1 ? "Etapa 1: se modela y calcula un pareo tipo; los otros dos usan el mismo modelo." : "Etapa 2: se suministran las piezas de los 3 pareos. Usa «Un pareo de cerca» para ver cada pieza rotulada.";
+  dirty=true; if(s===1) goView("all");}
+document.getElementById("st1").onclick=()=>setStage(1);
+document.getElementById("st2").onclick=()=>setStage(2);
+document.getElementById("v-lbl").onclick=e=>{state.labels=!state.labels; e.target.setAttribute("aria-pressed",state.labels); dirty=true;};
+
+const VIEWS={all:{tx:0,ty:1.5,tz:0,r:56,th:2.52,ph:1.0}, one:{tx:0,ty:2.4,tz:0,r:28,th:2.42,ph:1.1}};
+let anim=null;
+function goView(v){
+  state.view=v;
+  document.getElementById("v-all").setAttribute("aria-pressed",v==="all");
+  document.getElementById("v-one").setAttribute("aria-pressed",v==="one");
+  const to={...VIEWS[v]}; to.ty+=state.explode*8; to.r+=state.explode*(v==="one"?22:14);
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches){Object.assign(cam,to);dirty=true;return;}
+  anim={from:{...cam},to,t0:performance.now()};
+}
+document.getElementById("v-all").onclick=()=>goView("all");
+document.getElementById("v-one").onclick=()=>goView("one");
+
+function resize(){const r=canvas.parentElement.getBoundingClientRect(); W=r.width; H=r.height; canvas.width=Math.round(W*devicePixelRatio); canvas.height=Math.round(H*devicePixelRatio); canvas.style.width=W+"px"; canvas.style.height=H+"px"; dirty=true;}
+new ResizeObserver(resize).observe(canvas.parentElement); resize();
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change",()=>dirty=true);
+function loop(now){
+  if(anim){const k=Math.min((now-anim.t0)/700,1), e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
+    for(const key of ["tx","ty","tz","r","th","ph"]) cam[key]=anim.from[key]+(anim.to[key]-anim.from[key])*e;
+    dirty=true; if(k>=1) anim=null;}
+  if(dirty){dirty=false; draw();}
+  requestAnimationFrame(loop);
+}
+renderAlt(); setStage(2); requestAnimationFrame(loop);
+})();}catch(err){showErr(err.message+" · "+(err.stack||"").split("\n")[1]);}
+</script>
+</body>
+</html>

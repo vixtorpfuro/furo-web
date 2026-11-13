@@ -16,6 +16,8 @@ const nextConfig: NextConfig = {
     return [
       { source: "/interno/:path*", headers: cabecerasInternas },
       { source: "/api/interno/:path*", headers: cabecerasInternas },
+      // Propuestas para clientes: enlace directo, sin indexar en buscadores.
+      { source: "/propuestas/:path*", headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }] },
     ];
   },
 };
