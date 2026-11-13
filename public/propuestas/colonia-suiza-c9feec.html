@@ -51,6 +51,18 @@ tr.total td{font-weight:600;border-bottom:none;padding-top:8px}
 .sw{width:14px;height:14px;border-radius:3px;border:1px solid rgba(0,0,0,.18)}
 .layer .q{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}
 .layer.out .nm{color:var(--out)}
+.lgrp{font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin:10px 0 2px;padding-top:8px;border-top:1px solid var(--line)}
+.lgrp:first-child{margin-top:0;padding-top:0;border-top:none}
+.lgrp.in{color:var(--ok)} .lgrp.obra{color:#b0661a} .lgrp.out{color:var(--out)}
+.det{display:flex;flex-direction:column;gap:12px}
+.det figure{margin:0}
+.det img{display:block;width:100%;max-height:380px;object-fit:contain;background:#fff;border-radius:8px;border:1px solid var(--line)}
+.det figcaption{font-size:12px;color:var(--muted);margin-top:6px}
+.det svg{display:block;width:100%;height:auto;background:var(--soft);border-radius:8px}
+.det svg text{font-family:var(--body);fill:var(--fg)}
+.det svg .m{fill:var(--muted)}
+.key{display:grid;grid-template-columns:14px 1fr;gap:6px 8px;font-size:12.5px;align-items:start;margin:0;padding:0;list-style:none}
+.key .sw{margin-top:2px}
 .tag{font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:2px 6px;border-radius:4px;margin-left:6px;vertical-align:1px}
 .tag.in{background:color-mix(in srgb,var(--ok) 16%,transparent);color:var(--ok)}
 .tag.pv{background:color-mix(in srgb,var(--pv) 18%,transparent);color:var(--pv)}
@@ -128,6 +140,63 @@ ul.lst{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
       <p class="hint">Cantidades por pareo, según la propuesta del 10/11. Lo gris y transparente queda fuera del alcance.</p>
     </div>
 
+    <div class="det">
+      <h2>Detalle: componentes, bastidores y cadenetas</h2>
+      <svg viewBox="0 0 360 292" role="img" aria-label="Alzado de un componente con bastidor y corte del muro, mostrando cadenetas de fábrica, cadenetas de obra, herrajes, corona y emplacado por una cara">
+        <text x="8" y="14" font-size="10.5" class="m">ALZADO · COMPONENTE + BASTIDOR</text>
+        <rect x="8" y="262" width="214" height="24" fill="#a8a29a" opacity=".35"/>
+        <text x="115" y="279" font-size="10" text-anchor="middle" class="m" font-style="italic">Fundación · fuera</text>
+        <rect x="70" y="38" width="90" height="202" fill="#efe9dc" opacity=".7"/>
+        <g fill="#e2c9a0" stroke="#a8875a" stroke-width="1">
+          <rect x="62" y="30" width="8" height="218"/><rect x="160" y="30" width="8" height="218"/>
+          <rect x="62" y="30" width="106" height="8"/><rect x="62" y="240" width="106" height="8"/>
+        </g>
+        <g fill="#b9824a" stroke="#7e4e2a" stroke-width="1"><rect x="30" y="30" width="24" height="218"/><rect x="176" y="30" width="24" height="218"/></g>
+        <g fill="#52448a"><rect x="26" y="70" width="32" height="7"/><rect x="26" y="120" width="32" height="7"/><rect x="26" y="170" width="32" height="7"/><rect x="26" y="220" width="32" height="7"/>
+          <rect x="172" y="70" width="32" height="7"/><rect x="172" y="120" width="32" height="7"/><rect x="172" y="170" width="32" height="7"/><rect x="172" y="220" width="32" height="7"/></g>
+        <g fill="#c9761c"><rect x="70" y="40" width="90" height="6"/><rect x="70" y="95" width="90" height="7"/><rect x="70" y="145" width="90" height="7"/><rect x="70" y="195" width="90" height="7"/></g>
+        <g fill="#4f5b66"><rect x="52" y="50" width="12" height="12"/><rect x="52" y="226" width="12" height="12"/><rect x="166" y="50" width="12" height="12"/><rect x="166" y="226" width="12" height="12"/>
+          <rect x="22" y="248" width="40" height="14"/><rect x="168" y="248" width="40" height="14"/></g>
+        <g font-size="10" font-weight="600" text-anchor="middle">
+          <circle cx="42" cy="20" r="8" fill="#b9824a"/><text x="42" y="23.5" style="fill:#fff">1</text>
+          <circle cx="14" cy="124" r="8" fill="#52448a"/><text x="14" y="127.5" style="fill:#fff">2</text>
+          <circle cx="115" cy="20" r="8" fill="#a8875a"/><text x="115" y="23.5" style="fill:#fff">3</text>
+          <circle cx="115" cy="173" r="8" fill="#c9761c"/><text x="115" y="176.5" style="fill:#fff">4</text>
+          <circle cx="84" cy="62" r="8" fill="#4f5b66"/><text x="84" y="65.5" style="fill:#fff">5</text>
+          <circle cx="115" cy="255" r="8" fill="#4f5b66"/><text x="115" y="258.5" style="fill:#fff">6</text>
+        </g>
+        <text x="238" y="14" font-size="10.5" class="m">CORTE DEL MURO</text>
+        <text x="294" y="44" font-size="10" text-anchor="middle" class="m">Exterior</text>
+        <rect x="240" y="54" width="108" height="6" fill="#d9c48e" stroke="#a8875a"/>
+        <rect x="264" y="60" width="60" height="60" fill="#efe9dc"/>
+        <rect x="250" y="60" width="14" height="60" fill="#b9824a"/><rect x="324" y="60" width="14" height="60" fill="#b9824a"/>
+        <text x="294" y="80" font-size="9.5" text-anchor="middle">↑ OSB HWR</text>
+        <text x="294" y="92" font-size="9.5" text-anchor="middle">una cara</text>
+        <line x1="240" y1="124" x2="348" y2="124" stroke="#8a8278" stroke-dasharray="4 3"/>
+        <text x="294" y="142" font-size="10" text-anchor="middle" font-weight="600">Interior: cara libre</text>
+        <text x="294" y="156" font-size="10" text-anchor="middle" class="m">para instalaciones;</text>
+        <text x="294" y="169" font-size="10" text-anchor="middle" class="m">emplacado interior</text>
+        <text x="294" y="182" font-size="10" text-anchor="middle" class="m">fuera del alcance</text>
+        <text x="238" y="214" font-size="10" font-weight="600">Muro de pareo</text>
+        <text x="238" y="228" font-size="10" class="m">mismo criterio: una</text>
+        <text x="238" y="241" font-size="10" class="m">cara emplacada, la</text>
+        <text x="238" y="254" font-size="10" class="m">otra libre para</text>
+        <text x="238" y="267" font-size="10" class="m">especialidades.</text>
+      </svg>
+      <ul class="key">
+        <li class="sw" style="background:#b9824a"></li><li><b>1 · Componente prefabricado</b> de madera laminada (muro, techo, piso).</li>
+        <li class="sw" style="background:#52448a"></li><li><b>2 · Cadenetas fijadas en fábrica</b>: llegan incorporadas al componente.</li>
+        <li class="sw" style="background:#e2c9a0"></li><li><b>3 · Bastidor</b> entre componentes.</li>
+        <li class="sw" style="background:#c9761c"></li><li><b>4 · Cadenetas sueltas</b>: se entregan dimensionadas y rotuladas, y se instalan en obra en bastidores y encuentros, después de los herrajes.</li>
+        <li class="sw" style="background:#4f5b66"></li><li><b>5 · Herrajes metálicos y fijaciones</b> en los encuentros.</li>
+        <li class="sw" style="background:#4f5b66"></li><li><b>6 · Corona</b>: une la viga madre o riel con la fundación. Incluida.</li>
+      </ul>
+      <figure>
+        <img src="/home/componente.avif" alt="Componente FURŌ de madera laminada con sus cadenetas" loading="lazy">
+        <figcaption>Componente FURŌ tipo, con sus cadenetas incorporadas. Imagen referencial: las dimensiones y la aislación de Colonia Suiza salen del cálculo.</figcaption>
+      </figure>
+    </div>
+
     <div>
       <h2>Etapas del trabajo</h2>
       <div class="steps">
@@ -148,7 +217,12 @@ ul.lst{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
     <div>
       <h2>Incluido <span class="tag in">en el total</span></h2>
       <ul class="lst">
-        <li>Materiales cubicados desde el modelo: vigas laminadas, cadenetas, OSB HWR 11,1 mm, Top Notch 18 mm, fijaciones, conectores y herrajes. Lana de oveja 50 mm en rollos, sin cortar.</li>
+        <li>Estructura de componentes prefabricados y bastidores en madera laminada, todos con sus cadenetas para recibir los emplacados.</li>
+        <li>Cadenetas de los componentes: incorporadas y fijadas en fábrica. Cadenetas de bastidores y encuentros: se entregan sueltas, dimensionadas y rotuladas, y se instalan en obra después de los herrajes.</li>
+        <li>Todos los herrajes metálicos y sus fijaciones, incluidas las coronas (unión entre vigas madres o rieles y fundaciones).</li>
+        <li>Sistema Top Notch 18 mm en piso y entrepiso.</li>
+        <li>Emplacado exterior OSB HWR 11,1 mm, por una cara. El muro de pareo también se emplaca por una sola cara; la otra queda libre para instalaciones sanitarias, eléctricas y demás especialidades.</li>
+        <li>Lana de oveja 50 mm en rollos, sin cortar.</li>
         <li>Dimensionado en fábrica según planos de fabricación.</li>
         <li>Cálculo estructural firmado, resistencia al fuego, planos de fundaciones, BIM LOD 350, cubicación, planos de armado y montaje, IFC final.</li>
       </ul>
@@ -166,7 +240,10 @@ ul.lst{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
     <div>
       <h2>Fuera del alcance <span class="tag out">exclusiones</span></h2>
       <ul class="lst">
-        <li>Montaje en obra (lo hace el cliente con los planos FURŌ)</li>
+        <li>Frontones</li>
+        <li>Tabiquería interior</li>
+        <li>Emplacados interiores de la envolvente térmica, incluida la segunda cara del muro de pareo</li>
+        <li>Montaje en obra, incluida la instalación de bastidores, herrajes y cadenetas sueltas (lo hace el cliente con los planos FURŌ)</li>
         <li>Transporte, flete marítimo, carga, descarga y seguros</li>
         <li>Fundaciones, radieres y obras civiles</li>
         <li>Terminaciones, revestimientos, ventanas y puertas</li>
@@ -190,26 +267,33 @@ function showErr(m){const b=document.getElementById("badge"); if(b){b.style.disp
 try{(function(){
 const ALT = {
   marco:{hint:"Con componente de piso: el marco se cierra abajo y forma un anillo completo.",
-    rows:[["Componente de piso","18 · 102,78 ml"],["Componentes de muro","15 · 76,5 ml"],["Componentes de techo","10 · 57,1 ml"],["Bastidores muro / techo","12 / 8"],["Vigas entrepiso 5,4 m + colectoras 9 m","48 + 4"],["Vigas laminadas","138 pzas · 10,04 m³"],["Lana de oveja","47 rollos"],["OSB HWR / Top Notch","218 / 34"],["Suministro por pareo","840,85 UF"],["Total 3 pareos + BIM (neto)","2.710,15 UF + IVA"]],
+    rows:[["Componente de piso","18 · 102,78 ml"],["Componentes de muro","15 · 76,5 ml"],["Componentes de techo","10 · 57,1 ml"],["Bastidores muro / techo","12 / 8"],["Vigas entrepiso 5,4 m + colectoras 9 m","48 + 4"],["Vigas laminadas","138 pzas · 10,04 m³"],["Lana de oveja","47 rollos"],["OSB HWR ext. / Top Notch","218 / 34"],["Suministro por pareo","840,85 UF"],["Total 3 pareos + BIM (neto)","2.710,15 UF + IVA"]],
     armado:"326,10 UF por pareo"},
   arco:{hint:"Sin componente de piso: el marco se apoya directo en la fundación. Cerca de 23% menos por pareo.",
-    rows:[["Componente de piso","No"],["Componentes de muro","15 · 76,5 ml"],["Componentes de techo","10 · 57,1 ml"],["Bastidores muro / techo","12 / 8"],["Vigas entrepiso 5,4 m + colectoras 9 m","48 + 4"],["Vigas laminadas","102 pzas · 8,74 m³"],["Lana de oveja","35 rollos"],["OSB HWR / Top Notch","170 / 34"],["Suministro por pareo","649,68 UF"],["Total 3 pareos + BIM (neto)","2.136,64 UF + IVA"]],
+    rows:[["Componente de piso","No"],["Componentes de muro","15 · 76,5 ml"],["Componentes de techo","10 · 57,1 ml"],["Bastidores muro / techo","12 / 8"],["Vigas entrepiso 5,4 m + colectoras 9 m","48 + 4"],["Vigas laminadas","102 pzas · 8,74 m³"],["Lana de oveja","35 rollos"],["OSB HWR ext. / Top Notch","170 / 34"],["Suministro por pareo","649,68 UF"],["Total 3 pareos + BIM (neto)","2.136,64 UF + IVA"]],
     armado:"228,46 UF por pareo"}
 };
+const GROUPS={in:"Incluido · dimensionado en fábrica", obra:"Incluido · se entrega suelto, se instala en obra", out:"Fuera del alcance"};
 const LAYERS = [
-  {k:"piso",  nm:"Componente de piso", q:"18", col:"#d7ae73", on:true, marcoOnly:true},
-  {k:"muro",  nm:"Componentes de muro", q:"15", col:"#b9824a", on:true},
-  {k:"med",   nm:"Medianero 270 mm", q:"5", col:"#7e4e2a", on:true},
-  {k:"techo", nm:"Componentes de techo", q:"10", col:"#a06a38", on:true},
-  {k:"bast",  nm:"Bastidores muro / techo", q:"12 / 8", col:"#e2c9a0", on:true},
-  {k:"entre", nm:"Vigas de entrepiso y colectoras", q:"48 + 4", col:"#cf9a5c", on:true},
-  {k:"tn",    nm:"Placa Top Notch 18 mm", q:"34", col:"#c7a467", on:true},
-  {k:"osb",   nm:"Placas OSB HWR 11,1 mm", q:"218", col:"#d9c48e", on:false},
-  {k:"lana",  nm:"Aislación lana de oveja", q:"47 rollos", col:"#efe9dc", on:false},
-  {k:"fuera", nm:"Radier, estacionamiento y terreno", q:"fuera", col:"#a8a29a", on:true, out:true},
-  {k:"envol", nm:"Terminaciones, ventanas y revestimientos", q:"fuera", col:"#c9c4bb", on:false, out:true}
+  {g:"in", k:"piso",  nm:"Componente de piso", q:"18", col:"#d7ae73", on:true, marcoOnly:true},
+  {g:"in", k:"muro",  nm:"Componentes de muro", q:"15", col:"#b9824a", on:true},
+  {g:"in", k:"med",   nm:"Muro de pareo 270 mm", q:"5", col:"#7e4e2a", on:true},
+  {g:"in", k:"techo", nm:"Componentes de techo", q:"10", col:"#a06a38", on:true},
+  {g:"in", k:"bast",  nm:"Bastidores muro / techo", q:"12 / 8", col:"#e2c9a0", on:true},
+  {g:"in", k:"entre", nm:"Vigas de entrepiso y colectoras", q:"48 + 4", col:"#cf9a5c", on:true},
+  {g:"in", k:"cadf",  nm:"Cadenetas fijadas en fábrica", q:"en componentes", col:"#52448a", on:true},
+  {g:"in", k:"herr",  nm:"Herrajes, fijaciones y coronas", q:"todos", col:"#4f5b66", on:true},
+  {g:"in", k:"tn",    nm:"Top Notch 18 mm · piso y entrepiso", q:"34", col:"#c7a467", on:true},
+  {g:"in", k:"osb",   nm:"OSB HWR 11,1 mm · exterior, una cara", q:"218", col:"#d9c48e", on:false},
+  {g:"in", k:"lana",  nm:"Aislación lana de oveja", q:"47 rollos", col:"#efe9dc", on:false},
+  {g:"obra", k:"cado", nm:"Cadenetas sueltas · bastidores y encuentros", q:"en obra", col:"#c9761c", on:true},
+  {g:"out", k:"fuera", nm:"Radier, fundaciones y estacionamiento", q:"fuera", col:"#a8a29a", on:true, out:true},
+  {g:"out", k:"front", nm:"Frontones", q:"fuera", col:"#9d978e", on:true, out:true},
+  {g:"out", k:"tab",   nm:"Tabiquería interior", q:"fuera", col:"#b4aea5", on:true, out:true},
+  {g:"out", k:"empi",  nm:"Emplacados interiores de la envolvente", q:"fuera", col:"#cfc9bf", on:false, out:true},
+  {g:"out", k:"envol", nm:"Terminaciones, ventanas y revestimientos", q:"fuera", col:"#c9c4bb", on:false, out:true}
 ];
-const ALPHA={osb:.55,lana:.85,fuera:.35,envol:.14,bast:.6};
+const ALPHA={osb:.55,lana:.85,fuera:.35,envol:.14,bast:.42,front:.18,tab:.3,empi:.45};
 let alt="marco";
 const LM={}; LAYERS.forEach(l=>{LM[l.k]=l; const h=l.col.slice(1); l.rgb=[0,2,4].map(i=>parseInt(h.substr(i,2),16));});
 
@@ -225,17 +309,45 @@ for(let p=0;p<3;p++){
   const houses=[{x0:oL,x1:med,outer:oL,side:-1},{x0:med,x1:oR,outer:oR,side:1}];
   // radier primero (siempre al fondo)
   houses.forEach(h=>{const cx=(h.x0+h.x1)/2; box("fuera",p,h.x1-h.x0+0.3,0.15,HD+0.4,X(cx),-0.075,Z(FRONT+HD/2));});
+  const cols=[[oL+WT/2,WT],[med,MT],[oR-WT/2,WT]];
   for(let i=0;i<FR;i++){
     const z=FRONT+i*BAY;
     box("muro",p,WT,WH,WT,X(oL+WT/2),WH/2,Z(z));
     box("muro",p,WT,WH,WT,X(oR-WT/2),WH/2,Z(z));
     box("med",p,MT,WH,WT,X(med),WH/2,Z(z));
+    cols.forEach(([x,t])=>{
+      // corona: une la viga madre / riel con la fundación
+      box("herr",p,t+0.12,0.1,WT+0.12,X(x),0.05,Z(z),{lvl:0});
+      // herrajes en el encuentro muro-techo y en el apoyo del entrepiso
+      box("herr",p,t+0.03,0.32,WT+0.03,X(x),WH-0.16,Z(z),{lvl:1});
+      box("herr",p,t+0.03,0.12,WT+0.03,X(x),EP-0.39,Z(z),{lvl:1,edges:false});
+      // cadenetas fijadas en fábrica al componente (reciben el canto del emplacado)
+      for(let k=1;k<=4;k++) [-1,1].forEach(s=>{ if((i===0&&s<0)||(i===FR-1&&s>0)) return;
+        box("cadf",p,0.09,0.05,0.16,X(x),k*1.22-0.3,Z(z+s*(WT/2+0.08)),{lvl:1});});
+    });
   }
   houses.forEach(h=>{
     const w=h.x1-h.x0, cx=(h.x0+h.x1)/2;
     const roofLen=w+0.4, rcx=cx+h.side*0.2;
-    for(let i=0;i<FR;i++) box("techo",p,roofLen,0.3,WT,X(rcx),WH+0.15,Z(FRONT+i*BAY));
-    for(let b=0;b<FR-1;b++) box("bast",p,w-0.1,0.16,BAY-WT-0.04,X(cx),WH+0.1,Z(FRONT+b*BAY+BAY/2),{lvl:3});
+    for(let i=0;i<FR;i++){
+      box("techo",p,roofLen,0.3,WT,X(rcx),WH+0.15,Z(FRONT+i*BAY));
+      for(let k=1;k<=3;k++) [-1,1].forEach(s=>{ if((i===0&&s<0)||(i===FR-1&&s>0)) return;
+        box("cadf",p,0.05,0.09,0.16,X(h.x0+k*w/4),WH+0.15,Z(FRONT+i*BAY+s*(WT/2+0.08)),{lvl:3});});
+    }
+    for(let b=0;b<FR-1;b++){
+      const zc=FRONT+b*BAY+BAY/2;
+      box("bast",p,w-0.1,0.16,BAY-WT-0.04,X(cx),WH+0.1,Z(zc),{lvl:3});
+      [-1,1].forEach(s=>box("cado",p,w-0.2,0.06,0.05,X(cx),WH+0.21,Z(zc+s*BAY/4),{lvl:3}));
+    }
+    // Top Notch también en el piso
+    box("tn",p,w-0.1,0.018,HD,X(cx),0.249,Z(FRONT+HD/2),{lvl:0.35});
+    // fuera del alcance: frontones, tabiquería, emplacado interior
+    box("front",p,w,WH,0.08,X(cx),WH/2,Z(FRONT-WT/2-0.05),{lvl:1});
+    box("front",p,w,WH,0.08,X(cx),WH/2,Z(FRONT+HD+WT/2+0.05),{lvl:1});
+    box("tab",p,w-0.7,EP-0.45,0.09,X(cx),0.24+(EP-0.45)/2,Z(FRONT+HD*0.55),{lvl:0.5});
+    box("tab",p,0.09,WH-EP-0.15,HD*0.45,X(cx),EP+(WH-EP-0.15)/2,Z(FRONT+HD*0.3),{lvl:2});
+    box("empi",p,0.012,WH-0.1,HD-0.1,X(h.outer-h.side*(WT+0.008)),WH/2,Z(FRONT+HD/2),{edges:false,lvl:1});
+    box("empi",p,w-0.3,0.012,HD-0.1,X(cx),WH-0.02,Z(FRONT+HD/2),{edges:false,lvl:3});
     for(let j=0;j<9;j++) box("piso",p,w,0.24,WT,X(cx),0.12,Z(FRONT+j*HD/8));
     const inL=h.x0+(h.side<0?WT:MT/2), inR=h.x1-(h.side<0?MT/2:WT);
     box("entre",p,0.14,0.3,HD,X(inL+0.07),EP-0.39,Z(FRONT+HD/2));
@@ -253,8 +365,14 @@ for(let p=0;p<3;p++){
       const zc=FRONT+b*BAY+BAY/2;
       box("bast",p,0.12,WH-0.1,BAY-WT-0.04,X(x),WH/2,Z(zc));
       box("lana",p,0.14,WH-0.4,BAY-WT-0.3,X(x),WH/2,Z(zc),{edges:false});
+      // cadenetas sueltas: se instalan en obra en el bastidor, después de los herrajes
+      for(let k=1;k<=3;k++) box("cado",p,0.13,0.06,BAY-WT-0.1,X(x),k*1.22+0.31,Z(zc));
+      box("cado",p,0.13,0.08,BAY-WT-0.1,X(x),WH-0.09,Z(zc)); // encuentro muro-techo
     }
   });
+  // muro de pareo: OSB por una cara; la otra queda libre para instalaciones
+  box("osb",p,0.012,WH,HD+WT,X(med-MT/2-0.006),WH/2,Z(FRONT+HD/2),{edges:false,lvl:1});
+  box("empi",p,0.012,WH-0.1,HD-0.1,X(med+MT/2+0.008),WH/2,Z(FRONT+HD/2),{edges:false,lvl:1});
   box("fuera",p,CPW-0.1,3.37,5.5,X(p0+CPW/2),3.37/2,Z(FRONT+2.75));
   box("fuera",p,CPW-0.1,3.37,5.5,X(p0+8+HW+CPW/2),3.37/2,Z(FRONT+2.75));
 }
@@ -285,7 +403,7 @@ const FACES=[ // normal, 4 esquinas en signos (sx,sy,sz)
 
 /* ---------- estado ---------- */
 const state={labels:true, explode:0, stage:2, view:"all"};
-const EXP={piso:0, fuera:0, envol:0, muro:1, med:1, bast:1, lana:1, osb:1, entre:2, tn:2.06, techo:3};
+const EXP={piso:0, fuera:0, envol:0, muro:1, med:1, bast:1, lana:1, osb:1, entre:2, tn:2.06, techo:3, cadf:1, cado:1, herr:0, front:1, tab:0.5, empi:1};
 function layerVisible(k){const L=LM[k]; if(!L) return true; if(!L.on) return false; if(L.marcoOnly && alt!=="marco") return false; return true;}
 const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 
@@ -337,15 +455,24 @@ function line(a,b){const p=proj(...a),q=proj(...b); if(!p||!q)return; ctx.beginP
 /* ---------- rótulos ---------- */
 const p0=16;
 const LBL=[
-  {t:"Componentes de muro · pilar del marco 5,10 m", k:"muro", v:[X(p0+8+HW-0.1),WH*0.8,Z(FRONT)]},
-  {t:"Medianero 270 mm", k:"med", v:[X(p0+8),WH*0.62,Z(FRONT)]},
+  {t:"Componentes de muro · pilar del marco 5,10 m", k:"muro", v:[X(p0+8+HW-0.1),WH*0.62,Z(FRONT+HD)]},
+  {t:"Muro de pareo · emplacado por una cara", k:"med", v:[X(p0+8),WH*0.5,Z(FRONT)]},
   {t:"Componentes de techo · 5,71 m", k:"techo", v:[X(p0+CPW+1.2),WH+0.3,Z(FRONT)]},
-  {t:"Bastidores de muro", k:"bast", v:[X(p0+CPW),WH*0.45,Z(FRONT+BAY*1.5)]},
+  {t:"Bastidores de muro", k:"bast", v:[X(p0+CPW),WH*0.6,Z(FRONT+BAY*2.5)]},
   {t:"Bastidores de techo", k:"bast", lvl:3, v:[X(p0+8+HW/2),WH+0.2,Z(FRONT+BAY*2.5)]},
-  {t:"Vigas de entrepiso 5,4 m + colectoras 9 m", k:"entre", v:[X(p0+8+HW/2),EP-0.2,Z(FRONT)]},
-  {t:"Placa Top Notch 18 mm", k:"tn", v:[X(p0+CPW+HW/2),EP,Z(FRONT+0.4)]},
+  {t:"Vigas de entrepiso 5,4 m + colectoras 9 m", k:"entre", v:[X(p0+CPW+HW/2),EP-0.2,Z(FRONT+HD)]},
+  {t:"Top Notch 18 mm · entrepiso", k:"tn", v:[X(p0+CPW+HW/2),EP,Z(FRONT+0.4)]},
+  {t:"Top Notch 18 mm · piso", k:"tn", lvl:0.35, v:[X(p0+8+HW/2),0.27,Z(FRONT+HD*0.75)]},
   {t:"Componente de piso (solo Marco)", k:"piso", v:[X(p0+CPW+HW/2),0.25,Z(FRONT)]},
-  {t:"OSB HWR 11,1 mm", k:"osb", v:[X(p0+8+HW),WH*0.3,Z(FRONT+HD*0.6)]},
+  {t:"Cadenetas fijadas en fábrica", k:"cadf", v:[X(p0+8+HW-WT/2),1.22*3-0.3,Z(FRONT+WT/2+0.1)]},
+  {t:"Cadenetas sueltas · se instalan en obra", k:"cado", v:[X(p0+8+HW-WT/2),1.22+0.31,Z(FRONT+BAY*3.5)]},
+  {t:"Herrajes en encuentros", k:"herr", lvl:1, v:[X(p0+8+HW-WT/2),WH,Z(FRONT+BAY*2)]},
+  {t:"Coronas · unión con la fundación", k:"herr", v:[X(p0+8+HW-WT/2),0.1,Z(FRONT+BAY)]},
+  {t:"Frontón · fuera", k:"front", out:true, v:[X(p0+CPW+HW/2),WH*0.86,Z(FRONT-0.15)]},
+  {t:"Frontón · fuera", k:"front", out:true, v:[X(p0+8+HW/2),WH*0.86,Z(FRONT+HD+0.15)]},
+  {t:"Tabiquería interior · fuera", k:"tab", out:true, v:[X(p0+8+HW/2),1.7,Z(FRONT+HD*0.55)]},
+  {t:"Cara libre para instalaciones · emplacado interior fuera", k:"empi", out:true, v:[X(p0+8+MT/2),WH*0.35,Z(FRONT+HD*0.35)]},
+  {t:"OSB HWR 11,1 mm · exterior, una cara", k:"osb", v:[X(p0+8+HW),WH*0.3,Z(FRONT+HD*0.6)]},
   {t:"Lana de oveja 50 mm", k:"lana", v:[X(p0+CPW),WH*0.25,Z(FRONT+BAY*2.5)]},
   {t:"Radier y fundaciones · fuera", k:"fuera", out:true, v:[X(p0+CPW+0.2),0,Z(FRONT+HD)]},
   {t:"Estacionamiento lateral · fuera", k:"fuera", out:true, v:[X(p0+CPW/2),3.37,Z(FRONT+2.75)]},
@@ -360,9 +487,12 @@ const LBL=[
 ];
 const host=document.getElementById("labels");
 LBL.forEach(l=>{ l.el=document.createElement("div"); l.el.className="lbl"+(l.out?" out":"")+(l.big?" big":""); l.el.textContent=l.t; host.appendChild(l.el); });
+// prioridad: los rótulos de alcance (Top Notch, coronas, cadenetas, exclusiones) ganan si se tapan
+const PRI={tn:1,cadf:1,cado:1,herr:1,med:1,front:1,tab:1,muro:2,techo:2,piso:2,entre:2,empi:2};
+const ORDER=LBL.map((l,i)=>[l,(l.k?(PRI[l.k]||3):0)*100+i]).sort((a,b)=>a[1]-b[1]).map(a=>a[0]);
 function placeLabels(){
-  const ex=state.explode*5.5;
-  LBL.forEach(l=>{
+  const ex=state.explode*5.5, taken=[];
+  ORDER.forEach(l=>{
     let show=state.labels;
     if(l.set==="all") show=show&&state.stage===2&&state.view==="all";
     if(l.set==="bim") show=show&&state.stage===1;
@@ -370,8 +500,12 @@ function placeLabels(){
     if(!l.set&&!l.k) show=show&&state.view==="all";
     let q=null;
     if(show){ q=proj(l.v[0], l.v[1]+(l.k?(l.lvl!=null?l.lvl:(EXP[l.k]||0))*ex:0), l.v[2]); if(!q||q[0]<0||q[0]>W||q[1]<0||q[1]>H) show=false; }
+    if(show){
+      l.el.hidden=false; l.el.style.left=q[0]+"px"; l.el.style.top=(q[1]-6)+"px";
+      const w=l.el.offsetWidth, h=l.el.offsetHeight, r=[q[0]-w/2-2,q[1]-6-h-2,q[0]+w/2+2,q[1]-4];
+      if(taken.some(t=>r[0]<t[2]&&r[2]>t[0]&&r[1]<t[3]&&r[3]>t[1])) show=false; else taken.push(r);
+    }
     l.el.hidden=!show;
-    if(show){ l.el.style.left=q[0]+"px"; l.el.style.top=(q[1]-6)+"px"; }
   });
 }
 
@@ -394,7 +528,9 @@ canvas.addEventListener("wheel",e=>{e.preventDefault();cam.r=clampR(cam.r*Math.e
 
 /* ---------- UI ---------- */
 const lh=document.getElementById("layers");
+let lastG=null;
 LAYERS.forEach(l=>{
+  if(l.g!==lastG){ lastG=l.g; const gh=document.createElement("div"); gh.className="lgrp "+l.g; gh.textContent=GROUPS[l.g]; lh.appendChild(gh); }
   const id="ly-"+l.k;
   const row=document.createElement("label"); row.className="layer"+(l.out?" out":""); row.htmlFor=id;
   const cb=document.createElement("input"); cb.type="checkbox"; cb.id=id; cb.checked=l.on;
@@ -429,7 +565,7 @@ document.getElementById("st1").onclick=()=>setStage(1);
 document.getElementById("st2").onclick=()=>setStage(2);
 document.getElementById("v-lbl").onclick=e=>{state.labels=!state.labels; e.target.setAttribute("aria-pressed",state.labels); dirty=true;};
 
-const VIEWS={all:{tx:0,ty:1.5,tz:0,r:56,th:2.52,ph:1.0}, one:{tx:0,ty:2.4,tz:0,r:28,th:2.42,ph:1.1}};
+const VIEWS={all:{tx:0,ty:1.5,tz:0,r:56,th:2.52,ph:1.0}, one:{tx:0,ty:2.4,tz:0,r:24,th:2.42,ph:1.1}};
 let anim=null;
 function goView(v){
   state.view=v;
