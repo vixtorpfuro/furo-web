@@ -51,13 +51,12 @@ export default function Modelos() {
       </section>
 
       <div className="modelos-grid">
-        <ModeloTile m={MODELOS[0]} />
         <div style={{ aspectRatio: '4 / 3', background: C.dark, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 32 }}>
           <p style={{ fontSize: 15, fontWeight: 300, color: 'rgba(255,255,255,0.85)', lineHeight: 1.7, textAlign: 'center', maxWidth: 320 }}>
             Noki está construyendo la próxima generación de viviendas prefabricadas — usando materiales naturales y de alto desempeño para crear casas que se adaptan a cualquier paisaje de Chile.
           </p>
         </div>
-        {MODELOS.slice(1).map(m => <ModeloTile key={m.slug} m={m} />)}
+        {MODELOS.map(m => <ModeloTile key={m.slug} m={m} />)}
       </div>
 
       <p style={{ fontSize: 11.5, fontWeight: 300, color: C.muted, lineHeight: 1.7, maxWidth: 860, margin: '0 auto', padding: '24px 20px 72px', textAlign: 'center' }}>

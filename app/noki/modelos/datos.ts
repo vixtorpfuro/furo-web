@@ -26,30 +26,6 @@ const G = (slug: string, ...f: string[]) => f.map(n => `/noki/Modelos/galeria/${
 
 export const MODELOS: Modelo[] = [
   {
-    slug: 'noki-i',
-    nombre: 'Noki I',
-    linea: 'Noki I',
-    m2: 162,
-    resumen: '3 dormitorios · 3 baños · 162 m²',
-    descripcion: 'Nuestro modelo insignia: 162 m² en dos pisos, con living-comedor amplio y luminoso, cocina integrada y una terraza techada de 22 m² para disfrutar el exterior todo el año.',
-    specs: [
-      { l: 'Superficie', v: '162 m²' },
-      { l: 'Dormitorios', v: '3' },
-      { l: 'Baños', v: '3' },
-      { l: 'Terraza techada', v: '22 m²' },
-    ],
-    programa: ['3 dormitorios', '3 baños', 'Living-comedor y cocina integrada', 'Terraza techada de 22 m²'],
-    superficies: [
-      { l: 'Interior térmico', v: '140 m²' },
-      { l: 'Terraza techada', v: '22 m²' },
-    ],
-    desdeUF: null,
-    planoPdf: '/noki/Modelos/nokiI.pdf',
-    hero: '/noki/Modelos/baja/nokiI.jpg',
-    galeria: ['/noki/P1010657.jpg', '/noki/P1010640.jpg', '/noki/P1010586.jpg', '/noki/P1010591.jpg', '/noki/P1010593.jpg', '/noki/P1010594.jpg', '/noki/P1010632.jpg'],
-    fotosReales: true,
-  },
-  {
     slug: 'noki-ii-70',
     nombre: 'Noki II 70',
     linea: 'Noki II',
@@ -239,6 +215,30 @@ export const MODELOS: Modelo[] = [
     planoImg: '/noki/Modelos/planos/nokiII_160_plano.jpg',
     hero: '/noki/Modelos/galeria/noki-ii-160/hero.jpg',
     galeria: [...G('noki-ii-160', 'hero.jpg', 'living.jpg', 'extra.jpg', 'dormitorio.jpg', 'dusk.jpg'), '/noki/Modelos/baja/nokiII_160.jpg'],
+  },
+  {
+    slug: 'noki-i',
+    nombre: 'Noki I',
+    linea: 'Noki I',
+    m2: 162,
+    resumen: '3 dormitorios · 3 baños · 162 m²',
+    descripcion: 'Nuestro modelo insignia: 162 m² en dos pisos, con living-comedor amplio y luminoso, cocina integrada y una terraza techada de 22 m² para disfrutar el exterior todo el año.',
+    specs: [
+      { l: 'Superficie', v: '162 m²' },
+      { l: 'Dormitorios', v: '3' },
+      { l: 'Baños', v: '3' },
+      { l: 'Terraza techada', v: '22 m²' },
+    ],
+    programa: ['3 dormitorios', '3 baños', 'Living-comedor y cocina integrada', 'Terraza techada de 22 m²'],
+    superficies: [
+      { l: 'Interior térmico', v: '140 m²' },
+      { l: 'Terraza techada', v: '22 m²' },
+    ],
+    desdeUF: null,
+    planoPdf: '/noki/Modelos/nokiI.pdf',
+    hero: '/noki/Modelos/baja/nokiI.jpg',
+    galeria: ['/noki/P1010657.jpg', '/noki/P1010640.jpg', '/noki/P1010586.jpg', '/noki/P1010591.jpg', '/noki/P1010593.jpg', '/noki/P1010594.jpg', '/noki/P1010632.jpg'],
+    fotosReales: true,
   },
 ]
 
