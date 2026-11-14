@@ -1,6 +1,6 @@
 // Datos de los modelos Noki. Fuente: planos del 03-11-2026 y presupuestos
 // preliminares del 11-11-2026 (Drive FURO COMPANY › 03. NOKI › PRESUPUESTOS).
-// Los valores "desde" son el total con IVA de cada presupuesto preliminar.
+// Precios como en el mercado: UF/m² neto + IVA ("UF/M2 NETO" de cada presupuesto preliminar).
 
 export type Spec = { l: string; v: string }
 
@@ -14,7 +14,8 @@ export type Modelo = {
   specs: Spec[]
   programa: string[]
   superficies: Spec[]
-  desdeUF: number | null
+  ufM2: number | null // UF/m² neto, del presupuesto
+  totalNetoUF: number | null
   planoPdf?: string
   planoImg?: string
   hero: string
@@ -43,7 +44,8 @@ export const MODELOS: Modelo[] = [
       { l: 'Interior térmico', v: '65 m²' },
       { l: 'Chiflonera', v: '5 m²' },
     ],
-    desdeUF: 2858,
+    ufM2: 34.81,
+    totalNetoUF: 2402,
     planoPdf: '/noki/Modelos/planos/nokiII_70.pdf',
     planoImg: '/noki/Modelos/planos/nokiII_70_plano.jpg',
     hero: '/noki/Modelos/galeria/noki-ii-70/hero.jpg',
@@ -67,7 +69,8 @@ export const MODELOS: Modelo[] = [
       { l: 'Interior térmico', v: '70 m²' },
       { l: 'Chiflonera', v: '5 m²' },
     ],
-    desdeUF: 3021,
+    ufM2: 33.4,
+    totalNetoUF: 2538,
     planoPdf: '/noki/Modelos/planos/nokiII_75.pdf',
     planoImg: '/noki/Modelos/planos/nokiII_75_plano.jpg',
     hero: '/noki/Modelos/galeria/noki-ii-75/hero.jpg',
@@ -91,7 +94,8 @@ export const MODELOS: Modelo[] = [
       { l: 'Interior térmico', v: '92 m²' },
       { l: 'Chiflonera', v: '5 m²' },
     ],
-    desdeUF: 4092,
+    ufM2: 35.45,
+    totalNetoUF: 3439,
     planoPdf: '/noki/Modelos/planos/nokiII_97.pdf',
     planoImg: '/noki/Modelos/planos/nokiII_97_plano.jpg',
     hero: '/noki/Modelos/galeria/noki-ii-97/hero.jpg',
@@ -115,7 +119,8 @@ export const MODELOS: Modelo[] = [
       { l: 'Interior térmico', v: '103 m²' },
       { l: 'Chiflonera', v: '5 m²' },
     ],
-    desdeUF: 4768,
+    ufM2: 37.1,
+    totalNetoUF: 4007,
     planoPdf: '/noki/Modelos/planos/nokiII_108.pdf',
     planoImg: '/noki/Modelos/planos/nokiII_108_plano.jpg',
     hero: '/noki/Modelos/galeria/noki-ii-108/hero.jpg',
@@ -136,7 +141,8 @@ export const MODELOS: Modelo[] = [
     ],
     programa: ['Dormitorio principal en suite con baño', 'Living, comedor y cocina', '2 dormitorios secundarios con antebaño y baño', 'Módulo chiflonera y closet técnico', 'Puentes vidriados entre pabellones'],
     superficies: [{ l: 'Interior térmico', v: '120 m²' }],
-    desdeUF: 4573,
+    ufM2: 32.57,
+    totalNetoUF: 3843,
     planoPdf: '/noki/Modelos/planos/nokiII_120.pdf',
     planoImg: '/noki/Modelos/planos/nokiII_120_plano.jpg',
     hero: '/noki/Modelos/galeria/noki-ii-120/hero.jpg',
@@ -160,7 +166,8 @@ export const MODELOS: Modelo[] = [
       { l: 'Interior térmico', v: '130 m²' },
       { l: 'Chiflonera', v: '5 m²' },
     ],
-    desdeUF: 5489,
+    ufM2: 34.94,
+    totalNetoUF: 4612,
     planoPdf: '/noki/Modelos/planos/nokiII_135.pdf',
     planoImg: '/noki/Modelos/planos/nokiII_135_plano.jpg',
     hero: '/noki/Modelos/galeria/noki-ii-135/hero.jpg',
@@ -185,7 +192,8 @@ export const MODELOS: Modelo[] = [
       { l: 'Quincho techado', v: '36 m²' },
       { l: 'Chiflonera', v: '5 m²' },
     ],
-    desdeUF: 5005,
+    ufM2: 28.61,
+    totalNetoUF: 4206,
     planoPdf: '/noki/Modelos/planos/nokiII_147.pdf',
     planoImg: '/noki/Modelos/planos/nokiII_147_plano.jpg',
     hero: '/noki/Modelos/galeria/noki-ii-147/hero.jpg',
@@ -210,7 +218,8 @@ export const MODELOS: Modelo[] = [
       { l: 'Quincho techado', v: '36 m²' },
       { l: 'Chiflonera', v: '5 m²' },
     ],
-    desdeUF: 5311,
+    ufM2: 27.72,
+    totalNetoUF: 4463,
     planoPdf: '/noki/Modelos/planos/nokiII_160.pdf',
     planoImg: '/noki/Modelos/planos/nokiII_160_plano.jpg',
     hero: '/noki/Modelos/galeria/noki-ii-160/hero.jpg',
@@ -234,7 +243,8 @@ export const MODELOS: Modelo[] = [
       { l: 'Interior térmico', v: '140 m²' },
       { l: 'Terraza techada', v: '22 m²' },
     ],
-    desdeUF: null,
+    ufM2: null,
+    totalNetoUF: null,
     planoPdf: '/noki/Modelos/nokiI.pdf',
     hero: '/noki/Modelos/baja/nokiI.jpg',
     galeria: ['/noki/P1010657.jpg', '/noki/P1010640.jpg', '/noki/P1010586.jpg', '/noki/P1010591.jpg', '/noki/P1010593.jpg', '/noki/P1010594.jpg', '/noki/P1010632.jpg'],
@@ -245,6 +255,7 @@ export const MODELOS: Modelo[] = [
 export const modeloPorSlug = (slug: string) => MODELOS.find(m => m.slug === slug)
 
 export const formatoUF = (n: number) => n.toLocaleString('es-CL')
+export const formatoM2 = (n: number) => n.toLocaleString('es-CL', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
 
 export const INCLUYE = [
   { l: 'Cubierta', v: 'Zincalum microondulado 0,5 mm' },
@@ -256,4 +267,4 @@ export const INCLUYE = [
 ]
 
 export const LETRA_CHICA =
-  'Valores referenciales en UF, IVA incluido, según presupuesto preliminar de noviembre de 2026. No incluyen fundaciones, logística y transporte ni preparación del terreno, que dependen de la ubicación y de las condiciones de cada terreno. Valores sujetos a confirmación tras la visita técnica. Imágenes referenciales.'
+  'Valores referenciales en UF, netos más IVA, según presupuesto preliminar de noviembre de 2026. No incluyen fundaciones, logística y transporte ni preparación del terreno, que dependen de la ubicación y de las condiciones de cada terreno. Valores sujetos a confirmación tras la visita técnica. Imágenes referenciales.'

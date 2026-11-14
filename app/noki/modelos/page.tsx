@@ -1,17 +1,18 @@
 'use client'
 import Link from 'next/link'
 import NokiChrome, { C, serif, FadeUp } from '../shared'
-import { MODELOS, LETRA_CHICA, formatoUF, type Modelo } from './datos'
+import { MODELOS, LETRA_CHICA, formatoM2, type Modelo } from './datos'
 
 function ModeloTile({ m }: { m: Modelo }) {
   return (
     <Link href={`/noki/modelos/${m.slug}`} className="modelo-tile">
       <img src={m.hero} alt={m.nombre} loading="lazy" />
       <div className="modelo-sombra" />
-      {m.desdeUF != null && (
+      {m.ufM2 != null && (
         <div className="modelo-precio">
           <span>Desde</span>
-          <strong>{formatoUF(m.desdeUF)} UF</strong>
+          <strong>{formatoM2(m.ufM2)} UF/m²</strong>
+          <em>+ IVA</em>
         </div>
       )}
       <div style={{ position: 'absolute', left: 24, right: 24, bottom: 22 }}>
@@ -34,6 +35,7 @@ export default function Modelos() {
         .modelo-precio { position: absolute; top: 16px; right: 16px; background: rgba(255,255,255,0.94); color: #1a1714; border-radius: 10px; padding: 8px 12px; text-align: right; line-height: 1.15; }
         .modelo-precio span { display: block; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #8a8278; }
         .modelo-precio strong { font-size: 17px; font-weight: 500; }
+        .modelo-precio em { display: block; font-style: normal; font-size: 10.5px; color: #8a8278; }
         @media (max-width: 900px) { .modelos-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 600px) { .modelos-grid { grid-template-columns: 1fr; padding: 0 0 6px; } .modelos-intro { padding: 120px 16px 40px !important; } }
       `}</style>

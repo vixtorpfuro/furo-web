@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import NokiChrome, { C, ctaBtn, FadeUp, AbrirFormularioButton } from '../shared'
-import { MODELOS, INCLUYE, LETRA_CHICA, formatoUF, modeloPorSlug, type Modelo } from './datos'
+import { MODELOS, INCLUYE, LETRA_CHICA, formatoUF, formatoM2, modeloPorSlug, type Modelo } from './datos'
 
 const sans = "'DM Sans', sans-serif"
 const etiqueta: React.CSSProperties = { fontSize: 11, fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase', color: C.muted }
@@ -52,15 +52,18 @@ function Visor({ fotos, i, alt, cerrar, ir }: { fotos: string[]; i: number; alt:
   )
 }
 
-function Precio({ m, grande }: { m: Modelo; grande?: boolean }) {
-  if (m.desdeUF == null) return <p style={{ fontFamily: sans, fontSize: grande ? 22 : 15, color: C.dark }}>Valor a consultar</p>
+function Precio({ m }: { m: Modelo }) {
+  if (m.ufM2 == null) return <p style={{ fontFamily: sans, fontSize: 22, color: C.dark }}>Valor a consultar</p>
   return (
-    <p style={{ fontFamily: sans, color: C.dark, lineHeight: 1 }}>
+    <div style={{ fontFamily: sans, color: C.dark, lineHeight: 1 }}>
       <span style={{ ...etiqueta, display: 'block', marginBottom: 10, letterSpacing: '0.18em' }}>Desde</span>
-      <span style={{ fontSize: grande ? 'clamp(40px,5vw,56px)' : 22, fontWeight: 400, letterSpacing: '-0.02em' }}>{formatoUF(m.desdeUF)}</span>
-      <span style={{ fontSize: grande ? 20 : 13, fontWeight: 400, marginLeft: 8, color: C.mid }}>UF</span>
-      {grande && <span style={{ display: 'block', fontSize: 12, fontWeight: 300, color: C.muted, marginTop: 10, letterSpacing: 0 }}>IVA incluido · sin fundaciones, logística ni preparación de terreno*</span>}
-    </p>
+      <span style={{ fontSize: 'clamp(40px,5vw,56px)', fontWeight: 400, letterSpacing: '-0.02em' }}>{formatoM2(m.ufM2)}</span>
+      <span style={{ fontSize: 20, fontWeight: 400, marginLeft: 8, color: C.mid }}>UF/m² + IVA</span>
+      {m.totalNetoUF != null && (
+        <span style={{ display: 'block', fontSize: 14, fontWeight: 400, color: C.dark, marginTop: 14 }}>Total desde {formatoUF(m.totalNetoUF)} UF + IVA</span>
+      )}
+      <span style={{ display: 'block', fontSize: 12, fontWeight: 300, color: C.muted, marginTop: 8, lineHeight: 1.5 }}>Fundaciones y logística según tu terreno*</span>
+    </div>
   )
 }
 
@@ -105,7 +108,7 @@ export function ModeloDetail({ slug }: { slug: string }) {
 
           <FadeUp delay={0.1}>
             <div style={{ background: '#f4f1eb', borderRadius: 16, padding: 'clamp(24px,3vw,36px)' }}>
-              <Precio m={m} grande />
+              <Precio m={m} />
               <div className="mf-specs" style={{ margin: '28px 0' }}>
                 {m.specs.map(s => (
                   <div key={s.l} style={{ background: '#f4f1eb', padding: '16px 18px' }}>
@@ -200,7 +203,7 @@ export function ModeloDetail({ slug }: { slug: string }) {
                 </div>
                 <p style={{ fontSize: 15, color: C.dark }}>{o.nombre}</p>
                 <p style={{ fontSize: 12.5, fontWeight: 300, color: C.muted, marginTop: 2 }}>
-                  {o.desdeUF != null ? `Desde ${formatoUF(o.desdeUF)} UF` : o.resumen}
+                  {o.ufM2 != null ? `Desde ${formatoM2(o.ufM2)} UF/m² + IVA` : o.resumen}
                 </p>
               </Link>
             ))}

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { ModeloDetail } from '../ModeloTemplate'
-import { MODELOS, formatoUF, modeloPorSlug } from '../datos'
+import { MODELOS, formatoM2, modeloPorSlug } from '../datos'
 
 export const dynamicParams = false
 
@@ -13,7 +13,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params
   const m = modeloPorSlug(slug)
   if (!m) return {}
-  const precio = m.desdeUF != null ? ` Desde ${formatoUF(m.desdeUF)} UF.` : ''
+  const precio = m.ufM2 != null ? ` Desde ${formatoM2(m.ufM2)} UF/m² + IVA.` : ''
   return {
     title: `${m.nombre} — ${m.resumen} | Noki`,
     description: `${m.descripcion}${precio}`,
