@@ -12,6 +12,18 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     "/interno/cotizador": ["./lib/cotizador/cotizador.html"],
   },
+  // Modelos Noki renombrados con los planos de noviembre 2026.
+  async redirects() {
+    const renombrados = [
+      ["noki-ii-65", "noki-ii-70"],
+      ["noki-ii-110", "noki-ii-108"],
+      ["noki-ii-140", "noki-ii-147"],
+    ];
+    return renombrados.flatMap(([de, a]) => [
+      { source: `/noki/modelos/${de}`, destination: `/noki/modelos/${a}`, permanent: true },
+      { source: `/modelos/${de}`, destination: `/modelos/${a}`, permanent: true },
+    ]);
+  },
   async headers() {
     return [
       { source: "/interno/:path*", headers: cabecerasInternas },
