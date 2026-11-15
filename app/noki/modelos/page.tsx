@@ -1,5 +1,6 @@
 'use client'
 import Link from 'next/link'
+import Atributos from './Atributos'
 import NokiChrome, { C, serif, FadeUp } from '../shared'
 import { MODELOS, LETRA_CHICA, formatoM2, type Modelo } from './datos'
 
@@ -60,6 +61,8 @@ export default function Modelos() {
         </div>
         {MODELOS.map(m => <ModeloTile key={m.slug} m={m} />)}
       </div>
+
+      <div style={{ marginTop: 6 }}><Atributos /></div>
 
       <p style={{ fontSize: 11.5, fontWeight: 300, color: C.muted, lineHeight: 1.7, maxWidth: 860, margin: '0 auto', padding: '24px 20px 72px', textAlign: 'center' }}>
         {LETRA_CHICA}

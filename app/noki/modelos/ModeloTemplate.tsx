@@ -1,6 +1,7 @@
 'use client'
 import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
+import Atributos from './Atributos'
 import NokiChrome, { C, ctaBtn, FadeUp, AbrirFormularioButton } from '../shared'
 import { MODELOS, INCLUYE, LETRA_CHICA, formatoUF, formatoM2, modeloPorSlug, type Modelo } from './datos'
 
@@ -142,6 +143,8 @@ export function ModeloDetail({ slug }: { slug: string }) {
           {m.fotosReales ? `Fotos reales — ${m.nombre}.` : 'Imágenes referenciales. Terminaciones, paisaje y mobiliario pueden variar.'}
         </p>
       </section>
+
+      <div style={{ marginTop: 72 }}><Atributos /></div>
 
       {(m.planoImg || m.planoPdf) && (
         <section className="mf-wrap" style={{ padding: '88px 0 0' }}>
