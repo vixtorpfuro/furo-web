@@ -197,7 +197,7 @@ export const MODELOS: Modelo[] = [
     planoPdf: '/noki/Modelos/planos/nokiII_147.pdf',
     planoImg: '/noki/Modelos/planos/nokiII_147_plano.jpg',
     hero: '/noki/Modelos/galeria/noki-ii-147/hero.jpg',
-    galeria: [...G('noki-ii-147', 'hero.jpg', 'living.jpg', 'extra.jpg', 'dormitorio.jpg', 'dusk.jpg'), '/noki/Modelos/baja/nokiII_140.jpg'],
+    galeria: [...G('noki-ii-147', 'hero.jpg', 'dormitorio.jpg'), '/noki/Modelos/baja/nokiII_140.jpg'],
   },
   {
     slug: 'noki-ii-160',
