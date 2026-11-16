@@ -5,7 +5,7 @@ import NokiChrome, { C, serif, ctaBtn, FadeUp, AbrirFormularioButton } from '../
 const WHY_ITEMS = [
   { img: 'P1010593.jpg', t: 'Montaje rápido, proceso transparente', d: 'Los paneles estructurales térmicos FURŌ llegan prefabricados desde nuestra planta. La estructura se monta en 4 a 8 meses. Presupuesto claro, plazo predecible.', sub: 'Ensamblaje preciso. Sin imprevistos.' },
   { img: 'P1010591.jpg', t: 'Materiales naturales para todo clima', d: 'Paneles Estructurales Térmicos FURŌ, envolvente 160mm con lana de oveja. Eficiente en la costa y en el frío del sur. Interior en madera laminada vista.', sub: 'Una casa que se siente diferente.' },
-  { img: 'P1010657.jpg', t: 'Una casa que se adapta contigo', d: 'Elige terminaciones y materiales sin alterar la estructura. Precio a suma alzada desde el primer día. Tu Noki, con tu impronta.', sub: 'Personalizable dentro del sistema.' },
+  { img: 'P1010657.jpg', t: 'Una casa que se adapta contigo', d: 'Elige terminaciones y materiales sin alterar la estructura. Cotización clara desde la primera reunión. Tu Noki, con tu impronta.', sub: 'Personalizable dentro del sistema.' },
 ]
 
 export default function ComoTrabajamos() {
@@ -37,7 +37,7 @@ export default function ComoTrabajamos() {
               Construida mejor. Entregada más <em style={{ fontFamily: serif, fontStyle: 'italic', fontWeight: 300 }}>rápido.</em>
             </h2>
             <p style={{ fontSize: 20, fontWeight: 300, color: 'rgba(255,255,255,0.55)', maxWidth: 560, margin: '0 auto', lineHeight: 1.75 }}>
-              Materiales naturales de alto desempeño, diseño minimalista y precio transparente desde el primer día.
+              Materiales naturales de alto desempeño, diseño minimalista y una cotización clara desde la primera reunión.
             </p>
           </FadeUp>
         </div>
@@ -68,7 +68,7 @@ export default function ComoTrabajamos() {
           <div className="bene-grid">
             {[
               { n:'01', t:'Va a cualquier lugar', d:'Transportada en camión. Montada en cualquier geografía chilena.' },
-              { n:'02', t:'Precio transparente', d:'Suma alzada. Sin adicionales. Sabes lo que pagas desde el día uno.' },
+              { n:'02', t:'Cotización clara', d:'Cada modelo se cotiza en UF y se confirma tras la visita técnica a tu terreno. Sabes qué incluye y qué no desde el principio.' },
               { n:'03', t:'Aislación real', d:'160mm de lana de oveja. Eficiente en la costa y en el sur.' },
               { n:'04', t:'Paneles Estructurales Térmicos FURŌ', d:'Más resistente y liviano. Interior visto que se siente diferente.' },
               { n:'05', t:'Montaje en meses', d:'Estructura prefabricada. 4 a 8 meses en tu terreno.' },

@@ -40,9 +40,9 @@ const FAQ_CATS = [
   {
     cat: 'PRECIOS & FINANCIAMIENTO',
     items: [
-      { q: '¿Cuál es el precio?', r: 'El precio de lanzamiento parte desde 6.000 UF para las primeras unidades. Es un precio a suma alzada: lo que firmas es lo que pagas, sin adicionales.' },
-      { q: '¿Qué incluye el precio?', r: 'Proyecto de arquitectura, fabricación de paneles, transporte y montaje en terreno, instalaciones básicas y terminaciones del paquete base.' },
-      { q: '¿Qué no incluye el precio?', r: 'Terreno, permisos municipales, instalaciones de servicios (agua, luz, alcantarillado) y terminaciones adicionales fuera del paquete base.' },
+      { q: '¿Cuál es el precio?', r: 'El precio depende del modelo y de las condiciones de tu terreno (ubicación, acceso y fundaciones). Lo conversamos en la reunión de 20 minutos y se confirma tras la visita técnica.' },
+      { q: '¿Qué incluye el precio?', r: 'La estructura prefabricada en paneles térmicos FURŌ y las terminaciones del paquete base: cubierta de zincalum, fachada ventilada de pino termotratado, muros interiores y cielos en pino, piso flotante, cerámica y porcelanato en baños y deck en terrazas. El detalle está en la ficha de cada modelo.' },
+      { q: '¿Qué no incluye el precio?', r: 'Terreno, fundaciones, logística y transporte, preparación del terreno, permisos municipales, conexión de servicios (agua, luz, alcantarillado) y terminaciones fuera del paquete base. Las fundaciones y la logística dependen de la ubicación y de las condiciones de cada terreno, por eso se confirman tras la visita técnica.' },
       { q: '¿Hay opciones de financiamiento?', r: 'Actualmente trabajamos con pago en etapas: reserva, fabricación y entrega. Estamos desarrollando convenios con instituciones financieras para las próximas unidades.' },
     ]
   },

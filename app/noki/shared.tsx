@@ -1,6 +1,7 @@
 'use client'
 import { createContext, useContext, useRef, useState, useEffect } from 'react'
 import Link from 'next/link'
+import { MODELOS } from './modelos/datos'
 
 export const WEBHOOK = 'https://hook.eu2.make.com/jcti1vtgp2roletlg03vf2jm9leiqkhq'
 
@@ -42,7 +43,10 @@ export function FadeUp({ children, delay = 0, style = {} }: { children: React.Re
   )
 }
 
-const NokiFormContext = createContext<() => void>(() => {})
+// El argumento es el nombre del modelo a precargar en el formulario. Se acepta
+// `unknown` porque algunos botones pasan el evento de click directamente
+// (onClick={openForm}); en ese caso simplemente se ignora.
+const NokiFormContext = createContext<(modelo?: unknown) => void>(() => {})
 export function useNokiForm() {
   return useContext(NokiFormContext)
 }
@@ -51,9 +55,9 @@ export function useNokiForm() {
 // devuelven <NokiChrome>, así que llamar useNokiForm() ahí arriba no
 // alcanza al Provider (que NokiChrome recién crea al renderizarse).
 // Este botón llama al hook desde dentro del árbol de NokiChrome.
-export function AbrirFormularioButton({ children, style }: { children: React.ReactNode, style?: React.CSSProperties }) {
+export function AbrirFormularioButton({ children, style, modelo }: { children: React.ReactNode, style?: React.CSSProperties, modelo?: string }) {
   const openForm = useNokiForm()
-  return <button onClick={openForm} style={style}>{children}</button>
+  return <button onClick={() => openForm(modelo)} style={style}>{children}</button>
 }
 
 const MENU = [
@@ -136,10 +140,16 @@ export function GlobalNokiStyles() {
   )
 }
 
-function InterestedForm({ open, onClose }: { open: boolean, onClose: () => void }) {
-  const [form, setForm] = useState({ nombre: '', apellido: '', email: '', celular: '', perfil: '', donde: '', terreno: '', plazo: '', como_contactar: '' })
+function InterestedForm({ open, onClose, modelo }: { open: boolean, onClose: () => void, modelo: string }) {
+  const [form, setForm] = useState({ nombre: '', apellido: '', email: '', celular: '', modelo, perfil: '', donde: '', terreno: '', plazo: '', como_contactar: '' })
   const [status, setStatus] = useState<'idle'|'sending'|'ok'|'error'>('idle')
   const set = (k: string, v: string) => setForm(f => ({ ...f, [k]: v }))
+
+  // Cada vez que se abre el formulario, parte con el modelo desde el que se abrió
+  // (vacío si se abrió desde un botón genérico).
+  useEffect(() => {
+    if (open) setForm(f => ({ ...f, modelo }))
+  }, [open, modelo])
 
   const submit = async () => {
     if (!form.nombre || !form.apellido || !form.email) { setStatus('error'); return }
@@ -173,6 +183,14 @@ function InterestedForm({ open, onClose }: { open: boolean, onClose: () => void 
               <label style={{ fontSize: 10, letterSpacing: '0.15em', textTransform: 'uppercase', color: C.muted, display: 'block', marginBottom: 8 }}>Apellido *</label>
               <input style={inp} type="text" placeholder="Tu apellido" value={form.apellido} onChange={e => set('apellido', e.target.value)} />
             </div>
+          </div>
+
+          <div style={{ marginBottom: 28 }}>
+            <label style={{ fontSize: 10, letterSpacing: '0.15em', textTransform: 'uppercase', color: C.muted, display: 'block', marginBottom: 8 }}>Modelo de interés</label>
+            <select style={sel} value={form.modelo} onChange={e => set('modelo', e.target.value)}>
+              <option value="">Aún no lo sé</option>
+              {MODELOS.map(m => <option key={m.slug} value={m.nombre}>{m.nombre}</option>)}
+            </select>
           </div>
 
           {[
@@ -324,13 +342,17 @@ export function NokiFooter() {
 
 export default function NokiChrome({ children, showFooter = true }: { children: React.ReactNode, showFooter?: boolean }) {
   const [formOpen, setFormOpen] = useState(false)
-  const openForm = () => setFormOpen(true)
+  const [modelo, setModelo] = useState('')
+  const openForm = (m?: unknown) => {
+    setModelo(typeof m === 'string' ? m : '')
+    setFormOpen(true)
+  }
 
   return (
     <NokiFormContext.Provider value={openForm}>
       <main style={{ backgroundColor: C.white, color: C.dark, fontFamily: "'DM Sans', sans-serif", minHeight: '100vh' }}>
         <GlobalNokiStyles />
-        <InterestedForm open={formOpen} onClose={() => setFormOpen(false)} />
+        <InterestedForm open={formOpen} onClose={() => setFormOpen(false)} modelo={modelo} />
         <NokiNav />
         {children}
         {showFooter && <NokiFooter />}

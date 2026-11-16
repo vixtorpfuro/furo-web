@@ -2,20 +2,13 @@
 import Link from 'next/link'
 import Atributos from './Atributos'
 import NokiChrome, { C, serif, FadeUp } from '../shared'
-import { MODELOS, LETRA_CHICA, formatoM2, type Modelo } from './datos'
+import { MODELOS, type Modelo } from './datos'
 
 function ModeloTile({ m }: { m: Modelo }) {
   return (
     <Link href={`/noki/modelos/${m.slug}`} className="modelo-tile">
       <img src={m.hero} alt={m.nombre} loading="lazy" />
       <div className="modelo-sombra" />
-      {m.ufM2 != null && (
-        <div className="modelo-precio">
-          <span>Desde</span>
-          <strong>{formatoM2(m.ufM2)} UF/m²</strong>
-          <em>+ IVA</em>
-        </div>
-      )}
       <div style={{ position: 'absolute', left: 24, right: 24, bottom: 22 }}>
         <h2 style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 24, fontWeight: 400, color: '#fff', marginBottom: 6, lineHeight: 1.15 }}>{m.nombre}</h2>
         <p style={{ fontSize: 13, fontWeight: 300, color: 'rgba(255,255,255,0.8)' }}>{m.resumen}</p>
@@ -33,10 +26,6 @@ export default function Modelos() {
         .modelo-tile img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .6s cubic-bezier(.16,1,.3,1); }
         .modelo-tile:hover img { transform: scale(1.03); }
         .modelo-sombra { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.68) 0%, rgba(0,0,0,0.12) 45%, transparent 70%); }
-        .modelo-precio { position: absolute; top: 16px; right: 16px; background: rgba(255,255,255,0.94); color: #1a1714; border-radius: 10px; padding: 8px 12px; text-align: right; line-height: 1.15; }
-        .modelo-precio span { display: block; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #8a8278; }
-        .modelo-precio strong { font-size: 17px; font-weight: 500; }
-        .modelo-precio em { display: block; font-style: normal; font-size: 10.5px; color: #8a8278; }
         @media (max-width: 900px) { .modelos-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 600px) { .modelos-grid { grid-template-columns: 1fr; padding: 0 0 6px; } .modelos-intro { padding: 120px 16px 40px !important; } }
       `}</style>
@@ -65,7 +54,7 @@ export default function Modelos() {
       <div style={{ marginTop: 6 }}><Atributos /></div>
 
       <p style={{ fontSize: 11.5, fontWeight: 300, color: C.muted, lineHeight: 1.7, maxWidth: 860, margin: '0 auto', padding: '24px 20px 72px', textAlign: 'center' }}>
-        {LETRA_CHICA}
+        Imágenes referenciales.
       </p>
     </NokiChrome>
   )
