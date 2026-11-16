@@ -49,7 +49,7 @@ export const MODELOS: Modelo[] = [
     planoPdf: '/noki/Modelos/planos/nokiII_70.pdf',
     planoImg: '/noki/Modelos/planos/nokiII_70_plano.jpg',
     hero: '/noki/Modelos/galeria/noki-ii-70/hero.jpg',
-    galeria: G('noki-ii-70', 'hero.jpg', 'living.jpg', 'dormitorio.jpg', 'dusk.jpg'),
+    galeria: G('noki-ii-70', 'hero.jpg', 'living.jpg', 'dusk.jpg'),
   },
   {
     slug: 'noki-ii-75',
@@ -74,7 +74,7 @@ export const MODELOS: Modelo[] = [
     planoPdf: '/noki/Modelos/planos/nokiII_75.pdf',
     planoImg: '/noki/Modelos/planos/nokiII_75_plano.jpg',
     hero: '/noki/Modelos/galeria/noki-ii-75/hero.jpg',
-    galeria: G('noki-ii-75', 'hero.jpg', 'living.jpg', 'dusk.jpg'),
+    galeria: G('noki-ii-75', 'hero.jpg', 'living.jpg'),
   },
   {
     slug: 'noki-ii-97',
@@ -124,7 +124,7 @@ export const MODELOS: Modelo[] = [
     planoPdf: '/noki/Modelos/planos/nokiII_108.pdf',
     planoImg: '/noki/Modelos/planos/nokiII_108_plano.jpg',
     hero: '/noki/Modelos/galeria/noki-ii-108/hero.jpg',
-    galeria: G('noki-ii-108', 'hero.jpg', 'living.jpg', 'dormitorio.jpg', 'dusk.jpg'),
+    galeria: G('noki-ii-108', 'hero.jpg', 'living.jpg', 'dusk.jpg'),
   },
   {
     slug: 'noki-ii-120',
@@ -197,7 +197,7 @@ export const MODELOS: Modelo[] = [
     planoPdf: '/noki/Modelos/planos/nokiII_147.pdf',
     planoImg: '/noki/Modelos/planos/nokiII_147_plano.jpg',
     hero: '/noki/Modelos/galeria/noki-ii-147/hero.jpg',
-    galeria: [...G('noki-ii-147', 'hero.jpg', 'dormitorio.jpg'), '/noki/Modelos/baja/nokiII_140.jpg'],
+    galeria: G('noki-ii-147', 'hero.jpg', 'dormitorio.jpg'),
   },
   {
     slug: 'noki-ii-160',
@@ -223,7 +223,7 @@ export const MODELOS: Modelo[] = [
     planoPdf: '/noki/Modelos/planos/nokiII_160.pdf',
     planoImg: '/noki/Modelos/planos/nokiII_160_plano.jpg',
     hero: '/noki/Modelos/galeria/noki-ii-160/hero.jpg',
-    galeria: G('noki-ii-160', 'hero.jpg', 'living.jpg', 'dormitorio.jpg', 'dusk.jpg'),
+    galeria: G('noki-ii-160', 'hero.jpg', 'living.jpg', 'dusk.jpg'),
   },
   {
     slug: 'noki-i',
@@ -247,7 +247,7 @@ export const MODELOS: Modelo[] = [
     totalNetoUF: null,
     planoPdf: '/noki/Modelos/nokiI.pdf',
     hero: '/noki/Modelos/baja/nokiI.jpg',
-    galeria: ['/noki/P1010657.jpg', '/noki/P1010640.jpg', '/noki/P1010586.jpg', '/noki/P1010591.jpg', '/noki/P1010593.jpg', '/noki/P1010594.jpg', '/noki/P1010632.jpg'],
+    galeria: ['/noki/P1010657.jpg', '/noki/P1010640.jpg'],
     fotosReales: true,
   },
 ]

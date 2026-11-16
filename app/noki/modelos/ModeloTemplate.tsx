@@ -125,7 +125,7 @@ export function ModeloDetail({ slug }: { slug: string }) {
           ))}
         </div>
         <p style={{ fontSize: 12, fontWeight: 300, color: C.muted, padding: '12px 2px 0' }}>
-          {m.fotosReales ? `Fotos reales — ${m.nombre}.` : 'Imágenes referenciales. Terminaciones, paisaje y mobiliario pueden variar.'}
+          {m.fotosReales ? `Fotos reales — ${m.nombre}.` : 'Imágenes referenciales. Terminaciones, tamaño y mobiliario pueden variar según selección.'}
         </p>
       </section>
 
@@ -176,7 +176,7 @@ export function ModeloDetail({ slug }: { slug: string }) {
               </div>
             ))}
           </div>
-          <p style={{ fontSize: 11.5, fontWeight: 300, color: C.muted, lineHeight: 1.7, marginTop: 28, maxWidth: 820 }}>Imágenes referenciales.</p>
+          <p style={{ fontSize: 11.5, fontWeight: 300, color: C.muted, lineHeight: 1.7, marginTop: 28, maxWidth: 820 }}>Imágenes referenciales. Terminaciones, tamaño y mobiliario pueden variar según selección.</p>
         </div>
       </section>
 

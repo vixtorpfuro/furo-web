@@ -54,7 +54,7 @@ export default function Modelos() {
       <div style={{ marginTop: 6 }}><Atributos /></div>
 
       <p style={{ fontSize: 11.5, fontWeight: 300, color: C.muted, lineHeight: 1.7, maxWidth: 860, margin: '0 auto', padding: '24px 20px 72px', textAlign: 'center' }}>
-        Imágenes referenciales.
+        Imágenes referenciales. Terminaciones, tamaño y mobiliario pueden variar según selección.
       </p>
     </NokiChrome>
   )
