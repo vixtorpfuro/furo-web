@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { MODELOS } from './modelos/datos'
 
 export const WEBHOOK = 'https://hook.eu2.make.com/jcti1vtgp2roletlg03vf2jm9leiqkhq'
+export const CALENDLY_URL = 'https://calendly.com/vpellegrini-furo/30min'
 
 export const C = { dark: '#1a1714', mid: '#5e5850', muted: '#8a8278', red: '#e05c4b', white: '#ffffff', border: 'rgba(26,23,20,0.08)' }
 export const serif = "'Cormorant Garamond', Georgia, serif"
@@ -244,7 +245,12 @@ function InterestedForm({ open, onClose, modelo }: { open: boolean, onClose: () 
             </select>
           </div>
 
-          {status === 'ok' && <p style={{ fontSize: 13, color: '#2c4a3d', borderTop: '2px solid #2c4a3d', paddingTop: 14, marginBottom: 16 }}>✓ Mensaje enviado. Te contactamos pronto.</p>}
+          {status === 'ok' && (
+            <div style={{ borderTop: '2px solid #2c4a3d', paddingTop: 14, marginBottom: 16 }}>
+              <p style={{ fontSize: 13, color: '#2c4a3d', lineHeight: 1.6, marginBottom: 14 }}>✓ Recibimos tus datos. Para avanzar más rápido, elige ahora el horario de tu reunión:</p>
+              <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer" style={{ ...ctaBtn, display: 'block', textAlign: 'center', padding: '16px', fontSize: 14 }}>Agenda tu reunión ahora →</a>
+            </div>
+          )}
           {status === 'error' && <p style={{ fontSize: 13, color: C.red, borderTop: `2px solid ${C.red}`, paddingTop: 14, marginBottom: 16 }}>Por favor ingresa nombre, apellido y email.</p>}
           <button onClick={submit} disabled={status === 'sending' || status === 'ok'} style={{ ...ctaBtn, width: '100%', padding: '16px', fontSize: 14, background: status === 'ok' ? '#2c4a3d' : C.red }}>
             {status === 'sending' ? 'Enviando...' : status === 'ok' ? '✓ Mensaje enviado' : 'Agenda tu reunión →'}
