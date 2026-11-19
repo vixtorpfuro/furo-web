@@ -23,7 +23,7 @@ const FAQ_CATS = [
   {
     cat: 'PROCESO',
     items: [
-      { q: '¿Cómo es el proceso de compra?', r: 'Primero agendas una reunión de 20 minutos con nuestro equipo. Luego definimos el emplazamiento y terminaciones. Firmamos contrato a suma alzada y comenzamos la fabricación. El montaje en terreno dura entre 4 y 8 meses.' },
+      { q: '¿Cómo es el proceso de compra?', r: 'Primero agendas una reunión de 30 minutos con nuestro equipo. Luego definimos el emplazamiento y terminaciones. Firmamos contrato a suma alzada y comenzamos la fabricación. El montaje en terreno dura entre 4 y 8 meses.' },
       { q: '¿Cuánto tiempo tarda todo el proceso?', r: 'Entre 6 y 12 meses desde la firma del contrato hasta las llaves, dependiendo de los tiempos de permisos del terreno.' },
       { q: '¿Necesito contratar un arquitecto por separado?', r: 'No. El proyecto de arquitectura básico está incluido. Si necesitas proyecto de permisos adaptado a tu municipio, lo coordinamos con nuestro equipo técnico.' },
       { q: '¿Puedo personalizar el diseño?', r: 'Sí, dentro del sistema Noki. Puedes elegir terminaciones interiores y exteriores, colores y acabados sin alterar la estructura ni el precio base.' },
@@ -40,7 +40,7 @@ const FAQ_CATS = [
   {
     cat: 'PRECIOS & FINANCIAMIENTO',
     items: [
-      { q: '¿Cuál es el precio?', r: 'El precio depende del modelo y de las condiciones de tu terreno (ubicación, acceso y fundaciones). Lo conversamos en la reunión de 20 minutos y se confirma tras la visita técnica.' },
+      { q: '¿Cuál es el precio?', r: 'El precio depende del modelo y de las condiciones de tu terreno (ubicación, acceso y fundaciones). Lo conversamos en la reunión de 30 minutos y se confirma tras la visita técnica.' },
       { q: '¿Qué incluye el precio?', r: 'La estructura prefabricada en paneles térmicos FURŌ y las terminaciones del paquete base: cubierta de zincalum, fachada ventilada de pino termotratado, muros interiores y cielos en pino, piso flotante, cerámica y porcelanato en baños y deck en terrazas. El detalle está en la ficha de cada modelo.' },
       { q: '¿Qué no incluye el precio?', r: 'Terreno, fundaciones, logística y transporte, preparación del terreno, permisos municipales, conexión de servicios (agua, luz, alcantarillado) y terminaciones fuera del paquete base. Las fundaciones y la logística dependen de la ubicación y de las condiciones de cada terreno, por eso se confirman tras la visita técnica.' },
       { q: '¿Hay opciones de financiamiento?', r: 'Actualmente trabajamos con pago en etapas: reserva, fabricación y entrega. Estamos desarrollando convenios con instituciones financieras para las próximas unidades.' },

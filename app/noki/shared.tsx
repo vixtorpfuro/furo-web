@@ -2,9 +2,33 @@
 import { createContext, useContext, useRef, useState, useEffect } from 'react'
 import Link from 'next/link'
 import { MODELOS } from './modelos/datos'
+import { trackLead, trackSchedule } from '@/components/MetaPixel'
 
 export const WEBHOOK = 'https://hook.eu2.make.com/jcti1vtgp2roletlg03vf2jm9leiqkhq'
 export const CALENDLY_URL = 'https://calendly.com/vpellegrini-furo/30min'
+
+// Etiquetas de campaña (UTM) del anuncio: se guardan al entrar a cualquier página de Noki
+// y viajan con el formulario y con el link a Calendly, para saber de qué anuncio llegó cada lead.
+const UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbclid']
+export function guardarUtm() {
+  try {
+    const p = new URLSearchParams(window.location.search)
+    const actual = leerUtm()
+    let cambio = false
+    for (const k of UTM_KEYS) { const v = p.get(k); if (v) { actual[k] = v; cambio = true } }
+    if (cambio) sessionStorage.setItem('noki_utm', JSON.stringify(actual))
+  } catch {}
+}
+export function leerUtm(): Record<string, string> {
+  try { return JSON.parse(sessionStorage.getItem('noki_utm') || '{}') } catch { return {} }
+}
+export function abrirCalendly() {
+  trackSchedule()
+  const u = leerUtm()
+  const q = new URLSearchParams()
+  for (const k of ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term']) if (u[k]) q.set(k, u[k])
+  window.open(q.toString() ? `${CALENDLY_URL}?${q}` : CALENDLY_URL, '_blank', 'noopener,noreferrer')
+}
 
 export const C = { dark: '#1a1714', mid: '#5e5850', muted: '#8a8278', red: '#e05c4b', white: '#ffffff', border: 'rgba(26,23,20,0.08)' }
 export const serif = "'Cormorant Garamond', Georgia, serif"
@@ -156,7 +180,8 @@ function InterestedForm({ open, onClose, modelo }: { open: boolean, onClose: () 
     if (!form.nombre || !form.apellido || !form.email) { setStatus('error'); return }
     setStatus('sending')
     try {
-      const res = await fetch(WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...form, tipo: 'waitlist_noki', fecha: new Date().toLocaleString('es-CL'), origen: 'noki', mailchimp: true }) })
+      const res = await fetch(WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...form, ...leerUtm(), tipo: 'waitlist_noki', fecha: new Date().toLocaleString('es-CL'), origen: 'noki', mailchimp: true }) })
+      if (res.ok) trackLead({ content_name: form.modelo || 'Formulario Noki' })
       setStatus(res.ok ? 'ok' : 'error')
     } catch { setStatus('error') }
   }
@@ -172,7 +197,7 @@ function InterestedForm({ open, onClose, modelo }: { open: boolean, onClose: () 
           </div>
           <h2 style={{ fontFamily: serif, fontSize: 30, fontWeight: 400, color: C.dark, lineHeight: 1.2, marginBottom: 20 }}>Cuéntanos de tu proyecto.</h2>
           <p style={{ fontSize: 13, fontWeight: 300, color: C.mid, lineHeight: 1.75, marginBottom: 40, paddingBottom: 24, borderBottom: `1px solid ${C.border}` }}>
-            Te enviaremos un link para una reunión de 20 minutos. Para calcular el precio final necesitamos conocer la ubicación y características de tu terreno.
+            Te enviaremos un link para una reunión de 30 minutos. Para calcular el precio final necesitamos conocer la ubicación y características de tu terreno.
           </p>
 
           <div className="nombre-row" style={{ marginBottom: 28 }}>
@@ -248,7 +273,7 @@ function InterestedForm({ open, onClose, modelo }: { open: boolean, onClose: () 
           {status === 'ok' && (
             <div style={{ borderTop: '2px solid #2c4a3d', paddingTop: 14, marginBottom: 16 }}>
               <p style={{ fontSize: 13, color: '#2c4a3d', lineHeight: 1.6, marginBottom: 14 }}>✓ Recibimos tus datos. Para avanzar más rápido, elige ahora el horario de tu reunión:</p>
-              <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer" style={{ ...ctaBtn, display: 'block', textAlign: 'center', padding: '16px', fontSize: 14 }}>Agenda tu reunión ahora →</a>
+              <button type="button" onClick={abrirCalendly} style={{ ...ctaBtn, display: 'block', width: '100%', textAlign: 'center', padding: '16px', fontSize: 14 }}>Agenda tu reunión ahora →</button>
             </div>
           )}
           {status === 'error' && <p style={{ fontSize: 13, color: C.red, borderTop: `2px solid ${C.red}`, paddingTop: 14, marginBottom: 16 }}>Por favor ingresa nombre, apellido y email.</p>}
@@ -349,6 +374,7 @@ export function NokiFooter() {
 export default function NokiChrome({ children, showFooter = true }: { children: React.ReactNode, showFooter?: boolean }) {
   const [formOpen, setFormOpen] = useState(false)
   const [modelo, setModelo] = useState('')
+  useEffect(() => { guardarUtm() }, [])
   const openForm = (m?: unknown) => {
     setModelo(typeof m === 'string' ? m : '')
     setFormOpen(true)
