@@ -2,7 +2,7 @@
 import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
-  calcularMl, cargaFabrica, diasEntre, sumarDias, PARAMETROS, TIEMPOS_DECISION,
+  aportePorMes, calcularMl, cargaFabrica, diasEntre, sumarDias, PARAMETROS, TIEMPOS_DECISION,
   type Alcance, type FaseId, type Hitos, type TiempoDecision,
 } from '@/lib/planificacion/calculo'
 import type { ProyectoPlanificado } from '@/lib/planificacion/datos'
@@ -206,6 +206,8 @@ export default function Planificador({ proyectos, hoy }: { proyectos: ProyectoPl
         con {PARAMETROS.mlPorM2.residencial} ml/m² (residencial) o {PARAMETROS.mlPorM2.comercial} ml/m² (comercial). Semanas de 5 días, sin descontar feriados.
       </p>
 
+      <AporteMensual proyectos={proyectos} hoy={hoy} onEditar={setEditando} />
+
       {editando && (
         <Editor
           key={editando.id}
@@ -324,6 +326,7 @@ function Editor({ p, hoy, onCerrar }: { p: ProyectoPlanificado; hoy: string; onC
     entradaFabricaAjustada: m.entradaFabricaAjustada || '',
     tipologia: m.tipologia || '',
     mlReales: m.mlReales?.toString() || '',
+    ufManual: m.ufManual?.toString() || '',
     cuadrillas: m.cuadrillas.toString(),
     terminacionesSemanas: m.terminacionesSemanas?.toString() || '',
     modeloPreliminar: m.modeloPreliminar,
@@ -362,6 +365,7 @@ function Editor({ p, hoy, onCerrar }: { p: ProyectoPlanificado; hoy: string; onC
     entradaFabricaAjustada: form.entradaFabricaAjustada || null,
     tipologia: form.tipologia || null,
     mlReales: num(form.mlReales),
+    ufManual: num(form.ufManual),
     cuadrillas: num(form.cuadrillas),
     terminacionesSemanas: num(form.terminacionesSemanas),
     modeloPreliminar: form.modeloPreliminar,
@@ -408,6 +412,9 @@ function Editor({ p, hoy, onCerrar }: { p: ProyectoPlanificado; hoy: string; onC
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
           <Campo etiqueta="ml reales (cotización)" ayuda={`Si se deja vacío: ${calcularMl({ m2: p.m2, tipologia: p.tipologia, mlReales: null }).ml ?? '—'} ml estimados`}>
             <input inputMode="decimal" value={form.mlReales} onChange={e => set('mlReales', e.target.value)} style={inputStyle} />
+          </Campo>
+          <Campo etiqueta="Venta UF (presupuesto)" ayuda={`Si se deja vacío: ${p.ufEstimada?.toLocaleString('es-CL') ?? '—'} UF estimadas (como Monday)`}>
+            <input inputMode="decimal" value={form.ufManual} onChange={e => set('ufManual', e.target.value)} style={inputStyle} />
           </Campo>
           <Campo etiqueta="Tipología" ayuda={`Automática: ${p.tipologia}`}>
             <select value={form.tipologia} onChange={e => set('tipologia', e.target.value)} style={inputStyle}>
@@ -494,5 +501,112 @@ function Editor({ p, hoy, onCerrar }: { p: ProyectoPlanificado; hoy: string; onC
         </div>
       </div>
     </div>
+  )
+}
+
+const fmtUF = (n: number) => Math.round(n).toLocaleString('es-CL')
+
+// Venta (UF) que aporta cada proyecto en cada mes, repartida según el avance de sus fases:
+// fabricación, montaje y terminaciones, con el peso de cada una según los UF/m² de Monday.
+function AporteMensual({ proyectos, hoy, onEditar }: {
+  proyectos: ProyectoPlanificado[]; hoy: string; onEditar: (p: ProyectoPlanificado) => void
+}) {
+  const [soloGanados, setSoloGanados] = useState(false)
+  const filas = useMemo(() => proyectos
+    .filter(p => !soloGanados || p.estado === 'Ganado')
+    .map(p => ({ p, meses: aportePorMes(p.plan, p.alcance, p.uf) }))
+    .filter(f => Object.keys(f.meses).length > 0)
+    .sort((a, b) => (a.p.plan.hitos?.inicioFabricacion || '').localeCompare(b.p.plan.hitos?.inicioFabricacion || '')),
+  [proyectos, soloGanados])
+
+  const meses = useMemo(() => {
+    const todos = filas.flatMap(f => Object.keys(f.meses)).sort()
+    if (!todos.length) return []
+    const res: string[] = []
+    let [y, m] = todos[0].split('-').map(Number)
+    const ultimo = todos.at(-1)!
+    for (;;) {
+      const k = `${y}-${String(m).padStart(2, '0')}`
+      if (k > ultimo) break
+      res.push(k)
+      m++
+      if (m > 12) { m = 1; y++ }
+    }
+    return res
+  }, [filas])
+
+  const mesHoy = hoy.slice(0, 7)
+  const totalMes = (k: string, cond: (p: ProyectoPlanificado) => boolean = () => true) =>
+    filas.filter(f => cond(f.p)).reduce((s, f) => s + (f.meses[k] || 0), 0)
+  const ganado = (p: ProyectoPlanificado) => p.estado === 'Ganado'
+  const sinMonto = proyectos.filter(p => p.plan.fases.length && !p.uf).length
+
+  const celda: React.CSSProperties = { padding: '7px 10px', textAlign: 'right', whiteSpace: 'nowrap', borderLeft: `1px solid ${C.border}` }
+  const izq: React.CSSProperties = { padding: '7px 14px', position: 'sticky', left: 0, background: '#fff', zIndex: 1, minWidth: 240, maxWidth: 240, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', borderRight: `1px solid ${C.border}` }
+  const colMes = (k: string) => (k === mesHoy ? { background: '#f6f3fb' } : {})
+
+  return (
+    <section style={{ marginTop: 28 }}>
+      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', marginBottom: 10 }}>
+        <div>
+          <h2 style={{ fontSize: 18, fontWeight: 400, margin: 0 }}>Aporte de venta por mes (UF)</h2>
+          <p style={{ fontSize: 12, color: C.muted, margin: '4px 0 0', maxWidth: 720, lineHeight: 1.5 }}>
+            La venta de cada proyecto se reparte según los días hábiles de sus fases en cada mes: fabricación 7 UF/m²,
+            montaje 2 UF/m² y terminaciones el resto (proyecto completo, 33 UF/m²). Usa la venta del presupuesto si se ingresó; si no, la estimación de Monday.
+          </p>
+        </div>
+        <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13 }}>
+          <input type="checkbox" checked={soloGanados} onChange={e => setSoloGanados(e.target.checked)} />
+          Solo ganados
+        </label>
+      </div>
+      {!filas.length ? (
+        <p style={{ fontSize: 13, color: C.muted }}>No hay proyectos con fechas y monto para repartir.</p>
+      ) : (
+        <div style={{ background: '#fff', border: `1px solid ${C.border}`, borderRadius: 8, overflowX: 'auto' }}>
+          <table style={{ borderCollapse: 'collapse', fontSize: 12, width: 'max-content', minWidth: '100%' }}>
+            <thead>
+              <tr style={{ color: C.muted, textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: 11 }}>
+                <th style={{ ...izq, textAlign: 'left', fontWeight: 500 }}>Proyecto</th>
+                <th style={{ ...celda, fontWeight: 500 }}>Venta UF</th>
+                {meses.map(k => {
+                  const [y, m] = k.split('-')
+                  return <th key={k} style={{ ...celda, ...colMes(k), fontWeight: 500 }}>{MESES[Number(m) - 1]} {y.slice(2)}</th>
+                })}
+              </tr>
+            </thead>
+            <tbody>
+              {filas.map(({ p, meses: pm }) => (
+                <tr key={p.id} onClick={() => onEditar(p)} style={{ borderTop: `1px solid ${C.border}`, cursor: 'pointer' }}>
+                  <td style={izq} title={p.nombre}>
+                    <span style={{ color: ganado(p) ? C.verde : C.purpleMid }}>● </span>{p.nombre}
+                  </td>
+                  <td style={celda}>
+                    {fmtUF(p.uf!)}{p.manual.ufManual == null && <span style={{ color: C.muted }} title="Estimada como en Monday"> est.</span>}
+                  </td>
+                  {meses.map(k => <td key={k} style={{ ...celda, ...colMes(k), color: pm[k] ? C.dark : C.border }}>{pm[k] ? fmtUF(pm[k]) : '·'}</td>)}
+                </tr>
+              ))}
+              {!soloGanados && (
+                <tr style={{ borderTop: `2px solid ${C.border}`, color: C.verde }}>
+                  <td style={{ ...izq, color: C.verde }}>Ganados</td>
+                  <td style={celda}>{fmtUF(filas.filter(f => ganado(f.p)).reduce((s, f) => s + (f.p.uf || 0), 0))}</td>
+                  {meses.map(k => <td key={k} style={{ ...celda, ...colMes(k) }}>{fmtUF(totalMes(k, ganado))}</td>)}
+                </tr>
+              )}
+              <tr style={{ borderTop: `2px solid ${C.dark}`, fontWeight: 500 }}>
+                <td style={{ ...izq, fontWeight: 500 }}>Total</td>
+                <td style={celda}>{fmtUF(filas.reduce((s, f) => s + (f.p.uf || 0), 0))}</td>
+                {meses.map(k => <td key={k} style={{ ...celda, ...colMes(k) }}>{fmtUF(totalMes(k))}</td>)}
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      )}
+      <p style={{ fontSize: 11, color: C.muted, marginTop: 8 }}>
+        ● verde: ganado · ● morado: en cartera (sin ponderar por probabilidad). Clic en un proyecto para ingresar la venta del presupuesto.
+        {sinMonto > 0 && ` ${sinMonto} proyecto(s) con fechas pero sin m² ni venta no se incluyen.`}
+      </p>
+    </section>
   )
 }

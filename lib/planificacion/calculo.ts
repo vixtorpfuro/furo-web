@@ -241,3 +241,48 @@ export function cargaFabrica(planes: ResultadoPlan[], desde: string, semanas: nu
   }
   return res
 }
+
+// ── Aporte de venta por mes ────────────────────────────────────────────────────────────────
+
+// Mismos factores que la columna fórmula "UF" de Monday (UF/m² según itemizado).
+export const UF_M2_POR_ALCANCE: Record<Alcance, number> = { estructuras: 7, montadas: 9, completo: 33 }
+
+export function ufEstimada(alcance: Alcance | null, m2: number | null): number | null {
+  return alcance && m2 ? Math.round(m2 * UF_M2_POR_ALCANCE[alcance]) : null
+}
+
+// Qué parte de la venta aporta cada fase, derivado de los mismos factores: las estructuras (7) se
+// producen en fábrica, el montaje suma 2 y las terminaciones el resto del proyecto completo.
+function pesosFases(alcance: Alcance, conTerminaciones: boolean): Partial<Record<FaseId, number>> {
+  const total = UF_M2_POR_ALCANCE[alcance]
+  const fab = UF_M2_POR_ALCANCE.estructuras / total
+  if (alcance === 'estructuras') return { fabricacion: 1 }
+  if (alcance === 'montadas') return { fabricacion: fab, montaje: 1 - fab }
+  const montaje = (UF_M2_POR_ALCANCE.montadas - UF_M2_POR_ALCANCE.estructuras) / total
+  return conTerminaciones
+    ? { fabricacion: fab, montaje, terminaciones: 1 - fab - montaje }
+    : { fabricacion: fab, montaje: 1 - fab }
+}
+
+// Reparte la venta (UF) en los meses según los días hábiles de cada fase productiva en cada mes.
+// Devuelve { 'YYYY-MM': UF }.
+export function aportePorMes(plan: ResultadoPlan, alcance: Alcance | null, uf: number | null): Record<string, number> {
+  const res: Record<string, number> = {}
+  if (!alcance || !uf || !plan.fases.length) return res
+  const pesos = pesosFases(alcance, plan.fases.some(f => f.id === 'terminaciones'))
+  for (const f of plan.fases) {
+    const peso = pesos[f.id]
+    if (!peso) continue
+    const porMes: Record<string, number> = {}
+    let habiles = 0
+    for (let d = f.inicio; d <= f.fin; d = sumarDias(d, 1)) {
+      if (!esHabil(aDate(d))) continue
+      const mes = d.slice(0, 7)
+      porMes[mes] = (porMes[mes] || 0) + 1
+      habiles++
+    }
+    if (!habiles) continue
+    for (const [mes, n] of Object.entries(porMes)) res[mes] = (res[mes] || 0) + (uf * peso * n) / habiles
+  }
+  return res
+}

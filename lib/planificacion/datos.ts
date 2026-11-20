@@ -2,7 +2,7 @@ import 'server-only'
 import { mondayFetch } from '@/lib/interno/monday'
 import { writeClient } from '@/sanity/lib/writeClient'
 import {
-  calcularPlan, TIEMPO_DECISION_DEFAULT, TIEMPOS_DECISION,
+  calcularPlan, ufEstimada, TIEMPO_DECISION_DEFAULT, TIEMPOS_DECISION,
   type Alcance, type Hitos, type ResultadoPlan, type TiempoDecision, type Tipologia,
 } from './calculo'
 
@@ -34,6 +34,7 @@ export type PlanManual = {
   entradaFabricaAjustada: string | null
   tipologia: Tipologia | null
   mlReales: number | null
+  ufManual: number | null
   cuadrillas: number
   terminacionesSemanas: number | null
   modeloPreliminar: boolean
@@ -55,6 +56,9 @@ export type ProyectoPlanificado = {
   horizonte: string
   tipoProyecto: string
   tipologia: Tipologia
+  // Venta en UF: la del presupuesto si se ingresó a mano, si no la estimada como en Monday.
+  uf: number | null
+  ufEstimada: number | null
   manual: PlanManual
   plan: ResultadoPlan
 }
@@ -84,7 +88,7 @@ type DocPlan = Partial<Omit<PlanManual, 'tiempoDecision' | 'tipologia'>> & {
 async function leerPlanesSanity(): Promise<Map<string, DocPlan>> {
   const docs: DocPlan[] = await writeClient.fetch(
     `*[_type == "planificacionProyecto"]{ mondayItemId, fechaObjetivo, tiempoDecision, entradaFabricaAjustada,
-      tipologia, mlReales, cuadrillas, terminacionesSemanas, modeloPreliminar, notas, reales, lineaBase, actualizadoPor }`
+      tipologia, mlReales, ufManual, cuadrillas, terminacionesSemanas, modeloPreliminar, notas, reales, lineaBase, actualizadoPor }`
   )
   return new Map(docs.map(d => [d.mondayItemId, d]))
 }
@@ -98,6 +102,7 @@ function normalizarManual(doc: DocPlan | undefined): PlanManual {
     entradaFabricaAjustada: doc?.entradaFabricaAjustada || null,
     tipologia: tip === 'residencial' || tip === 'comercial' ? tip : null,
     mlReales: typeof doc?.mlReales === 'number' ? doc.mlReales : null,
+    ufManual: typeof doc?.ufManual === 'number' ? doc.ufManual : null,
     cuadrillas: typeof doc?.cuadrillas === 'number' && doc.cuadrillas > 0 ? doc.cuadrillas : 1,
     terminacionesSemanas: typeof doc?.terminacionesSemanas === 'number' ? doc.terminacionesSemanas : null,
     modeloPreliminar: !!doc?.modeloPreliminar,
@@ -121,6 +126,7 @@ export async function obtenerPlanificacion(): Promise<ProyectoPlanificado[]> {
       const manual = normalizarManual(doc)
       const tipologia: Tipologia = manual.tipologia ?? (TIPOS_COMERCIALES.test(tipoProyecto) ? 'comercial' : 'residencial')
       const alcance = ALCANCE_POR_ITEMIZADO[v(COL.itemizado)] ?? null
+      const ufEst = ufEstimada(alcance, m2)
 
       return {
         doc,
@@ -136,6 +142,8 @@ export async function obtenerPlanificacion(): Promise<ProyectoPlanificado[]> {
           horizonte: v(COL.horizonte),
           tipoProyecto,
           tipologia,
+          uf: manual.ufManual ?? ufEst,
+          ufEstimada: ufEst,
           manual,
           plan: calcularPlan({
             alcance, m2, tipologia,

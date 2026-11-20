@@ -33,6 +33,7 @@ const planificacionProyecto = {
       options: { list: [{ title: 'Residencial (1,66)', value: 'residencial' }, { title: 'Comercial / educacional (0,9)', value: 'comercial' }] },
     },
     { name: 'mlReales', title: 'ml reales (cotización)', type: 'number' },
+    { name: 'ufManual', title: 'Venta UF (presupuesto)', type: 'number', description: 'Si está vacío se usa m² × UF/m² según itemizado, igual que Monday.' },
     { name: 'cuadrillas', title: 'Cuadrillas de montaje', type: 'number', initialValue: 1 },
     { name: 'terminacionesSemanas', title: 'Meta terminaciones (semanas)', type: 'number' },
     { name: 'modeloPreliminar', title: 'Tiene modelo preliminar', type: 'boolean' },

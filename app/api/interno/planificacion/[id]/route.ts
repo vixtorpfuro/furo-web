@@ -57,6 +57,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       entradaFabricaAjustada: fecha(body.entradaFabricaAjustada),
       tipologia,
       mlReales: numero(body.mlReales, 1, 100_000),
+      ufManual: numero(body.ufManual, 1, 10_000_000),
       cuadrillas: numero(body.cuadrillas, 1, 20),
       terminacionesSemanas: numero(body.terminacionesSemanas, 0.5, 104),
       modeloPreliminar: body.modeloPreliminar === true,
