@@ -4,7 +4,8 @@ import NokiChrome, { C, serif, ctaBtn, secBtn, FadeUp, AbrirFormularioButton, ab
 
 // Landing de la campaña: lo mismo que promete el anuncio de Meta.
 // Los valores "desde" son los mismos del anuncio; se editan aquí.
-const DESDE_UF = '2.500'
+// 2.402 UF = Noki II 70 (total más bajo). 27,7 UF/m² = Noki II 160 (incluye quincho de 36 m²).
+const DESDE_UF = '2.402'
 const DESDE_M2 = '27,7'
 
 const CARACTERISTICAS = [
@@ -58,9 +59,9 @@ export default function AgendaNoki() {
                 Casas prefabricadas en madera, fabricadas en planta y montadas en tu terreno, en cualquier lugar de Chile.
               </p>
               <p style={{ fontSize: 'clamp(24px,2.4vw,32px)', fontWeight: 500, color: C.dark, marginBottom: 6 }}>Desde {DESDE_UF} UF + IVA</p>
-              <p style={{ fontSize: 17, fontWeight: 300, color: C.mid, marginBottom: 10 }}>Valor m² desde {DESDE_M2} UF + IVA</p>
+              <p style={{ fontSize: 17, fontWeight: 300, color: C.mid, marginBottom: 10 }}>Desde {DESDE_M2} UF/m² + IVA, según modelo</p>
               <p style={{ fontSize: 12, fontWeight: 300, color: C.muted, lineHeight: 1.6, marginBottom: 36 }}>
-                Valores referenciales, netos más IVA. No incluyen fundaciones, logística ni preparación del terreno.
+                Valores referenciales, netos más IVA. No incluye fundaciones ni logística.
               </p>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14 }}>
                 <button type="button" onClick={abrirCalendly} style={ctaBtn}>Agendar reunión de 30 min →</button>
