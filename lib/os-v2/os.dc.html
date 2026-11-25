@@ -1,0 +1,1543 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>FURŌ OS</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&amp;family=JetBrains+Mono:wght@400;500&amp;family=Cormorant+Garamond:ital,wght@0,400;1,400&amp;display=swap">
+<style>
+body{margin:0;background:#e9e6df}
+button{font-family:inherit}
+a{color:#3a2d5e}
+.card{background:#fff;border-radius:18px;border:1px solid rgba(20,18,16,0.07);padding:18px;min-width:0;box-sizing:border-box}
+.glass{background:rgba(250,249,246,0.78);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,0.7);border-radius:18px;box-shadow:0 12px 40px rgba(20,18,16,0.10)}
+.k{font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#6f6860;margin:0}
+.mono{font-family:'JetBrains Mono',monospace}
+.h2{margin:0;font-size:16px;font-weight:500}
+.row{display:flex;flex-wrap:wrap;gap:14px}
+.btn{border:1px solid rgba(20,18,16,0.16);background:#fff;border-radius:10px;padding:9px 14px;font-size:13px;cursor:pointer;color:#141210;min-height:38px}
+.btn-d{border:none;background:#141210;color:#fff;border-radius:10px;padding:10px 16px;font-size:13px;cursor:pointer;min-height:38px}
+.muted{color:#6f6860}
+.bar{height:6px;background:#ece9e2;border-radius:99px;overflow:hidden}
+</style>
+</helmet>
+<div style="min-height: 1040px; background: #e9e6df; color: #141210; font-family: 'DM Sans', sans-serif; display: flex">
+
+<!-- ============ BARRA LATERAL ============ -->
+<aside style="flex: 0 0 232px; background: #141210; color: #f5f3ee; display: flex; flex-direction: column; padding: 18px 14px; gap: 14px; box-sizing: border-box">
+<div style="display: flex; align-items: baseline; gap: 8px; padding: 4px 8px 0">
+<span style="font-size: 21px; font-weight: 500; letter-spacing: 0.1em">FURŌ</span><span class="mono" style="font-size: 11px; color: #8b7fc0">OS</span>
+</div>
+
+<div style="position: relative">
+<button onClick="{{ toggleRol }}" aria-expanded="{{ rolAbiertoTxt }}" style="width: 100%; display: flex; align-items: center; gap: 10px; background: #221f1b; border: 1px solid #34302b; border-radius: 12px; padding: 10px 12px; color: #f5f3ee; cursor: pointer; text-align: left">
+<span style="width: 30px; height: 30px; border-radius: 8px; background: #3a2d5e; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500">{{ rolIni }}</span>
+<span style="flex: 1; min-width: 0"><span style="display: block; font-size: 13px; font-weight: 500">{{ rolNombre }}</span><span style="display: block; font-size: 11px; color: #a39b90">Nivel de acceso</span></span>
+<span style="color: #a39b90">⌄</span>
+</button>
+<sc-if value="{{ rolAbierto }}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; left: 0; right: 0; top: 56px; z-index: 5; background: #221f1b; border: 1px solid #34302b; border-radius: 12px; padding: 6px; box-shadow: 0 16px 40px rgba(0,0,0,0.4)">
+<sc-for list="{{ roles }}" as="r" hint-placeholder-count="6">
+<button onClick="{{ r.pick }}" style="{{ r.estilo }}"><span style="display: block; font-size: 13px">{{ r.nombre }}</span><span style="display: block; font-size: 11px; color: #a39b90; margin-top: 2px">{{ r.alcance }}</span></button>
+</sc-for>
+</div>
+</sc-if>
+</div>
+
+<nav aria-label="Secciones" style="display: flex; flex-direction: column; gap: 2px">
+<sc-for list="{{ nav }}" as="n" hint-placeholder-count="10">
+<button onClick="{{ n.pick }}" aria-current="{{ n.actual }}" style="{{ n.estilo }}">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ n.icon }}"></path></svg>
+<span style="flex: 1">{{ n.nombre }}</span>
+<span style="{{ n.badgeEst }}">{{ n.badge }}</span>
+</button>
+</sc-for>
+</nav>
+
+<div style="margin-top: auto; background: #1c1a17; border: 1px solid #2c2925; border-radius: 12px; padding: 12px; font-size: 12px; display: flex; flex-direction: column; gap: 8px">
+<p class="k" style="color: #8a8278; font-size: 10px">Conexiones</p>
+<sc-for list="{{ conexiones }}" as="c" hint-placeholder-count="4">
+<span style="display: flex; align-items: center; gap: 8px"><span style="{{ c.punto }}"></span><span style="flex: 1">{{ c.nombre }}</span><span style="color: #8a8278">{{ c.estado }}</span></span>
+</sc-for>
+</div>
+<a href="Formulario.dc.html" style="color: #b3a9e0; font-size: 12px; padding: 0 6px">Ver formulario público →</a>
+</aside>
+
+<!-- ============ CONTENIDO ============ -->
+<main style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+
+<header style="display: flex; flex-wrap: wrap; align-items: center; gap: 14px; padding: 16px 28px 8px">
+<div style="min-width: 0">
+<p class="k">{{ migas }}</p>
+<h1 style="margin: 2px 0 0; font-size: 28px; font-weight: 400">{{ titulo }}</h1>
+</div>
+<label style="margin-left: auto; flex: 0 1 420px; display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 999px; background: #fff; border: 1px solid rgba(20,18,16,0.1)">
+<span style="color: #52448a">✦</span>
+<span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Preguntar a FURŌ</span>
+<input placeholder="Pregúntale a FURŌ: “¿qué falta para que Coyhaique entre a fábrica?”" style="flex: 1; min-width: 0; border: none; outline: none; font: inherit; font-size: 13px; background: transparent">
+<span class="mono" style="font-size: 11px; color: #8a8278">⌘K</span>
+</label>
+<span style="width: 38px; height: 38px; border-radius: 50%; background: #fff; border: 1px solid rgba(20,18,16,0.1); display: inline-flex; align-items: center; justify-content: center; position: relative">🔔<span style="position: absolute; top: 6px; right: 7px; width: 8px; height: 8px; border-radius: 50%; background: #c0563e"></span></span>
+<span style="width: 38px; height: 38px; border-radius: 50%; background: #3a2d5e; color: #fff; display: inline-flex; align-items: center; justify-content: center; font-size: 13px">VP</span>
+</header>
+
+<sc-if value="{{ bloqueado }}" hint-placeholder-val="{{ false }}">
+<div style="margin: 40px 28px; padding: 40px; text-align: center" class="card">
+<p style="font-size: 28px; margin: 0">🔒</p>
+<h2 style="margin: 10px 0 0; font-weight: 400">{{ rolNombre }} no tiene acceso a {{ titulo }}</h2>
+<p class="muted" style="margin: 8px 0 0; font-size: 14px">Cada nivel ve solo sus secciones. Cambia el nivel de acceso arriba a la izquierda para probar otra vista.</p>
+</div>
+</sc-if>
+
+<div style="padding: 8px 28px 36px; display: flex; flex-direction: column; gap: 16px">
+
+<!-- ================= PORTADA ================= -->
+<sc-if value="{{ vPortada }}" hint-placeholder-val="{{ true }}">
+<section aria-label="Resumen" style="position: relative; height: 560px; border-radius: 24px; overflow: hidden; background: radial-gradient(120% 90% at 50% 40%, #f3f1ec 0%, #e3dfd6 70%, #d9d4ca 100%); border: 1px solid rgba(255,255,255,0.7)">
+<div style="position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%); aspect-ratio: 2 / 1">
+<svg viewBox="0 0 1200 600" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Planta FURŌ, camiones en ruta y obras en curso" style="position: absolute; inset: 0; width: 100%; height: 100%">
+<g transform="translate(40 -6)">
+<polygon points="179.9,248.8 751.5,578.8 751.5,597.3 179.9,267.3" fill="#c9c3b6"></polygon>
+<polygon points="1071.6,394.0 751.5,578.8 751.5,597.3 1071.6,412.5" fill="#d6d1c6"></polygon>
+<polygon points="500.0,64.0 1071.6,394.0 751.5,578.8 179.9,248.8" fill="#e6e2d9"></polygon>
+<polygon points="305.7,189.4 465.7,281.8 362.8,341.2 202.8,248.8" fill="#d3d7c4"></polygon>
+<polygon points="488.6,295.0 637.2,380.8 534.3,440.2 385.7,354.4" fill="#d3d7c4"></polygon>
+<polygon points="660.0,394.0 854.4,506.2 751.5,565.6 557.2,453.4" fill="#d3d7c4"></polygon>
+<polygon points="762.9,229.0 865.8,288.4 751.5,354.4 648.6,295.0" fill="#d3d7c4"></polygon>
+<polygon points="991.6,361.0 1048.7,394.0 934.4,460.0 877.2,427.0" fill="#d3d7c4"></polygon>
+<polygon points="356.0,147.2 927.5,477.2 879.5,504.9 308.0,174.9" fill="#aaa499"></polygon>
+<line x1="336.5" y1="163.7" x2="352.5" y2="172.9" stroke="#f5f3ee" stroke-width="1.4" stroke-linecap="round" opacity="0.9"></line>
+<line x1="370.8" y1="183.5" x2="386.8" y2="192.7" stroke="#f5f3ee" stroke-width="1.4" stroke-linecap="round" opacity="0.9"></line>
+<line x1="405.1" y1="203.3" x2="421.1" y2="212.5" stroke="#f5f3ee" stroke-width="1.4" stroke-linecap="round" opacity="0.9"></line>
+<line x1="439.4" y1="223.1" x2="455.4" y2="232.3" stroke="#f5f3ee" stroke-width="1.4" stroke-linecap="round" opacity="0.9"></line>
+<line x1="473.7" y1="242.9" x2="489.7" y2="252.1" stroke="#f5f3ee" stroke-width="1.4" stroke-linecap="round" opacity="0.9"></line>
+<line x1="508.0" y1="262.7" x2="524.0" y2="271.9" stroke="#f5f3ee" stroke-width="1.4" stroke-linecap="round" opacity="0.9"></line>
+<line x1="542.3" y1="282.5" x2="558.3" y2="291.7" stroke="#f5f3ee" stroke-width="1.4" stroke-linecap="round" opacity="0.9"></line>
+<line x1="576.6" y1="302.3" x2="592.6" y2="311.5" stroke="#f5f3ee" stroke-width="1.4" stroke-linecap="round" opacity="0.9"></line>
+<line x1="610.9" y1="322.1" x2="626.9" y2="331.3" stroke="#f5f3ee" stroke-width="1.4" stroke-linecap="round" opacity="0.9"></line>
+<line x1="645.2" y1="341.9" x2="661.2" y2="351.1" stroke="#f5f3ee" stroke-width="1.4" stroke-linecap="round" opacity="0.9"></line>
+<line x1="679.5" y1="361.7" x2="695.5" y2="370.9" stroke="#f5f3ee" stroke-width="1.4" stroke-linecap="round" opacity="0.9"></line>
+<line x1="713.8" y1="381.5" x2="729.8" y2="390.7" stroke="#f5f3ee" stroke-width="1.4" stroke-linecap="round" opacity="0.9"></line>
+<line x1="748.1" y1="401.3" x2="764.1" y2="410.5" stroke="#f5f3ee" stroke-width="1.4" stroke-linecap="round" opacity="0.9"></line>
+<line x1="782.4" y1="421.1" x2="798.4" y2="430.3" stroke="#f5f3ee" stroke-width="1.4" stroke-linecap="round" opacity="0.9"></line>
+<line x1="816.7" y1="440.9" x2="832.7" y2="450.1" stroke="#f5f3ee" stroke-width="1.4" stroke-linecap="round" opacity="0.9"></line>
+<line x1="850.9" y1="460.7" x2="867.0" y2="469.9" stroke="#f5f3ee" stroke-width="1.4" stroke-linecap="round" opacity="0.9"></line>
+<line x1="885.2" y1="480.5" x2="901.2" y2="489.7" stroke="#f5f3ee" stroke-width="1.4" stroke-linecap="round" opacity="0.9"></line>
+<polygon points="614.3,248.8 660.0,275.2 618.9,299.0 573.2,272.6" fill="#bdb7ab"></polygon>
+<polygon points="520.8,107.4 726.6,226.2 608.6,294.3 402.8,175.5" fill="#4b443c" opacity="0.18"></polygon>
+<polygon points="711.5,205.9 608.6,265.3 608.6,204.6 711.5,145.2" fill="#ece8e0" stroke="#b7b0a4" stroke-width="0.5" stroke-linejoin="round"></polygon>
+<polygon points="402.8,146.5 608.6,265.3 608.6,204.6 402.8,85.8" fill="#d8d2c7" stroke="#b7b0a4" stroke-width="0.5" stroke-linejoin="round"></polygon>
+<polygon points="505.7,26.4 711.5,145.2 608.6,204.6 402.8,85.8" fill="#d9d4ca" stroke="#b7b0a4" stroke-width="0.5" stroke-linejoin="round"></polygon>
+<polygon points="505.7,26.4 402.8,85.8 437.1,84.5 540.0,25.1" fill="#4a4462" stroke="#38334c" stroke-width="0.4" stroke-linejoin="round"></polygon>
+<polygon points="540.0,46.2 437.1,105.6 437.1,84.5 540.0,25.1" fill="#b8c4cc" stroke="#8f9aa1" stroke-width="0.4" stroke-linejoin="round"></polygon>
+<polygon points="540.0,46.2 437.1,105.6 471.4,104.3 574.3,44.9" fill="#4a4462" stroke="#38334c" stroke-width="0.4" stroke-linejoin="round"></polygon>
+<polygon points="574.3,66.0 471.4,125.4 471.4,104.3 574.3,44.9" fill="#b8c4cc" stroke="#8f9aa1" stroke-width="0.4" stroke-linejoin="round"></polygon>
+<polygon points="574.3,66.0 471.4,125.4 505.7,124.1 608.6,64.7" fill="#4a4462" stroke="#38334c" stroke-width="0.4" stroke-linejoin="round"></polygon>
+<polygon points="608.6,85.8 505.7,145.2 505.7,124.1 608.6,64.7" fill="#b8c4cc" stroke="#8f9aa1" stroke-width="0.4" stroke-linejoin="round"></polygon>
+<polygon points="608.6,85.8 505.7,145.2 540.0,143.9 642.9,84.5" fill="#4a4462" stroke="#38334c" stroke-width="0.4" stroke-linejoin="round"></polygon>
+<polygon points="642.9,105.6 540.0,165.0 540.0,143.9 642.9,84.5" fill="#b8c4cc" stroke="#8f9aa1" stroke-width="0.4" stroke-linejoin="round"></polygon>
+<polygon points="642.9,105.6 540.0,165.0 574.3,163.7 677.2,104.3" fill="#4a4462" stroke="#38334c" stroke-width="0.4" stroke-linejoin="round"></polygon>
+<polygon points="677.2,125.4 574.3,184.8 574.3,163.7 677.2,104.3" fill="#b8c4cc" stroke="#8f9aa1" stroke-width="0.4" stroke-linejoin="round"></polygon>
+<polygon points="677.2,125.4 574.3,184.8 608.6,183.5 711.5,124.1" fill="#4a4462" stroke="#38334c" stroke-width="0.4" stroke-linejoin="round"></polygon>
+<polygon points="711.5,145.2 608.6,204.6 608.6,183.5 711.5,124.1" fill="#b8c4cc" stroke="#8f9aa1" stroke-width="0.4" stroke-linejoin="round"></polygon>
+<polygon points="671.5,229.0 630.3,252.8 630.3,210.5 671.5,186.8" fill="#3b3631"></polygon>
+<polygon points="706.9,190.1 701.2,193.4 701.2,177.5 706.9,174.2" fill="#b8c4cc"></polygon>
+<polygon points="698.3,195.0 692.6,198.3 692.6,182.5 698.3,179.2" fill="#b8c4cc"></polygon>
+<polygon points="689.8,200.0 684.0,203.3 684.0,187.4 689.8,184.1" fill="#b8c4cc"></polygon>
+<polygon points="414.3,132.0 430.3,141.2 430.3,124.1 414.3,114.8" fill="#b8c4cc"></polygon>
+<polygon points="441.7,147.8 457.7,157.1 457.7,139.9 441.7,130.7" fill="#b8c4cc"></polygon>
+<polygon points="469.1,163.7 485.1,172.9 485.1,155.7 469.1,146.5" fill="#b8c4cc"></polygon>
+<polygon points="496.6,179.5 512.6,188.7 512.6,171.6 496.6,162.3" fill="#b8c4cc"></polygon>
+<polygon points="524.0,195.3 540.0,204.6 540.0,187.4 524.0,178.2" fill="#b8c4cc"></polygon>
+<polygon points="551.4,211.2 567.4,220.4 567.4,203.3 551.4,194.0" fill="#b8c4cc"></polygon>
+<polygon points="578.9,227.0 594.9,236.3 594.9,219.1 578.9,209.9" fill="#b8c4cc"></polygon>
+<polygon points="740.1,229.0 717.2,242.2 717.2,236.7 740.1,223.5" fill="#c99b62" stroke="#8f6a3e" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="694.3,229.0 717.2,242.2 717.2,236.7 694.3,223.5" fill="#b98c55" stroke="#8f6a3e" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="717.2,210.3 740.1,223.5 717.2,236.7 694.3,223.5" fill="#d8b07a" stroke="#8f6a3e" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="740.1,223.1 717.2,236.3 717.2,230.7 740.1,217.5" fill="#c99b62" stroke="#8f6a3e" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="694.3,223.1 717.2,236.3 717.2,230.7 694.3,217.5" fill="#b98c55" stroke="#8f6a3e" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="717.2,204.3 740.1,217.5 717.2,230.7 694.3,217.5" fill="#d8b07a" stroke="#8f6a3e" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="740.1,217.1 717.2,230.3 717.2,224.8 740.1,211.6" fill="#c99b62" stroke="#8f6a3e" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="694.3,217.1 717.2,230.3 717.2,224.8 694.3,211.6" fill="#b98c55" stroke="#8f6a3e" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="717.2,198.4 740.1,211.6 717.2,224.8 694.3,211.6" fill="#d8b07a" stroke="#8f6a3e" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="710.3,246.2 687.5,259.4 687.5,253.8 710.3,240.6" fill="#c99b62" stroke="#8f6a3e" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="664.6,246.2 687.5,259.4 687.5,253.8 664.6,240.6" fill="#b98c55" stroke="#8f6a3e" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="687.5,227.4 710.3,240.6 687.5,253.8 664.6,240.6" fill="#d8b07a" stroke="#8f6a3e" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="710.3,240.2 687.5,253.4 687.5,247.9 710.3,234.7" fill="#c99b62" stroke="#8f6a3e" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="664.6,240.2 687.5,253.4 687.5,247.9 664.6,234.7" fill="#b98c55" stroke="#8f6a3e" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="687.5,221.5 710.3,234.7 687.5,247.9 664.6,234.7" fill="#d8b07a" stroke="#8f6a3e" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="710.3,234.3 687.5,247.5 687.5,241.9 710.3,228.7" fill="#c99b62" stroke="#8f6a3e" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="664.6,234.3 687.5,247.5 687.5,241.9 664.6,228.7" fill="#b98c55" stroke="#8f6a3e" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="687.5,215.5 710.3,228.7 687.5,241.9 664.6,228.7" fill="#d8b07a" stroke="#8f6a3e" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="767.5,244.8 744.6,258.0 744.6,252.5 767.5,239.3" fill="#c99b62" stroke="#8f6a3e" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="721.8,244.8 744.6,258.0 744.6,252.5 721.8,239.3" fill="#b98c55" stroke="#8f6a3e" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="744.6,226.1 767.5,239.3 744.6,252.5 721.8,239.3" fill="#d8b07a" stroke="#8f6a3e" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="767.5,238.9 744.6,252.1 744.6,246.6 767.5,233.4" fill="#c99b62" stroke="#8f6a3e" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="721.8,238.9 744.6,252.1 744.6,246.6 721.8,233.4" fill="#b98c55" stroke="#8f6a3e" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="744.6,220.2 767.5,233.4 744.6,246.6 721.8,233.4" fill="#d8b07a" stroke="#8f6a3e" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="767.5,233.0 744.6,246.2 744.6,240.6 767.5,227.4" fill="#c99b62" stroke="#8f6a3e" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="721.8,233.0 744.6,246.2 744.6,240.6 721.8,227.4" fill="#b98c55" stroke="#8f6a3e" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="744.6,214.2 767.5,227.4 744.6,240.6 721.8,227.4" fill="#d8b07a" stroke="#8f6a3e" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="680.6,263.3 662.3,273.9 662.3,260.7 680.6,250.1" fill="#493d7c" stroke="#2b2622" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="639.5,260.7 662.3,273.9 662.3,260.7 639.5,247.5" fill="#41366e" stroke="#2b2622" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="657.8,236.9 680.6,250.1 662.3,260.7 639.5,247.5" fill="#52448a" stroke="#2b2622" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="708.1,279.2 689.8,289.7 689.8,276.5 708.1,266.0" fill="#ac7c37" stroke="#2b2622" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="666.9,276.5 689.8,289.7 689.8,276.5 666.9,263.3" fill="#996e31" stroke="#2b2622" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="685.2,252.8 708.1,266.0 689.8,276.5 666.9,263.3" fill="#c08a3e" stroke="#2b2622" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<ellipse cx="780.4" cy="250.8" rx="16.3" ry="7.7" fill="#4b443c" opacity="0.16"></ellipse>
+<line x1="774.4" y1="248.8" x2="774.4" y2="215.7" stroke="#7a6550" stroke-width="2"></line>
+<circle cx="774.4" cy="215.7" r="17.2" fill="#8fa07c"></circle>
+<circle cx="769.2" cy="210.5" r="9.4" fill="#a9b893" opacity="0.7"></circle>
+<path d="M776.1 232.8 A17.2 17.2 0 0 0 791.5 215.7" fill="none" stroke="#73855f" stroke-width="6.0" opacity="0.5"></path>
+<ellipse cx="791.4" cy="277.2" rx="15.4" ry="7.3" fill="#4b443c" opacity="0.16"></ellipse>
+<line x1="785.8" y1="275.2" x2="785.8" y2="242.8" stroke="#7a6550" stroke-width="2"></line>
+<circle cx="785.8" cy="242.8" r="16.2" fill="#8fa07c"></circle>
+<circle cx="780.9" cy="237.9" r="8.9" fill="#a9b893" opacity="0.7"></circle>
+<path d="M787.4 258.9 A16.2 16.2 0 0 0 802.0 242.8" fill="none" stroke="#73855f" stroke-width="5.7" opacity="0.5"></path>
+<ellipse cx="834.5" cy="285.1" rx="14.4" ry="6.8" fill="#4b443c" opacity="0.16"></ellipse>
+<line x1="829.2" y1="283.1" x2="829.2" y2="251.4" stroke="#7a6550" stroke-width="2"></line>
+<circle cx="829.2" cy="251.4" r="15.2" fill="#8fa07c"></circle>
+<circle cx="824.7" cy="246.8" r="8.3" fill="#a9b893" opacity="0.7"></circle>
+<path d="M830.7 266.6 A15.2 15.2 0 0 0 844.4 251.4" fill="none" stroke="#73855f" stroke-width="5.3" opacity="0.5"></path>
+<ellipse cx="727.5" cy="293.7" rx="12.5" ry="5.9" fill="#4b443c" opacity="0.16"></ellipse>
+<line x1="722.9" y1="291.7" x2="722.9" y2="261.3" stroke="#7a6550" stroke-width="2"></line>
+<circle cx="722.9" cy="261.3" r="13.2" fill="#8fa07c"></circle>
+<circle cx="719.0" cy="257.4" r="7.3" fill="#a9b893" opacity="0.7"></circle>
+<path d="M724.2 274.5 A13.2 13.2 0 0 0 736.1 261.3" fill="none" stroke="#73855f" stroke-width="4.6" opacity="0.5"></path>
+<ellipse cx="744.7" cy="323.4" rx="12.5" ry="5.9" fill="#4b443c" opacity="0.16"></ellipse>
+<line x1="740.1" y1="321.4" x2="740.1" y2="291.0" stroke="#7a6550" stroke-width="2"></line>
+<circle cx="740.1" cy="291.0" r="13.2" fill="#8fa07c"></circle>
+<circle cx="736.1" cy="287.1" r="7.3" fill="#a9b893" opacity="0.7"></circle>
+<path d="M741.4 304.2 A13.2 13.2 0 0 0 753.3 291.0" fill="none" stroke="#73855f" stroke-width="4.6" opacity="0.5"></path>
+<ellipse cx="990.8" cy="386.1" rx="13.5" ry="6.4" fill="#4b443c" opacity="0.16"></ellipse>
+<line x1="985.8" y1="384.1" x2="985.8" y2="353.0" stroke="#7a6550" stroke-width="2"></line>
+<circle cx="985.8" cy="353.0" r="14.2" fill="#8fa07c"></circle>
+<circle cx="981.6" cy="348.8" r="7.8" fill="#a9b893" opacity="0.7"></circle>
+<path d="M987.3 367.2 A14.2 14.2 0 0 0 1000.0 353.0" fill="none" stroke="#73855f" stroke-width="5.0" opacity="0.5"></path>
+<ellipse cx="969.3" cy="425.7" rx="17.2" ry="8.2" fill="#4b443c" opacity="0.16"></ellipse>
+<line x1="963.0" y1="423.7" x2="963.0" y2="389.9" stroke="#7a6550" stroke-width="2"></line>
+<circle cx="963.0" cy="389.9" r="18.1" fill="#8fa07c"></circle>
+<circle cx="957.5" cy="384.4" r="10.0" fill="#a9b893" opacity="0.7"></circle>
+<path d="M964.8 408.0 A18.1 18.1 0 0 0 981.1 389.9" fill="none" stroke="#73855f" stroke-width="6.4" opacity="0.5"></path>
+<ellipse cx="391.1" cy="147.8" rx="14.8" ry="7.0" fill="#4b443c" opacity="0.16"></ellipse>
+<line x1="385.7" y1="145.8" x2="385.7" y2="113.8" stroke="#7a6550" stroke-width="2"></line>
+<circle cx="385.7" cy="113.8" r="15.6" fill="#8fa07c"></circle>
+<circle cx="381.0" cy="109.1" r="8.6" fill="#a9b893" opacity="0.7"></circle>
+<path d="M387.2 129.4 A15.6 15.6 0 0 0 401.3 113.8" fill="none" stroke="#73855f" stroke-width="5.5" opacity="0.5"></path>
+<polygon points="885.5,319.3 976.9,372.1 888.7,423.0 797.2,370.2" fill="#4b443c" opacity="0.18"></polygon>
+<polygon points="968.7,361.0 888.7,407.2 888.7,372.9 968.7,326.7" fill="#5b5249" stroke="#1f1c19" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="797.2,354.4 888.7,407.2 888.7,372.9 797.2,320.1" fill="#4a423b" stroke="#1f1c19" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="877.2,271.9 975.6,328.7 932.1,325.4 833.8,268.6" fill="#2b2622" stroke="#1f1c19" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="968.7,326.7 888.7,372.9 928.7,323.4" fill="#5b5249" stroke="#1f1c19" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="790.4,322.1 888.7,378.8 932.1,325.4 833.8,268.6" fill="#3a3430" stroke="#1f1c19" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="808.7,358.4 826.9,368.9 826.9,343.8 808.7,333.3" fill="#d7e0e5"></polygon>
+<polygon points="836.1,374.2 854.4,384.8 854.4,359.7 836.1,349.1" fill="#d7e0e5"></polygon>
+<polygon points="863.5,390.0 881.8,400.6 881.8,375.5 863.5,365.0" fill="#d7e0e5"></polygon>
+<polygon points="952.7,367.6 932.1,379.5 932.1,355.7 952.7,343.8" fill="#d7e0e5"></polygon>
+<polygon points="400.3,184.9 524.9,256.9 494.3,274.5 369.7,202.6" fill="#4b443c" opacity="0.2"></polygon>
+<ellipse cx="383.4" cy="194.0" rx="5.5" ry="6.6" fill="#2b2622"></ellipse>
+<ellipse cx="404.0" cy="205.9" rx="5.5" ry="6.6" fill="#2b2622"></ellipse>
+<ellipse cx="449.7" cy="232.3" rx="5.5" ry="6.6" fill="#2b2622"></ellipse>
+<ellipse cx="485.1" cy="252.8" rx="5.5" ry="6.6" fill="#2b2622"></ellipse>
+<polygon points="492.0,226.4 466.8,240.9 466.8,236.3 492.0,221.7" fill="#5d564e"></polygon>
+<polygon points="369.7,184.8 466.8,240.9 466.8,236.3 369.7,180.2" fill="#4f4943"></polygon>
+<polygon points="394.8,165.6 492.0,221.7 466.8,236.3 369.7,180.2" fill="#6f6860"></polygon>
+<polygon points="425.9,185.5 404.2,198.1 404.2,183.6 425.9,171.0" fill="#493d7c" stroke="#2b2622" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="374.8,181.2 404.2,198.1 404.2,183.6 374.8,166.6" fill="#433771" stroke="#2b2622" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="396.5,154.1 425.9,171.0 404.2,183.6 374.8,166.6" fill="#52448a" stroke="#2b2622" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="456.4,203.2 434.6,215.7 434.6,196.5 456.4,184.0" fill="#ac7c37" stroke="#2b2622" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="405.3,198.7 434.6,215.7 434.6,196.5 405.3,179.6" fill="#9d7132" stroke="#2b2622" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="427.0,167.1 456.4,184.0 434.6,196.5 405.3,179.6" fill="#c08a3e" stroke="#2b2622" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="486.9,220.7 465.1,233.3 465.1,218.8 486.9,206.2" fill="#638a66" stroke="#2b2622" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="435.8,216.3 465.1,233.3 465.1,218.8 435.8,201.8" fill="#5b7e5d" stroke="#2b2622" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="457.5,189.3 486.9,206.2 465.1,218.8 435.8,201.8" fill="#6f9a72" stroke="#2b2622" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="518.3,242.9 495.4,256.1 495.4,230.3 518.3,217.1" fill="#e3e1dd" stroke="#9d958b" stroke-width="0.4" stroke-linejoin="round"></polygon>
+<polygon points="470.3,241.5 495.4,256.1 495.4,230.3 470.3,215.8" fill="#d2d0cc" stroke="#9d958b" stroke-width="0.4" stroke-linejoin="round"></polygon>
+<polygon points="493.1,202.6 518.3,217.1 495.4,230.3 470.3,215.8" fill="#edebe6" stroke="#9d958b" stroke-width="0.4" stroke-linejoin="round"></polygon>
+<polygon points="515.4,230.6 498.3,240.5 498.3,231.3 515.4,221.4" fill="#4d5a63"></polygon>
+<polygon points="669.0,340.0 793.6,412.0 762.9,429.6 638.3,357.7" fill="#4b443c" opacity="0.2"></polygon>
+<ellipse cx="652.0" cy="349.1" rx="5.5" ry="6.6" fill="#2b2622"></ellipse>
+<ellipse cx="672.6" cy="361.0" rx="5.5" ry="6.6" fill="#2b2622"></ellipse>
+<ellipse cx="718.3" cy="387.4" rx="5.5" ry="6.6" fill="#2b2622"></ellipse>
+<ellipse cx="753.8" cy="407.9" rx="5.5" ry="6.6" fill="#2b2622"></ellipse>
+<polygon points="760.6,381.5 735.5,396.0 735.5,391.4 760.6,376.8" fill="#5d564e"></polygon>
+<polygon points="638.3,339.9 735.5,396.0 735.5,391.4 638.3,335.3" fill="#4f4943"></polygon>
+<polygon points="663.5,320.7 760.6,376.8 735.5,391.4 638.3,335.3" fill="#6f6860"></polygon>
+<polygon points="694.5,340.6 672.8,353.2 672.8,338.7 694.5,326.1" fill="#7d72ac" stroke="#2b2622" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="643.5,336.2 672.8,353.2 672.8,338.7 643.5,321.7" fill="#71689d" stroke="#2b2622" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="665.2,309.2 694.5,326.1 672.8,338.7 643.5,321.7" fill="#8b7fc0" stroke="#2b2622" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="725.0,358.3 703.3,370.8 703.3,351.7 725.0,339.1" fill="#493d7c" stroke="#2b2622" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="673.9,353.9 703.3,370.8 703.3,351.7 673.9,334.7" fill="#433771" stroke="#2b2622" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="695.7,322.2 725.0,339.1 703.3,351.7 673.9,334.7" fill="#52448a" stroke="#2b2622" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="755.5,375.9 733.8,388.4 733.8,373.9 755.5,361.3" fill="#ac7c37" stroke="#2b2622" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="704.4,371.4 733.8,388.4 733.8,373.9 704.4,356.9" fill="#9d7132" stroke="#2b2622" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="726.2,344.4 755.5,361.3 733.8,373.9 704.4,356.9" fill="#c08a3e" stroke="#2b2622" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="786.9,398.0 764.1,411.2 764.1,385.4 786.9,372.2" fill="#d8d5cf" stroke="#9d958b" stroke-width="0.4" stroke-linejoin="round"></polygon>
+<polygon points="738.9,396.6 764.1,411.2 764.1,385.4 738.9,370.9" fill="#c8c5bf" stroke="#9d958b" stroke-width="0.4" stroke-linejoin="round"></polygon>
+<polygon points="761.8,357.7 786.9,372.2 764.1,385.4 738.9,370.9" fill="#e2dfd8" stroke="#9d958b" stroke-width="0.4" stroke-linejoin="round"></polygon>
+<polygon points="784.1,385.7 766.9,395.6 766.9,386.4 784.1,376.5" fill="#4d5a63"></polygon>
+<polygon points="325.3,220.3 428.2,279.7 345.7,327.3 242.8,267.9" fill="#4b443c" opacity="0.18"></polygon>
+<polygon points="420.0,268.6 345.7,311.5 345.7,277.2 420.0,234.3" fill="#c99b68" stroke="#2e2449" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="242.8,252.1 345.7,311.5 345.7,277.2 242.8,217.8" fill="#b88b5a" stroke="#2e2449" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="317.1,172.2 428.0,236.3 386.8,233.0 275.9,168.9" fill="#3a2d5e" stroke="#2e2449" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="420.0,234.3 345.7,277.2 382.8,230.6" fill="#c99b68" stroke="#2e2449" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="234.8,219.8 345.7,283.8 386.8,233.0 275.9,168.9" fill="#4a3d70" stroke="#2e2449" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="254.2,256.1 273.7,267.3 273.7,240.9 254.2,229.7" fill="#dfe7eb"></polygon>
+<polygon points="283.9,273.2 303.4,284.4 303.4,258.0 283.9,246.8" fill="#dfe7eb"></polygon>
+<polygon points="313.7,290.4 333.1,301.6 333.1,275.2 313.7,264.0" fill="#dfe7eb"></polygon>
+<polygon points="508.2,325.9 611.1,385.3 528.6,432.9 425.7,373.5" fill="#4b443c" opacity="0.12"></polygon>
+<polygon points="500.0,314.5 602.9,373.9 528.6,416.8 425.7,357.4" fill="#cfc9bd"></polygon>
+<polygon points="503.4,279.8 520.0,289.4 479.4,286.4 462.8,276.9" fill="#c99b62" stroke="#8f6a3e" stroke-width="0.4" stroke-linejoin="round"></polygon>
+<polygon points="520.6,289.7 537.2,299.3 496.6,296.3 480.0,286.8" fill="#e0c49a" stroke="#8f6a3e" stroke-width="0.4" stroke-linejoin="round"></polygon>
+<polygon points="537.7,299.6 554.3,309.2 513.7,306.2 497.1,296.7" fill="#c99b62" stroke="#8f6a3e" stroke-width="0.4" stroke-linejoin="round"></polygon>
+<polygon points="554.9,309.5 571.4,319.1 530.9,316.1 514.3,306.6" fill="#e0c49a" stroke="#8f6a3e" stroke-width="0.4" stroke-linejoin="round"></polygon>
+<polygon points="572.0,319.4 588.6,329.0 548.0,326.0 531.4,316.4" fill="#c99b62" stroke="#8f6a3e" stroke-width="0.4" stroke-linejoin="round"></polygon>
+<polygon points="425.7,357.7 442.3,367.3 442.3,332.9 425.7,323.4" fill="#d2a771" stroke="#8f6a3e" stroke-width="0.4" stroke-linejoin="round"></polygon>
+<polygon points="442.8,367.6 459.4,377.2 459.4,342.9 442.8,333.3" fill="#e8d3b0" stroke="#8f6a3e" stroke-width="0.4" stroke-linejoin="round"></polygon>
+<polygon points="460.0,377.5 476.6,387.1 476.6,352.8 460.0,343.2" fill="#d2a771" stroke="#8f6a3e" stroke-width="0.4" stroke-linejoin="round"></polygon>
+<polygon points="477.1,387.4 493.7,397.0 493.7,362.7 477.1,353.1" fill="#e8d3b0" stroke="#8f6a3e" stroke-width="0.4" stroke-linejoin="round"></polygon>
+<polygon points="494.3,397.3 510.9,406.9 510.9,372.6 494.3,363.0" fill="#d2a771" stroke="#8f6a3e" stroke-width="0.4" stroke-linejoin="round"></polygon>
+<polygon points="511.4,407.2 528.0,416.8 528.0,382.4 511.4,372.9" fill="#e8d3b0" stroke="#8f6a3e" stroke-width="0.4" stroke-linejoin="round"></polygon>
+<polygon points="602.9,374.2 528.6,417.1 528.6,382.8 602.9,339.9" fill="#c49461" stroke="#8f6a3e" stroke-width="0.4" stroke-linejoin="round"></polygon>
+<polygon points="602.9,339.9 528.6,382.8 565.7,336.2" fill="#d8b07a" stroke="#8f6a3e" stroke-width="0.4" stroke-linejoin="round"></polygon>
+<polygon points="422.3,326.7 438.8,336.2 479.4,286.4 462.8,276.9" fill="#c99b62" stroke="#6e5131" stroke-width="0.4" stroke-linejoin="round"></polygon>
+<polygon points="439.4,336.6 456.0,346.1 496.6,296.3 480.0,286.8" fill="#c99b62" stroke="#6e5131" stroke-width="0.4" stroke-linejoin="round"></polygon>
+<polygon points="456.6,346.5 473.1,356.0 513.7,306.2 497.1,296.7" fill="#52448a" stroke="#6e5131" stroke-width="0.4" stroke-linejoin="round"></polygon>
+<line x1="597.2" y1="410.5" x2="597.2" y2="291.7" stroke="#c08a3e" stroke-width="2.2" stroke-linecap="round"></line>
+<line x1="597.2" y1="291.7" x2="482.9" y2="225.7" stroke="#c08a3e" stroke-width="1.8" stroke-linecap="round"></line>
+<line x1="597.2" y1="291.7" x2="625.7" y2="308.2" stroke="#c08a3e" stroke-width="1.8" stroke-linecap="round"></line>
+<line x1="597.2" y1="275.9" x2="488.6" y2="228.3" stroke="#8a6a3e" stroke-width="0.8" stroke-linecap="round"></line>
+<line x1="522.9" y1="248.8" x2="522.9" y2="285.8" stroke="#4b443c" stroke-width="0.8" stroke-linecap="round"></line>
+<polygon points="538.9,295.0 525.1,302.9 525.1,296.3 538.9,288.4" fill="#493d7c" stroke="#2b2622" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="506.9,292.4 525.1,302.9 525.1,296.3 506.9,285.8" fill="#41366e" stroke="#2b2622" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="520.6,277.8 538.9,288.4 525.1,296.3 506.9,285.8" fill="#52448a" stroke="#2b2622" stroke-width="0.3" stroke-linejoin="round"></polygon>
+<polygon points="637.2,306.9 623.5,314.8 623.5,304.2 637.2,296.3" fill="#5d564e"></polygon>
+<polygon points="612.0,308.2 623.5,314.8 623.5,304.2 612.0,297.6" fill="#4f4943"></polygon>
+<polygon points="625.7,289.7 637.2,296.3 623.5,304.2 612.0,297.6" fill="#6f6860"></polygon>
+<polygon points="682.9,420.1 785.8,479.5 711.5,522.4 608.6,463.0" fill="#cfc9bd"></polygon>
+<line x1="682.9" y1="420.4" x2="682.9" y2="386.1" stroke="#a87b4a" stroke-width="1.4" stroke-linecap="round"></line>
+<line x1="682.9" y1="386.1" x2="645.8" y2="382.4" stroke="#a87b4a" stroke-width="1.4" stroke-linecap="round"></line>
+<line x1="645.8" y1="382.4" x2="608.6" y2="429.0" stroke="#a87b4a" stroke-width="1.4" stroke-linecap="round"></line>
+<line x1="608.6" y1="463.3" x2="608.6" y2="429.0" stroke="#a87b4a" stroke-width="1.6" stroke-linecap="round"></line>
+<line x1="700.1" y1="430.3" x2="700.1" y2="396.0" stroke="#a87b4a" stroke-width="1.4" stroke-linecap="round"></line>
+<line x1="700.1" y1="396.0" x2="662.9" y2="392.4" stroke="#a87b4a" stroke-width="1.4" stroke-linecap="round"></line>
+<line x1="662.9" y1="392.4" x2="625.7" y2="438.9" stroke="#a87b4a" stroke-width="1.4" stroke-linecap="round"></line>
+<line x1="625.7" y1="473.2" x2="625.7" y2="438.9" stroke="#a87b4a" stroke-width="1.6" stroke-linecap="round"></line>
+<line x1="717.2" y1="440.2" x2="717.2" y2="405.9" stroke="#a87b4a" stroke-width="1.4" stroke-linecap="round"></line>
+<line x1="717.2" y1="405.9" x2="680.0" y2="402.2" stroke="#a87b4a" stroke-width="1.4" stroke-linecap="round"></line>
+<line x1="680.0" y1="402.2" x2="642.9" y2="448.8" stroke="#a87b4a" stroke-width="1.4" stroke-linecap="round"></line>
+<line x1="642.9" y1="483.1" x2="642.9" y2="448.8" stroke="#a87b4a" stroke-width="1.6" stroke-linecap="round"></line>
+<line x1="734.3" y1="450.1" x2="734.3" y2="415.8" stroke="#a87b4a" stroke-width="1.4" stroke-linecap="round"></line>
+<line x1="734.3" y1="415.8" x2="697.2" y2="412.1" stroke="#a87b4a" stroke-width="1.4" stroke-linecap="round"></line>
+<line x1="697.2" y1="412.1" x2="660.0" y2="458.7" stroke="#a87b4a" stroke-width="1.4" stroke-linecap="round"></line>
+<line x1="660.0" y1="493.0" x2="660.0" y2="458.7" stroke="#a87b4a" stroke-width="1.6" stroke-linecap="round"></line>
+<line x1="751.5" y1="460.0" x2="751.5" y2="425.7" stroke="#a87b4a" stroke-width="1.4" stroke-linecap="round"></line>
+<line x1="751.5" y1="425.7" x2="714.3" y2="422.1" stroke="#a87b4a" stroke-width="1.4" stroke-linecap="round"></line>
+<line x1="714.3" y1="422.1" x2="677.2" y2="468.6" stroke="#a87b4a" stroke-width="1.4" stroke-linecap="round"></line>
+<line x1="677.2" y1="502.9" x2="677.2" y2="468.6" stroke="#a87b4a" stroke-width="1.6" stroke-linecap="round"></line>
+<line x1="768.6" y1="469.9" x2="768.6" y2="435.6" stroke="#a87b4a" stroke-width="1.4" stroke-linecap="round"></line>
+<line x1="768.6" y1="435.6" x2="731.5" y2="431.9" stroke="#a87b4a" stroke-width="1.4" stroke-linecap="round"></line>
+<line x1="731.5" y1="431.9" x2="694.3" y2="478.5" stroke="#a87b4a" stroke-width="1.4" stroke-linecap="round"></line>
+<line x1="694.3" y1="512.8" x2="694.3" y2="478.5" stroke="#a87b4a" stroke-width="1.6" stroke-linecap="round"></line>
+<line x1="785.8" y1="479.8" x2="785.8" y2="445.5" stroke="#a87b4a" stroke-width="1.4" stroke-linecap="round"></line>
+<line x1="785.8" y1="445.5" x2="748.6" y2="441.9" stroke="#a87b4a" stroke-width="1.4" stroke-linecap="round"></line>
+<line x1="748.6" y1="441.9" x2="711.5" y2="488.4" stroke="#a87b4a" stroke-width="1.4" stroke-linecap="round"></line>
+<line x1="711.5" y1="522.7" x2="711.5" y2="488.4" stroke="#a87b4a" stroke-width="1.6" stroke-linecap="round"></line>
+<line x1="682.9" y1="386.1" x2="785.8" y2="445.5" stroke="#a87b4a" stroke-width="1.6" stroke-linecap="round"></line>
+<line x1="608.6" y1="429.0" x2="711.5" y2="488.4" stroke="#a87b4a" stroke-width="1.6" stroke-linecap="round"></line>
+<line x1="645.8" y1="382.4" x2="748.6" y2="441.9" stroke="#a87b4a" stroke-width="2" stroke-linecap="round"></line>
+<line x1="608.6" y1="463.3" x2="711.5" y2="522.7" stroke="#a87b4a" stroke-width="1.6" stroke-linecap="round"></line>
+<ellipse cx="384.6" cy="320.1" rx="12.5" ry="5.9" fill="#4b443c" opacity="0.16"></ellipse>
+<line x1="380.0" y1="318.1" x2="380.0" y2="287.7" stroke="#7a6550" stroke-width="2"></line>
+<circle cx="380.0" cy="287.7" r="13.2" fill="#8fa07c"></circle>
+<circle cx="376.0" cy="283.8" r="7.3" fill="#a9b893" opacity="0.7"></circle>
+<path d="M381.3 300.9 A13.2 13.2 0 0 0 393.2 287.7" fill="none" stroke="#73855f" stroke-width="4.6" opacity="0.5"></path>
+<ellipse cx="441.7" cy="306.9" rx="12.5" ry="5.9" fill="#4b443c" opacity="0.16"></ellipse>
+<line x1="437.1" y1="304.9" x2="437.1" y2="274.5" stroke="#7a6550" stroke-width="2"></line>
+<circle cx="437.1" cy="274.5" r="13.2" fill="#8fa07c"></circle>
+<circle cx="433.2" cy="270.6" r="7.3" fill="#a9b893" opacity="0.7"></circle>
+<path d="M438.4 287.7 A13.2 13.2 0 0 0 450.3 274.5" fill="none" stroke="#73855f" stroke-width="4.6" opacity="0.5"></path>
+<ellipse cx="556.1" cy="438.9" rx="12.5" ry="5.9" fill="#4b443c" opacity="0.16"></ellipse>
+<line x1="551.4" y1="436.9" x2="551.4" y2="406.5" stroke="#7a6550" stroke-width="2"></line>
+<circle cx="551.4" cy="406.5" r="13.2" fill="#8fa07c"></circle>
+<circle cx="547.5" cy="402.6" r="7.3" fill="#a9b893" opacity="0.7"></circle>
+<path d="M552.8 419.7 A13.2 13.2 0 0 0 564.6 406.5" fill="none" stroke="#73855f" stroke-width="4.6" opacity="0.5"></path>
+<ellipse cx="790.4" cy="514.8" rx="12.5" ry="5.9" fill="#4b443c" opacity="0.16"></ellipse>
+<line x1="785.8" y1="512.8" x2="785.8" y2="482.4" stroke="#7a6550" stroke-width="2"></line>
+<circle cx="785.8" cy="482.4" r="13.2" fill="#8fa07c"></circle>
+<circle cx="781.8" cy="478.5" r="7.3" fill="#a9b893" opacity="0.7"></circle>
+<path d="M787.1 495.6 A13.2 13.2 0 0 0 799.0 482.4" fill="none" stroke="#73855f" stroke-width="4.6" opacity="0.5"></path>
+<ellipse cx="759.5" cy="545.8" rx="12.5" ry="5.9" fill="#4b443c" opacity="0.16"></ellipse>
+<line x1="754.9" y1="543.8" x2="754.9" y2="513.5" stroke="#7a6550" stroke-width="2"></line>
+<circle cx="754.9" cy="513.5" r="13.2" fill="#8fa07c"></circle>
+<circle cx="751.0" cy="509.5" r="7.3" fill="#a9b893" opacity="0.7"></circle>
+<path d="M756.2 526.7 A13.2 13.2 0 0 0 768.1 513.5" fill="none" stroke="#73855f" stroke-width="4.6" opacity="0.5"></path>
+<ellipse cx="217.7" cy="251.5" rx="12.5" ry="5.9" fill="#4b443c" opacity="0.16"></ellipse>
+<line x1="213.1" y1="249.5" x2="213.1" y2="219.1" stroke="#7a6550" stroke-width="2"></line>
+<circle cx="213.1" cy="219.1" r="13.2" fill="#8fa07c"></circle>
+<circle cx="209.1" cy="215.1" r="7.3" fill="#a9b893" opacity="0.7"></circle>
+<path d="M214.4 232.3 A13.2 13.2 0 0 0 226.3 219.1" fill="none" stroke="#73855f" stroke-width="4.6" opacity="0.5"></path>
+<sc-for list="{{ pins }}" as="p" hint-placeholder-count="5">
+<g onClick="{{ p.pick }}" style="cursor: pointer">
+<line x1="{{ p.x }}" y1="{{ p.y }}" x2="{{ p.x }}" y2="{{ p.ly2 }}" stroke="#141210" stroke-width="1" stroke-opacity="0.5"></line>
+<circle cx="{{ p.x }}" cy="{{ p.y }}" r="5" fill="{{ p.col }}" stroke="#fff" stroke-width="2"></circle>
+<circle cx="{{ p.x }}" cy="{{ p.y }}" r="11" fill="{{ p.col }}" opacity="0.18"></circle>
+</g>
+</sc-for>
+</g>
+</svg>
+<sc-for list="{{ pins }}" as="p" hint-placeholder-count="5">
+<button onClick="{{ p.pick }}" style="{{ p.etq }}"><span style="{{ p.dot }}"></span><span style="display: block; padding-left: 14px"><span class="mono" style="display: block; font-size: 10px; letter-spacing: 0.06em">{{ p.t1 }}</span><span style="display: block; font-size: 11px; color: #5d564e; margin-top: 1px">{{ p.t2 }}</span></span></button>
+</sc-for>
+</div>
+
+<div class="glass" style="position: absolute; left: 18px; top: 18px; width: 300px; padding: 18px">
+<div style="display: flex; justify-content: space-between; align-items: center"><p class="k">Briefing de hoy</p><span class="mono" style="font-size: 10px; color: #2f6f48">● EN VIVO 10:42</span></div>
+<p style="margin: 10px 0 0; font-size: 14px; line-height: 1.55">{{ briefing }}</p>
+<p class="k" style="margin-top: 16px">Necesita atención</p>
+<div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px">
+<sc-for list="{{ atencion }}" as="a" hint-placeholder-count="3">
+<button onClick="{{ a.pick }}" style="{{ a.estilo }}"><span style="font-size: 13px; font-weight: 500; display: block">{{ a.t }}</span><span style="font-size: 12px; color: #6f6860; display: block; margin-top: 2px">{{ a.d }}</span></button>
+</sc-for>
+</div>
+</div>
+
+<div class="glass" style="position: absolute; right: 18px; top: 18px; width: 236px; padding: 18px">
+<p class="k">Venta noviembre</p>
+<svg viewBox="0 0 200 120" style="width: 100%; display: block; margin-top: 6px" aria-hidden="true">
+<path d="M20 105 A80 80 0 0 1 180 105" fill="none" stroke="#e2ded5" stroke-width="14" stroke-linecap="round"></path>
+<path d="M20 105 A80 80 0 0 1 180 105" fill="none" stroke="#52448a" stroke-width="14" stroke-linecap="round" pathLength="100" stroke-dasharray="{{ gaugeDash }}"></path>
+<text x="100" y="92" text-anchor="middle" font-family="DM Sans" font-size="30" fill="#141210">1.830</text>
+<text x="100" y="112" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#6f6860">UF FACTURADAS</text>
+</svg>
+<p style="margin: 6px 0 0; font-size: 12px; color: #6f6860; text-align: center">{{ ventaMesSub }}</p>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; font-size: 12px">
+<span><span class="muted">Estimado</span><br><strong class="mono" style="font-weight: 500">2.150 UF</strong></span>
+<span><span class="muted">Por cobrar</span><br><strong class="mono" style="font-weight: 500">820 UF</strong></span>
+</div>
+</div>
+
+<div style="position: absolute; left: 50%; bottom: 16px; transform: translateX(-50%); display: flex; gap: 6px; flex-wrap: wrap; justify-content: center">
+<sc-for list="{{ leyenda }}" as="l" hint-placeholder-count="4">
+<span class="glass" style="padding: 6px 12px; border-radius: 99px; font-size: 12px; display: inline-flex; align-items: center; gap: 6px"><span style="{{ l.punto }}"></span>{{ l.t }}</span>
+</sc-for>
+</div>
+</section>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px">
+<sc-for list="{{ kpis }}" as="k" hint-placeholder-count="4">
+<button onClick="{{ k.pick }}" class="card" style="text-align: left; cursor: pointer; font: inherit; color: inherit">
+<div style="display: flex; justify-content: space-between"><p class="k">{{ k.t }}</p><span class="muted">↗</span></div>
+<p style="margin: 10px 0 0; font-size: 34px; font-weight: 400">{{ k.v }} <span style="font-size: 14px; color: #6f6860">{{ k.u }}</span></p>
+<div style="display: flex; height: 6px; border-radius: 99px; overflow: hidden; margin-top: 12px; gap: 2px">
+<sc-for list="{{ k.seg }}" as="s" hint-placeholder-count="4"><span style="{{ s }}"></span></sc-for>
+</div>
+<p style="margin: 10px 0 0; font-size: 12px; color: #6f6860">{{ k.d }}</p>
+</button>
+</sc-for>
+</div>
+
+<div class="row">
+<div class="card" style="flex: 999 1 520px">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><h2 class="h2">Flujo de proyectos</h2><span class="muted" style="font-size: 12px">del pedido al montaje</span></div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; margin-top: 14px">
+<sc-for list="{{ flujo }}" as="f" hint-placeholder-count="7">
+<button onClick="{{ f.pick }}" style="text-align: left; background: #f7f5f1; border: 1px solid rgba(20,18,16,0.06); border-radius: 12px; padding: 12px; cursor: pointer; font: inherit; color: inherit">
+<span class="mono" style="font-size: 10px; color: #8a8278">{{ f.n }}</span>
+<span style="display: block; font-size: 13px; font-weight: 500; margin-top: 4px">{{ f.t }}</span>
+<span style="display: block; font-size: 28px; margin-top: 6px">{{ f.v }}</span>
+<span style="display: block; font-size: 11px; color: #6f6860; margin-top: 2px">{{ f.d }}</span>
+</button>
+</sc-for>
+</div>
+</div>
+<div class="card" style="flex: 1 1 340px">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><h2 class="h2">Esperan tu aprobación</h2><span class="mono" style="font-size: 11px; color: #a35a12">{{ nAprob }} PENDIENTES</span></div>
+<div style="display: flex; flex-direction: column; gap: 10px; margin-top: 12px">
+<sc-for list="{{ aprobaciones }}" as="a" hint-placeholder-count="3">
+<div style="{{ a.caja }}">
+<div style="display: flex; justify-content: space-between; gap: 8px"><span class="mono" style="font-size: 10px; color: #8a8278">{{ a.area }}</span><span style="font-size: 11px; color: #6f6860">{{ a.quien }}</span></div>
+<p style="margin: 4px 0 0; font-size: 13px; font-weight: 500">{{ a.t }}</p>
+<div style="display: flex; gap: 8px; margin-top: 8px; align-items: center">
+<sc-if value="{{ a.pend }}" hint-placeholder-val="{{ true }}"><button onClick="{{ a.ok }}" class="btn-d" style="padding: 7px 12px; min-height: 32px; font-size: 12px">Aprobar</button><button onClick="{{ a.ver }}" class="btn" style="padding: 7px 12px; min-height: 32px; font-size: 12px">Revisar</button></sc-if>
+<sc-if value="{{ a.hecho }}" hint-placeholder-val="{{ false }}"><span style="font-size: 12px; color: #2f6f48">✓ Aprobado por {{ rolNombre }}</span></sc-if>
+</div>
+</div>
+</sc-for>
+</div>
+<p style="margin: 12px 0 0; font-size: 11px; color: #8a8278">Los agentes preparan; nada sale sin la firma de una persona.</p>
+</div>
+</div>
+</sc-if>
+
+<!-- ================= PEDIDOS ================= -->
+<sc-if value="{{ vPedidos }}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px">
+<div role="tablist" aria-label="Vistas de pedidos" style="display: flex; gap: 4px; background: #fff; border-radius: 12px; padding: 4px; border: 1px solid rgba(20,18,16,0.08)">
+<sc-for list="{{ subPed }}" as="s" hint-placeholder-count="4"><button role="tab" onClick="{{ s.pick }}" style="{{ s.estilo }}">{{ s.t }} <span style="{{ s.bEst }}">{{ s.b }}</span></button></sc-for>
+</div>
+<button onClick="{{ toggleSplit }}" style="{{ splitEst }}">▥ Pantalla dividida</button>
+<div style="margin-left: auto; display: flex; flex-wrap: wrap; gap: 6px">
+<sc-for list="{{ filtrosServ }}" as="f" hint-placeholder-count="5"><button onClick="{{ f.pick }}" style="{{ f.estilo }}">{{ f.t }} · {{ f.n }}</button></sc-for>
+</div>
+</div>
+
+<!-- pantalla dividida -->
+<sc-if value="{{ split }}" hint-placeholder-val="{{ false }}">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px">
+<div class="card" style="padding: 0; overflow: hidden"><p class="k" style="padding: 14px 16px">Pedidos</p>
+<sc-for list="{{ pedidosLista }}" as="p" hint-placeholder-count="6"><button onClick="{{ p.pick }}" style="{{ p.filaMini }}"><span style="display: flex; justify-content: space-between"><strong style="font-weight: 500; font-size: 13px">{{ p.cliente }}</strong><span style="{{ p.canalEst }}">{{ p.canal }}</span></span><span style="display: block; font-size: 12px; color: #6f6860; margin-top: 3px">{{ p.servicio }} · {{ p.m2 }} m²</span></button></sc-for>
+</div>
+<div class="card" style="padding: 0; overflow: hidden"><p class="k" style="padding: 14px 16px">Correo · {{ pedSel.cliente }}</p>
+<div style="padding: 0 16px 16px; display: flex; flex-direction: column; gap: 10px">
+<sc-for list="{{ mailHilo }}" as="m" hint-placeholder-count="3"><div style="{{ m.caja }}"><span style="font-size: 11px; color: #6f6860">{{ m.de }} · {{ m.hora }}</span><p style="margin: 4px 0 0; font-size: 13px; line-height: 1.5">{{ m.t }}</p></div></sc-for>
+</div></div>
+<div class="card" style="padding: 0; overflow: hidden; background: #efe9e1"><p class="k" style="padding: 14px 16px">WhatsApp · {{ pedSel.cliente }}</p>
+<div style="padding: 0 12px 16px; display: flex; flex-direction: column; gap: 6px">
+<sc-for list="{{ waHilo }}" as="m" hint-placeholder-count="4"><div style="{{ m.fila }}"><span style="{{ m.burbuja }}">{{ m.t }}</span></div></sc-for>
+</div></div>
+</div>
+</sc-if>
+
+<sc-if value="{{ noSplit }}" hint-placeholder-val="{{ true }}">
+
+<sc-if value="{{ vPedLista }}" hint-placeholder-val="{{ true }}">
+<div class="row" style="align-items: flex-start">
+<div class="card" style="flex: 999 1 600px; padding: 6px 0 0">
+<div style="{{ tablaPedidos.wrap }}"><div style="{{ tablaPedidos.inner }}">
+<div style="{{ tablaPedidos.cab }}"><sc-for list="{{ tablaPedidos.cols }}" as="c" hint-placeholder-count="5"><span>{{ c }}</span></sc-for></div>
+<sc-for list="{{ tablaPedidos.filas }}" as="f" hint-placeholder-count="5"><div onClick="{{ f.pick }}" style="{{ f.estilo }}"><sc-for list="{{ f.celdas }}" as="x" hint-placeholder-count="5"><span style="{{ x.s }}">{{ x.t }}</span></sc-for></div></sc-for>
+</div></div>
+</div>
+<div class="card" style="flex: 1 1 320px">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 8px"><span class="mono" style="font-size: 11px; color: #8a8278">{{ pedSel.cod }}</span><span style="{{ pedSel.servEst }}">{{ pedSel.servicio }}</span></div>
+<h2 style="margin: 8px 0 0; font-size: 22px; font-weight: 400">{{ pedSel.cliente }}</h2>
+<p class="muted" style="margin: 4px 0 0; font-size: 13px">{{ pedSel.perfil }} · {{ pedSel.lugar }} · {{ pedSel.m2 }} m² · entró por {{ pedSel.canal }}</p>
+<p class="k" style="margin-top: 18px">Antes de dibujar · {{ pedSel.info }}</p>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px 10px; margin-top: 10px; font-size: 12px">
+<sc-for list="{{ pedSel.check }}" as="c" hint-placeholder-count="8"><span style="{{ c.estilo }}">{{ c.icono }} {{ c.t }}</span></sc-for>
+</div>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 18px">
+<div style="background: #f7f5f1; border-radius: 12px; padding: 12px"><p class="k" style="font-size: 10px">Probabilidad</p><p style="margin: 6px 0 0; font-size: 26px">{{ pedSel.prob }}</p><div class="bar" style="margin-top: 6px"><div style="{{ pedSel.probBarra }}"></div></div></div>
+<div style="background: #f7f5f1; border-radius: 12px; padding: 12px"><p class="k" style="font-size: 10px">Entrada a fábrica</p><p style="margin: 6px 0 0; font-size: 20px">{{ pedSel.fab }}</p><p style="margin: 4px 0 0; font-size: 11px; color: #6f6860">estimado por el agente</p></div>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px">
+<button onClick="{{ irAnalisis }}" class="btn-d">Ver análisis de planos</button>
+<button onClick="{{ irMail }}" class="btn">Responder por correo</button>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ vPedMail }}" hint-placeholder-val="{{ false }}">
+<div class="row" style="align-items: flex-start">
+<div class="card" style="flex: 1 1 280px; padding: 8px">
+<sc-for list="{{ pedidosLista }}" as="p" hint-placeholder-count="6"><button onClick="{{ p.pick }}" style="{{ p.filaMini }}"><span style="display: flex; justify-content: space-between"><strong style="font-weight: 500; font-size: 13px">{{ p.cliente }}</strong><span style="font-size: 11px; color: #8a8278">{{ p.mailHora }}</span></span><span style="display: block; font-size: 12px; color: #6f6860; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ p.mailAsunto }}</span></button></sc-for>
+</div>
+<div class="card" style="flex: 999 1 520px">
+<p class="mono" style="margin: 0; font-size: 11px; color: #8a8278">{{ pedSel.email }}</p>
+<h2 style="margin: 6px 0 14px; font-size: 20px; font-weight: 400">{{ pedSel.mailAsunto }}</h2>
+<div style="display: flex; flex-direction: column; gap: 10px">
+<sc-for list="{{ mailHilo }}" as="m" hint-placeholder-count="3"><div style="{{ m.caja }}"><span style="font-size: 11px; color: #6f6860">{{ m.de }} · {{ m.hora }}</span><p style="margin: 4px 0 0; font-size: 14px; line-height: 1.55">{{ m.t }}</p></div></sc-for>
+</div>
+<div style="margin-top: 14px; border: 1.5px solid #52448a; border-radius: 14px; padding: 14px; background: #f6f4fb">
+<p class="k" style="color: #52448a">Borrador del agente · requiere revisión</p>
+<p style="margin: 8px 0 0; font-size: 14px; line-height: 1.55">{{ pedSel.borrador }}</p>
+<div style="display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap"><button class="btn-d">Revisar y enviar</button><button class="btn">Editar</button><button onClick="{{ irAnalisis }}" class="btn">Adjuntar análisis</button></div>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ vPedWa }}" hint-placeholder-val="{{ false }}">
+<div class="row" style="align-items: flex-start">
+<div class="card" style="flex: 1 1 280px; padding: 8px">
+<sc-for list="{{ pedidosWa }}" as="p" hint-placeholder-count="3"><button onClick="{{ p.pick }}" style="{{ p.filaMini }}"><span style="display: flex; justify-content: space-between"><strong style="font-weight: 500; font-size: 13px">{{ p.cliente }}</strong><span style="{{ p.mailEst }}">{{ p.mailTxt }}</span></span><span style="display: block; font-size: 12px; color: #6f6860; margin-top: 3px">{{ p.servicio }}</span></button></sc-for>
+</div>
+<div class="card" style="flex: 999 1 520px; background: #efe9e1">
+<div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px"><strong style="font-weight: 500">{{ pedSel.cliente }}</strong><span style="{{ pedSel.mailEst }}">{{ pedSel.mailTxt }}</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px; margin-top: 14px">
+<sc-for list="{{ waHilo }}" as="m" hint-placeholder-count="5"><div style="{{ m.fila }}"><span style="{{ m.burbuja }}">{{ m.t }}</span></div></sc-for>
+</div>
+<p style="margin: 14px 0 0; font-size: 12px; color: #5d564e">Regla: el agente pide el correo antes del tercer mensaje. Con correo, el hilo sigue por mail y aquí solo se avisa.</p>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ vPedAnalisis }}" hint-placeholder-val="{{ false }}">
+<div class="card" style="display: flex; flex-wrap: wrap; gap: 16px; align-items: center">
+<div style="flex: 1 1 420px; min-width: 0">
+<p class="mono" style="margin: 0; font-size: 11px; color: #8a8278">P-2611-012 · ANÁLISIS DE PROYECTO · REV03 · 12-11-2026</p>
+<h2 style="margin: 6px 0 0; font-size: 24px; font-weight: 400">Casa Coyhaique – Vivienda Vargas Mansilla</h2>
+<p class="muted" style="margin: 4px 0 0; font-size: 13px">Fuente: VIVIENDA VARGAS MANSILLA.dwg · Criterio Casa Las Palmas · módulo 2,40 m (CT/CM 1,24 + CB 1,16)</p>
+</div>
+<div style="display: flex; gap: 8px; flex-wrap: wrap"><button class="btn">Descargar informe PDF</button><button onClick="{{ irMail }}" class="btn-d">Enviar al cliente</button></div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px">
+<sc-for list="{{ anStats }}" as="s" hint-placeholder-count="5"><div class="card" style="padding: 14px"><p class="k" style="font-size: 10px">{{ s.t }}</p><p style="margin: 6px 0 0; font-size: 24px">{{ s.v }}</p><p style="margin: 2px 0 0; font-size: 11px; color: #6f6860">{{ s.d }}</p></div></sc-for>
+</div>
+<div class="row" style="align-items: flex-start">
+<div style="flex: 999 1 560px; display: flex; flex-direction: column; gap: 14px; min-width: 0">
+<div class="card" style="padding: 6px 0 0"><h2 class="h2" style="padding: 10px 18px 4px">Compatibilidad por volumen</h2>
+<div style="{{ tablaCompat.wrap }}"><div style="{{ tablaCompat.inner }}">
+<div style="{{ tablaCompat.cab }}"><sc-for list="{{ tablaCompat.cols }}" as="c" hint-placeholder-count="5"><span>{{ c }}</span></sc-for></div>
+<sc-for list="{{ tablaCompat.filas }}" as="f" hint-placeholder-count="5"><div onClick="{{ f.pick }}" style="{{ f.estilo }}"><sc-for list="{{ f.celdas }}" as="x" hint-placeholder-count="5"><span style="{{ x.s }}">{{ x.t }}</span></sc-for></div></sc-for>
+</div></div>
+</div>
+<div class="card"><div style="display: flex; justify-content: space-between; align-items: baseline"><h2 class="h2">Iteración con el cliente</h2><span class="muted" style="font-size: 12px">{{ iterResumen }}</span></div>
+<div style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px">
+<sc-for list="{{ iteraciones }}" as="i" hint-placeholder-count="5"><div style="display: flex; gap: 12px; align-items: flex-start; padding: 10px 12px; background: #f7f5f1; border-radius: 12px"><span class="mono" style="font-size: 11px; color: #8a8278; min-width: 28px">{{ i.v }}</span><span style="flex: 1; font-size: 13px; line-height: 1.45">{{ i.t }}</span><button onClick="{{ i.pick }}" style="{{ i.estilo }}">{{ i.estado }}</button></div></sc-for>
+</div>
+<p style="margin: 10px 0 0; font-size: 11px; color: #8a8278">Haz clic en el estado para simular la respuesta del cliente. Meta: que el agente proponga estos cambios solo, desde el DWG.</p>
+</div>
+</div>
+<div style="flex: 1 1 320px; display: flex; flex-direction: column; gap: 14px; min-width: 0">
+<div class="card" style="background: #141210; color: #f5f3ee; border: none">
+<p class="k" style="color: #a39b90">Probabilidad de éxito</p>
+<p style="margin: 6px 0 0; font-size: 44px; font-weight: 300">{{ probCoy }}</p>
+<div style="display: flex; flex-direction: column; gap: 6px; margin-top: 10px; font-size: 12px">
+<sc-for list="{{ factores }}" as="f" hint-placeholder-count="6"><span style="display: flex; justify-content: space-between; gap: 8px"><span>{{ f.t }}</span><span style="{{ f.estilo }}">{{ f.v }}</span></span></sc-for>
+</div>
+<p class="k" style="color: #a39b90; margin-top: 18px">Entrada a fábrica</p>
+<p style="margin: 6px 0 0; font-size: 22px">{{ fabCoy }}</p>
+<div style="display: flex; flex-direction: column; gap: 6px; margin-top: 10px">
+<sc-for list="{{ tiempos }}" as="t" hint-placeholder-count="4"><div style="font-size: 11px"><span style="display: flex; justify-content: space-between; color: #cfc8bd"><span>{{ t.t }}</span><span>{{ t.v }}</span></span><div style="height: 5px; background: #2b2723; border-radius: 99px; margin-top: 4px"><div style="{{ t.barra }}"></div></div></div></sc-for>
+</div>
+<p style="margin: 12px 0 0; font-size: 11px; color: #8a8278">Hoy se estima al ojo. El puntaje usa completitud, compatibilidad, normativa e histórico de proyectos.</p>
+</div>
+<div class="card">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><h2 class="h2">Normativa y permisos</h2><button class="btn" style="padding: 5px 10px; min-height: 30px; font-size: 12px">+ Documento</button></div>
+<div style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px">
+<sc-for list="{{ normativa }}" as="n" hint-placeholder-count="6"><div style="display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; padding-bottom: 8px; border-bottom: 1px solid rgba(20,18,16,0.06)"><span style="font-size: 12px; color: #6f6860">{{ n.t }}</span><span style="{{ n.estilo }}">{{ n.e }}</span><span style="font-size: 13px; grid-column: 1 / -1">{{ n.v }}</span></div></sc-for>
+</div>
+<p style="margin: 8px 0 0; font-size: 11px; color: #8a8278">Valores de ejemplo, a confirmar con DOM y calculista.</p>
+</div>
+</div>
+</div>
+</sc-if>
+</sc-if>
+</sc-if>
+
+<!-- ================= 3D FURŌ ================= -->
+<sc-if value="{{ v3d }}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center">
+<div style="display: flex; gap: 4px; background: #fff; border-radius: 12px; padding: 4px; border: 1px solid rgba(20,18,16,0.08)">
+<sc-for list="{{ proyectos3d }}" as="p" hint-placeholder-count="3"><button onClick="{{ p.pick }}" style="{{ p.estilo }}">{{ p.t }}</button></sc-for>
+</div>
+<div style="display: flex; gap: 4px; background: #fff; border-radius: 12px; padding: 4px; border: 1px solid rgba(20,18,16,0.08)">
+<sc-for list="{{ lods }}" as="l" hint-placeholder-count="2"><button onClick="{{ l.pick }}" style="{{ l.estilo }}">{{ l.t }}</button></sc-for>
+</div>
+<span style="margin-left: auto; display: inline-flex; align-items: center; gap: 8px; font-size: 13px; background: #fff; border-radius: 99px; padding: 8px 14px; border: 1px solid rgba(20,18,16,0.08)"><span style="width: 8px; height: 8px; border-radius: 50%; background: #3d8b5a"></span>Revit 2025 · PC FURŌ-01 · conector en línea</span>
+</div>
+<div class="row" style="align-items: stretch">
+<div class="card" style="flex: 1 1 230px; max-width: 280px; padding: 14px">
+<p class="k">Familias FURŌ</p>
+<div style="display: flex; flex-direction: column; gap: 4px; margin-top: 10px">
+<sc-for list="{{ familias }}" as="f" hint-placeholder-count="9"><button onClick="{{ f.pick }}" style="{{ f.estilo }}"><span style="{{ f.sw }}"></span><span style="flex: 1; text-align: left"><span style="display: block; font-size: 13px">{{ f.cod }}</span><span style="display: block; font-size: 11px; color: #6f6860">{{ f.t }}</span></span><span class="mono" style="font-size: 11px; color: #6f6860">{{ f.n }}</span></button></sc-for>
+</div>
+<p style="margin: 10px 0 0; font-size: 11px; color: #8a8278">Clic para aislar una familia en el modelo.</p>
+</div>
+<div style="flex: 999 1 460px; min-width: 0; background: #1b1916; border-radius: 18px; position: relative; overflow: hidden; min-height: 470px">
+<svg viewBox="0 0 660 400" role="img" aria-label="Modelo Revit con componentes por familia" style="width: 100%; height: 100%; display: block">
+<polygon points="300.0,39.0 566.3,192.7 398.9,289.3 132.7,135.6" fill="#2a2723" stroke="#3a3631" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<line x1="300.0" y1="39.0" x2="132.7" y2="135.6" stroke="#3a3631" stroke-width="0.5" stroke-linecap="round"></line>
+<line x1="318.2" y1="49.5" x2="150.9" y2="146.1" stroke="#3a3631" stroke-width="0.5" stroke-linecap="round"></line>
+<line x1="336.4" y1="60.0" x2="169.1" y2="156.6" stroke="#3a3631" stroke-width="0.5" stroke-linecap="round"></line>
+<line x1="354.6" y1="70.5" x2="187.2" y2="167.1" stroke="#3a3631" stroke-width="0.5" stroke-linecap="round"></line>
+<line x1="372.7" y1="81.0" x2="205.4" y2="177.6" stroke="#3a3631" stroke-width="0.5" stroke-linecap="round"></line>
+<line x1="390.9" y1="91.5" x2="223.6" y2="188.1" stroke="#3a3631" stroke-width="0.5" stroke-linecap="round"></line>
+<line x1="409.1" y1="102.0" x2="241.8" y2="198.6" stroke="#3a3631" stroke-width="0.5" stroke-linecap="round"></line>
+<line x1="427.3" y1="112.5" x2="260.0" y2="209.1" stroke="#3a3631" stroke-width="0.5" stroke-linecap="round"></line>
+<line x1="445.5" y1="123.0" x2="278.2" y2="219.6" stroke="#3a3631" stroke-width="0.5" stroke-linecap="round"></line>
+<line x1="463.7" y1="133.5" x2="296.4" y2="230.1" stroke="#3a3631" stroke-width="0.5" stroke-linecap="round"></line>
+<line x1="481.9" y1="144.0" x2="314.5" y2="240.6" stroke="#3a3631" stroke-width="0.5" stroke-linecap="round"></line>
+<line x1="500.1" y1="154.5" x2="332.7" y2="251.1" stroke="#3a3631" stroke-width="0.5" stroke-linecap="round"></line>
+<line x1="518.2" y1="165.0" x2="350.9" y2="261.6" stroke="#3a3631" stroke-width="0.5" stroke-linecap="round"></line>
+<line x1="536.4" y1="175.5" x2="369.1" y2="272.1" stroke="#3a3631" stroke-width="0.5" stroke-linecap="round"></line>
+<line x1="554.6" y1="186.0" x2="387.3" y2="282.6" stroke="#3a3631" stroke-width="0.5" stroke-linecap="round"></line>
+<polygon points="300.0,59.0 529.9,191.7 398.9,267.3 169.1,134.6" fill="#3a3631" stroke="#4a4640" stroke-width="0.5" stroke-linejoin="round"></polygon>
+<polygon points="300.0,60.0 322.6,73.0 322.6,19.9 300.0,6.9" fill="{{ cCM }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round" opacity="0.7"></polygon>
+<polygon points="322.6,73.0 343.6,85.2 343.6,32.1 322.6,19.9" fill="{{ cCBM }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round" opacity="0.7"></polygon>
+<polygon points="343.6,85.2 366.2,98.2 366.2,45.1 343.6,32.1" fill="{{ cCM }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round" opacity="0.7"></polygon>
+<polygon points="366.2,98.2 387.3,110.4 387.3,57.3 366.2,45.1" fill="{{ cCBM }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round" opacity="0.7"></polygon>
+<polygon points="387.3,110.4 409.8,123.4 409.8,70.3 387.3,57.3" fill="{{ cCM }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round" opacity="0.7"></polygon>
+<polygon points="409.8,123.4 430.9,135.6 430.9,82.5 409.8,70.3" fill="{{ cCBM }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round" opacity="0.7"></polygon>
+<polygon points="430.9,135.6 453.5,148.6 453.5,95.5 430.9,82.5" fill="{{ cCM }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round" opacity="0.7"></polygon>
+<polygon points="453.5,148.6 474.6,160.8 474.6,107.7 453.5,95.5" fill="{{ cCBM }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round" opacity="0.7"></polygon>
+<polygon points="474.6,160.8 497.1,173.8 497.1,120.7 474.6,107.7" fill="{{ cCM }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round" opacity="0.7"></polygon>
+<polygon points="497.1,173.8 518.2,186.0 518.2,132.9 497.1,120.7" fill="{{ cCBM }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round" opacity="0.7"></polygon>
+<polygon points="518.2,186.0 529.9,192.7 529.9,139.6 518.2,132.9" fill="{{ cCM2 }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round" opacity="0.7"></polygon>
+<polygon points="305.5,5.8 328.0,18.8 257.1,15.7 234.5,2.7" fill="{{ cCT }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="328.0,18.8 349.1,31.0 278.2,27.9 257.1,15.7" fill="{{ cCB }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="349.1,31.0 371.7,44.0 300.7,40.9 278.2,27.9" fill="{{ cCT }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="371.7,44.0 392.8,56.2 321.8,53.1 300.7,40.9" fill="{{ cCB }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="392.8,56.2 415.3,69.2 344.4,66.1 321.8,53.1" fill="{{ cCT }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="415.3,69.2 436.4,81.4 365.5,78.3 344.4,66.1" fill="{{ cCB }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="436.4,81.4 459.0,94.4 388.0,91.3 365.5,78.3" fill="{{ cCT }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="459.0,94.4 480.0,106.6 409.1,103.5 388.0,91.3" fill="{{ cCB }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="480.0,106.6 502.6,119.6 431.7,116.5 409.1,103.5" fill="{{ cCT }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="502.6,119.6 523.7,131.8 452.8,128.7 431.7,116.5" fill="{{ cCB }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="523.7,131.8 535.3,138.5 464.4,135.4 452.8,128.7" fill="{{ cCT2 }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="169.1,135.6 191.6,148.6 191.6,95.5 169.1,82.5" fill="{{ cCM }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="191.6,148.6 212.7,160.8 212.7,107.7 191.6,95.5" fill="{{ cCBM }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="212.7,160.8 235.3,173.8 235.3,120.7 212.7,107.7" fill="{{ cCM }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="235.3,173.8 256.4,186.0 256.4,132.9 235.3,120.7" fill="{{ cVano }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="256.4,186.0 278.9,199.0 278.9,145.9 256.4,132.9" fill="{{ cCM }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="278.9,199.0 300.0,211.2 300.0,158.1 278.9,145.9" fill="{{ cCBM }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="300.0,211.2 322.6,224.2 322.6,171.1 300.0,158.1" fill="{{ cCM }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="322.6,224.2 343.6,236.4 343.6,183.3 322.6,171.1" fill="{{ cVano }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="343.6,236.4 366.2,249.4 366.2,196.3 343.6,183.3" fill="{{ cCM }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="366.2,249.4 387.3,261.6 387.3,208.5 366.2,196.3" fill="{{ cCBM }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="387.3,261.6 398.9,268.3 398.9,215.2 387.3,208.5" fill="{{ cCM2 }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="529.9,192.7 398.9,268.3 398.9,215.2 529.9,139.6" fill="{{ cTest }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="529.9,139.6 398.9,215.2 464.4,135.4" fill="{{ cTest }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<line x1="168.1" y1="83.0" x2="398.0" y2="215.7" stroke="{{ cCol }}" stroke-width="3" stroke-linecap="round"></line>
+<polygon points="158.1,84.6 398.9,223.6 469.9,138.5 229.1,-0.5" fill="none" stroke="#f5f3ee" stroke-width="0.8" stroke-linejoin="round" opacity="0.35" stroke-dasharray="4 4"></polygon>
+</svg>
+<div style="position: absolute; left: 16px; top: 14px; color: #f5f3ee"><p class="mono" style="margin: 0; font-size: 11px; color: #a39b90">{{ p3dNombre }} · {{ lodTxt }}</p><p style="margin: 4px 0 0; font-size: 15px">{{ famSelTxt }}</p></div>
+<div style="position: absolute; left: 16px; right: 16px; bottom: 14px; display: flex; flex-wrap: wrap; gap: 8px">
+<sc-for list="{{ jobs }}" as="j" hint-placeholder-count="3"><span style="background: rgba(245,243,238,0.08); border: 1px solid rgba(245,243,238,0.14); color: #f5f3ee; border-radius: 10px; padding: 8px 10px; font-size: 12px; flex: 1 1 180px"><span style="display: flex; justify-content: space-between"><span>{{ j.t }}</span><span class="mono">{{ j.p }}</span></span><span style="display: block; height: 3px; background: rgba(255,255,255,0.1); border-radius: 99px; margin-top: 6px"><span style="{{ j.barra }}"></span></span></span></sc-for>
+</div>
+</div>
+<div class="card" style="flex: 1 1 300px; padding: 6px 0 0">
+<div style="padding: 10px 18px 2px; display: flex; justify-content: space-between"><h2 class="h2">Cubicación del modelo</h2><span class="mono muted" style="font-size: 11px">{{ lodTxt }}</span></div>
+<div style="{{ tablaCub3d.wrap }}"><div style="{{ tablaCub3d.inner }}">
+<div style="{{ tablaCub3d.cab }}"><sc-for list="{{ tablaCub3d.cols }}" as="c" hint-placeholder-count="5"><span>{{ c }}</span></sc-for></div>
+<sc-for list="{{ tablaCub3d.filas }}" as="f" hint-placeholder-count="5"><div onClick="{{ f.pick }}" style="{{ f.estilo }}"><sc-for list="{{ f.celdas }}" as="x" hint-placeholder-count="5"><span style="{{ x.s }}">{{ x.t }}</span></sc-for></div></sc-for>
+</div></div>
+<div style="padding: 12px 18px 16px; display: flex; gap: 8px; flex-wrap: wrap"><button onClick="{{ irCotizar }}" class="btn-d">Pasar a cotización</button><button class="btn">Exportar IFC</button></div>
+</div>
+</div>
+</sc-if>
+
+<!-- ================= COTIZACIONES ================= -->
+<sc-if value="{{ vCot }}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center">
+<div role="tablist" style="display: flex; gap: 4px; background: #fff; border-radius: 12px; padding: 4px; border: 1px solid rgba(20,18,16,0.08)">
+<sc-for list="{{ subCot }}" as="s" hint-placeholder-count="4"><button role="tab" onClick="{{ s.pick }}" style="{{ s.estilo }}">{{ s.t }}</button></sc-for>
+</div>
+<span class="muted" style="font-size: 13px; margin-left: 6px">Casa Coyhaique · 392 m²</span>
+<div style="margin-left: auto; display: flex; flex-wrap: wrap; gap: 6px">
+<sc-for list="{{ alcances }}" as="a" hint-placeholder-count="4"><button onClick="{{ a.pick }}" style="{{ a.estilo }}">{{ a.t }}</button></sc-for>
+</div>
+</div>
+
+<sc-if value="{{ vCotRes }}" hint-placeholder-val="{{ true }}">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px">
+<sc-for list="{{ bloquesCot }}" as="b" hint-placeholder-count="5"><div style="{{ b.caja }}">
+<div style="display: flex; justify-content: space-between; gap: 6px"><span class="mono" style="font-size: 10px; color: #8a8278">{{ b.n }}</span><span style="{{ b.chip }}">{{ b.estado }}</span></div>
+<p style="margin: 10px 0 0; font-size: 15px; font-weight: 500">{{ b.t }}</p>
+<p style="margin: 4px 0 0; font-size: 12px; color: #6f6860; line-height: 1.45; min-height: 34px">{{ b.d }}</p>
+<p style="margin: 12px 0 0; font-size: 30px; font-weight: 400">{{ b.uf }} <span style="font-size: 13px; color: #6f6860">UF</span></p>
+<p class="mono" style="margin: 2px 0 0; font-size: 11px; color: #6f6860">{{ b.m2 }} UF/m²</p>
+</div></sc-for>
+</div>
+<div class="card" style="display: flex; flex-wrap: wrap; gap: 18px; align-items: center; background: #141210; color: #f5f3ee; border: none">
+<div style="flex: 1 1 260px"><p class="k" style="color: #a39b90">Total {{ alcanceNombre }}</p><p style="margin: 6px 0 0; font-size: 42px; font-weight: 300">{{ totalCot }} UF <span style="font-size: 16px; color: #a39b90">+ IVA</span></p><p class="mono" style="margin: 2px 0 0; font-size: 12px; color: #a39b90">{{ totalM2 }} UF/m² · valores de ejemplo</p></div>
+<div style="flex: 2 1 360px; display: flex; height: 14px; border-radius: 99px; overflow: hidden; gap: 2px">
+<sc-for list="{{ barraCot }}" as="s" hint-placeholder-count="5"><span style="{{ s }}"></span></sc-for>
+</div>
+<p style="flex: 1 1 100%; margin: 0; font-size: 12px; color: #a39b90">La misma cotización crece de Estructuras a Obra completa sin rehacerla: se suman bloques, no se recalcula todo.</p>
+</div>
+</sc-if>
+
+<sc-if value="{{ vCotCub }}" hint-placeholder-val="{{ false }}">
+<div class="card" style="padding: 6px 0 0"><h2 class="h2" style="padding: 10px 18px 4px">Cubicación por volumen · criterio Las Palmas</h2>
+<div style="{{ tablaCubVol.wrap }}"><div style="{{ tablaCubVol.inner }}">
+<div style="{{ tablaCubVol.cab }}"><sc-for list="{{ tablaCubVol.cols }}" as="c" hint-placeholder-count="5"><span>{{ c }}</span></sc-for></div>
+<sc-for list="{{ tablaCubVol.filas }}" as="f" hint-placeholder-count="5"><div onClick="{{ f.pick }}" style="{{ f.estilo }}"><sc-for list="{{ f.celdas }}" as="x" hint-placeholder-count="5"><span style="{{ x.s }}">{{ x.t }}</span></sc-for></div></sc-for>
+</div></div>
+<p style="margin: 0; padding: 10px 18px 16px; font-size: 12px; color: #6f6860">Fuente: informe REV03. CT = componente de techo · CB = bastidor · CM = componente de muro.</p>
+</div>
+</sc-if>
+
+<sc-if value="{{ vCotApu }}" hint-placeholder-val="{{ false }}">
+<div class="card" style="padding: 6px 0 0"><div style="padding: 10px 18px 4px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px"><h2 class="h2">Análisis de precios unitarios</h2><span class="muted" style="font-size: 12px">UF · rendimientos de fábrica actuales · ejemplo</span></div>
+<div style="{{ tablaApu.wrap }}"><div style="{{ tablaApu.inner }}">
+<div style="{{ tablaApu.cab }}"><sc-for list="{{ tablaApu.cols }}" as="c" hint-placeholder-count="5"><span>{{ c }}</span></sc-for></div>
+<sc-for list="{{ tablaApu.filas }}" as="f" hint-placeholder-count="5"><div onClick="{{ f.pick }}" style="{{ f.estilo }}"><sc-for list="{{ f.celdas }}" as="x" hint-placeholder-count="5"><span style="{{ x.s }}">{{ x.t }}</span></sc-for></div></sc-for>
+</div></div>
+</div>
+</sc-if>
+
+<sc-if value="{{ vCotLink }}" hint-placeholder-val="{{ false }}">
+<div class="row" style="align-items: flex-start">
+<div class="card" style="flex: 999 1 520px; padding: 0; overflow: hidden">
+<div style="background: #f0eee9; padding: 10px 14px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid rgba(20,18,16,0.06)"><span style="width: 10px; height: 10px; border-radius: 50%; background: #d9d4ca"></span><span style="width: 10px; height: 10px; border-radius: 50%; background: #d9d4ca"></span><span class="mono" style="flex: 1; background: #fff; border-radius: 8px; padding: 6px 10px; font-size: 12px; color: #5d564e">furo.company/propuestas/casa-coyhaique-4f2a1c</span></div>
+<div style="padding: 28px; background: #f5f3ee">
+<p class="k">Propuesta FURŌ · Casa Coyhaique</p>
+<h2 style="margin: 8px 0 0; font-size: 32px; font-weight: 400">Tu casa en <em style="font-family: 'Cormorant Garamond', serif">madera industrializada</em></h2>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 18px">
+<sc-for list="{{ bloquesCot }}" as="b" hint-placeholder-count="5"><div style="{{ b.mini }}"><span style="font-size: 12px; color: #6f6860">{{ b.t }}</span><span style="display: block; font-size: 20px; margin-top: 4px">{{ b.uf }} UF</span></div></sc-for>
+</div>
+<p style="margin: 16px 0 0; font-size: 13px; color: #5d564e">Alcance mostrado: <strong style="font-weight: 500">{{ alcanceNombre }}</strong> · {{ totalCot }} UF + IVA</p>
+</div>
+</div>
+<div style="flex: 1 1 300px; display: flex; flex-direction: column; gap: 14px">
+<div class="card"><p class="k">Actividad del cliente</p>
+<div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px; font-size: 13px">
+<span>📨 Enviada 20-11 · 18:20</span><span>👁 Vista 3 veces · última 23-11 21:40</span><span>⏱ 6 min en "Obra completa"</span><span style="color: #52448a">✦ El agente sugiere ofrecer Obra completa</span>
+</div></div>
+<div class="card"><p class="k">Ejemplo real</p><p style="margin: 8px 0 0; font-size: 13px; line-height: 1.5">El link sigue el formato de <a href="https://www.furo.company/propuestas/colonia-suiza-c9feec.html">colonia-suiza-c9feec</a>, pero se arma solo desde la cotización y puede evolucionar a proyecto completo.</p><a href="Cliente.dc.html" class="btn" style="display: inline-block; margin-top: 12px; text-decoration: none">Ver portal del cliente</a></div>
+</div>
+</div>
+</sc-if>
+</sc-if>
+
+<!-- ================= CÁLCULO ================= -->
+<sc-if value="{{ vCalc }}" hint-placeholder-val="{{ false }}">
+<div class="card" style="display: flex; flex-wrap: wrap; gap: 14px; align-items: center">
+<div style="flex: 1 1 360px"><p class="mono" style="margin: 0; font-size: 11px; color: #8a8278">MESA DEL CALCULISTA · VENTA APROBADA 21-11</p><h2 style="margin: 4px 0 0; font-size: 22px; font-weight: 400">Casa Coyhaique · 6 volúmenes · 392 m²</h2></div>
+<div style="display: flex; gap: 6px; flex-wrap: wrap">
+<sc-for list="{{ firmas }}" as="f" hint-placeholder-count="4"><span style="{{ f.estilo }}">{{ f.t }}</span></sc-for>
+</div>
+</div>
+<div class="row" style="align-items: flex-start">
+<div class="card" style="flex: 1 1 300px">
+<h2 class="h2">Parámetros entregados</h2><p class="muted" style="margin: 4px 0 10px; font-size: 12px">Se cargan solos desde el pedido y la normativa</p>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<sc-for list="{{ parametros }}" as="p" hint-placeholder-count="8"><div style="display: flex; justify-content: space-between; gap: 10px; font-size: 13px; padding-bottom: 8px; border-bottom: 1px solid rgba(20,18,16,0.06)"><span class="muted">{{ p.t }}</span><span style="{{ p.estilo }}">{{ p.v }}</span></div></sc-for>
+</div>
+</div>
+<div style="flex: 1 1 300px; display: flex; flex-direction: column; gap: 14px">
+<div class="card"><h2 class="h2">Programas conectados</h2>
+<div style="display: flex; flex-direction: column; gap: 10px; margin-top: 12px">
+<sc-for list="{{ programas }}" as="p" hint-placeholder-count="3"><div style="display: flex; gap: 12px; align-items: center; padding: 12px; background: #f7f5f1; border-radius: 12px"><span style="{{ p.logo }}">{{ p.ini }}</span><span style="flex: 1"><span style="display: block; font-size: 14px; font-weight: 500">{{ p.t }}</span><span style="display: block; font-size: 12px; color: #6f6860">{{ p.d }}</span></span><span style="{{ p.estEst }}">{{ p.e }}</span></div></sc-for>
+</div></div>
+<div class="card"><h2 class="h2">Iteraciones</h2>
+<div style="display: flex; flex-direction: column; gap: 0; margin-top: 12px">
+<sc-for list="{{ iterCalc }}" as="i" hint-placeholder-count="4"><div style="display: flex; gap: 10px"><span style="display: flex; flex-direction: column; align-items: center"><span style="{{ i.punto }}"></span><span style="flex: 1; width: 1px; background: rgba(20,18,16,0.12); min-height: 18px"></span></span><span style="padding-bottom: 12px"><span class="mono" style="font-size: 10px; color: #8a8278">{{ i.f }} · {{ i.quien }}</span><span style="display: block; font-size: 13px; margin-top: 2px">{{ i.t }}</span></span></div></sc-for>
+</div></div>
+</div>
+<div class="card" style="flex: 1 1 320px">
+<h2 class="h2">Puntos a verificar</h2><p class="muted" style="margin: 4px 0 10px; font-size: 12px">Vienen del análisis de planos</p>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<sc-for list="{{ verificar }}" as="v" hint-placeholder-count="6"><button onClick="{{ v.pick }}" style="{{ v.caja }}"><span style="flex: 1; text-align: left"><span style="display: block; font-size: 13px; font-weight: 500">{{ v.t }}</span><span style="display: block; font-size: 12px; color: #6f6860; margin-top: 2px">{{ v.d }}</span></span><span style="{{ v.chip }}">{{ v.e }}</span></button></sc-for>
+</div>
+<button onClick="{{ validarCalc }}" style="{{ validarEst }}">{{ validarTxt }}</button>
+</div>
+</div>
+</sc-if>
+
+<!-- ================= FABRICACIÓN ================= -->
+<sc-if value="{{ vFab }}" hint-placeholder-val="{{ false }}">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px">
+<sc-for list="{{ mesas }}" as="m" hint-placeholder-count="4"><div class="card">
+<div style="display: flex; justify-content: space-between; align-items: center"><strong style="font-weight: 500">{{ m.t }}</strong><span style="{{ m.chip }}">{{ m.e }}</span></div>
+<p style="margin: 8px 0 0; font-size: 13px">{{ m.proy }}</p>
+<p class="mono" style="margin: 2px 0 0; font-size: 11px; color: #6f6860">{{ m.config }}</p>
+<div class="bar" style="margin-top: 12px; height: 8px"><div style="{{ m.barra }}"></div></div>
+<div style="display: flex; justify-content: space-between; margin-top: 8px; font-size: 12px; color: #6f6860"><span>{{ m.pzas }}</span><span>{{ m.fin }}</span></div>
+</div></sc-for>
+</div>
+<div class="row" style="align-items: flex-start">
+<div class="card" style="flex: 999 1 560px; padding: 6px 0 0"><div style="padding: 10px 18px 4px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px"><h2 class="h2">Piezas · Colonia Suiza</h2><span class="muted" style="font-size: 12px">tiempo estimado según rendimientos actuales</span></div>
+<div style="{{ tablaPiezas.wrap }}"><div style="{{ tablaPiezas.inner }}">
+<div style="{{ tablaPiezas.cab }}"><sc-for list="{{ tablaPiezas.cols }}" as="c" hint-placeholder-count="5"><span>{{ c }}</span></sc-for></div>
+<sc-for list="{{ tablaPiezas.filas }}" as="f" hint-placeholder-count="5"><div onClick="{{ f.pick }}" style="{{ f.estilo }}"><sc-for list="{{ f.celdas }}" as="x" hint-placeholder-count="5"><span style="{{ x.s }}">{{ x.t }}</span></sc-for></div></sc-for>
+</div></div>
+</div>
+<div style="flex: 1 1 300px; display: flex; flex-direction: column; gap: 14px">
+<div class="card"><h2 class="h2">Validación de piezas</h2><p class="muted" style="margin: 4px 0 10px; font-size: 12px">{{ qcPieza }}</p>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<sc-for list="{{ qc }}" as="q" hint-placeholder-count="4"><button onClick="{{ q.pick }}" style="{{ q.estilo }}"><span>{{ q.icono }}</span><span style="flex: 1; text-align: left">{{ q.t }}</span></button></sc-for>
+</div>
+<button onClick="{{ aprobarQc }}" style="{{ qcBtnEst }}">{{ qcBtnTxt }}</button>
+</div>
+<div class="card"><h2 class="h2">Inventario de planta</h2>
+<div style="display: flex; flex-direction: column; gap: 10px; margin-top: 12px">
+<sc-for list="{{ inventario }}" as="i" hint-placeholder-count="5"><div><div style="display: flex; justify-content: space-between; font-size: 13px"><span>{{ i.t }}</span><span style="{{ i.estilo }}">{{ i.v }}</span></div><div class="bar" style="margin-top: 5px"><div style="{{ i.barra }}"></div></div></div></sc-for>
+</div></div>
+</div>
+</div>
+</sc-if>
+
+<!-- ================= LOGÍSTICA ================= -->
+<sc-if value="{{ vLog }}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center">
+<div style="display: flex; gap: 4px; background: #fff; border-radius: 12px; padding: 4px; border: 1px solid rgba(20,18,16,0.08)">
+<sc-for list="{{ camionesTab }}" as="c" hint-placeholder-count="4"><button onClick="{{ c.pick }}" style="{{ c.estilo }}">{{ c.t }}</button></sc-for>
+</div>
+<span class="muted" style="font-size: 13px">Colonia Suiza · lo último que se carga es lo primero que se iza</span>
+<span style="margin-left: auto; font-size: 13px; background: #fff; border-radius: 99px; padding: 8px 14px; border: 1px solid rgba(20,18,16,0.08)">Plano de montaje vs piezas: <strong style="font-weight: 500">226 / 228</strong> · faltan CT02-07 y CB-14</span>
+</div>
+<div class="card" style="padding: 22px">
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; align-items: baseline"><h2 class="h2">{{ camSel.t }} · {{ camSel.d }}</h2><span class="mono muted" style="font-size: 12px">{{ camSel.peso }} · {{ camSel.ruta }}</span></div>
+<div style="overflow-x: auto; margin-top: 18px">
+<div style="min-width: 760px; display: flex; align-items: flex-end; gap: 6px; position: relative; padding-bottom: 34px">
+<div style="flex: 1; border: 2px solid #3b3631; border-radius: 10px 4px 4px 10px; padding: 8px; background: #f7f5f1; display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px">
+<sc-for list="{{ slots }}" as="s" hint-placeholder-count="12"><button onClick="{{ s.pick }}" style="{{ s.estilo }}"><span style="display: flex; justify-content: space-between; font-size: 11px"><span class="mono">{{ s.pos }}</span><span>{{ s.orden }}</span></span><span style="display: block; font-size: 12px; font-weight: 500; margin-top: 6px">{{ s.t }}</span><span style="display: block; font-size: 11px; opacity: 0.8; margin-top: 2px">{{ s.peso }}</span></button></sc-for>
+</div>
+<div style="width: 120px; height: 150px; background: #f5f3ee; border: 2px solid #3b3631; border-radius: 6px 34px 6px 6px; position: relative; flex: 0 0 auto"><span style="position: absolute; right: 12px; top: 16px; width: 54px; height: 44px; background: #4d5a63; border-radius: 4px 22px 4px 4px"></span><span class="mono" style="position: absolute; left: 10px; bottom: 10px; font-size: 10px; color: #6f6860">FURŌ</span></div>
+<sc-for list="{{ ruedas }}" as="r" hint-placeholder-count="5"><span style="{{ r }}"></span></sc-for>
+</div>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 14px; margin-top: 6px; font-size: 12px">
+<sc-for list="{{ leyendaIzaje }}" as="l" hint-placeholder-count="4"><span style="display: inline-flex; align-items: center; gap: 6px"><span style="{{ l.sw }}"></span>{{ l.t }}</span></sc-for>
+</div>
+<p style="margin: 14px 0 0; font-size: 13px; padding: 12px 14px; border-radius: 12px; background: #f6f4fb">{{ slotDetalle }}</p>
+</div>
+<div class="card" style="padding: 6px 0 0"><h2 class="h2" style="padding: 10px 18px 4px">Despachos</h2>
+<div style="{{ tablaDespachos.wrap }}"><div style="{{ tablaDespachos.inner }}">
+<div style="{{ tablaDespachos.cab }}"><sc-for list="{{ tablaDespachos.cols }}" as="c" hint-placeholder-count="5"><span>{{ c }}</span></sc-for></div>
+<sc-for list="{{ tablaDespachos.filas }}" as="f" hint-placeholder-count="5"><div onClick="{{ f.pick }}" style="{{ f.estilo }}"><sc-for list="{{ f.celdas }}" as="x" hint-placeholder-count="5"><span style="{{ x.s }}">{{ x.t }}</span></sc-for></div></sc-for>
+</div></div>
+</div>
+</sc-if>
+
+<!-- ================= MONTAJE ================= -->
+<sc-if value="{{ vMon }}" hint-placeholder-val="{{ false }}">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px">
+<sc-for list="{{ montajeKpi }}" as="k" hint-placeholder-count="4"><div class="card"><p class="k">{{ k.t }}</p><p style="margin: 8px 0 0; font-size: 28px">{{ k.v }}</p><p style="margin: 2px 0 0; font-size: 12px; color: #6f6860">{{ k.d }}</p></div></sc-for>
+</div>
+<div class="row" style="align-items: flex-start">
+<div style="flex: 999 1 520px; min-width: 0; background: #1b1916; border-radius: 18px; position: relative; overflow: hidden; min-height: 430px">
+<svg viewBox="0 0 660 400" role="img" aria-label="Plano de montaje con piezas montadas y pendientes" style="width: 100%; display: block">
+<polygon points="300.0,39.0 566.3,192.7 398.9,289.3 132.7,135.6" fill="#2a2723" stroke="#3a3631" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<line x1="300.0" y1="39.0" x2="132.7" y2="135.6" stroke="#3a3631" stroke-width="0.5" stroke-linecap="round"></line>
+<line x1="318.2" y1="49.5" x2="150.9" y2="146.1" stroke="#3a3631" stroke-width="0.5" stroke-linecap="round"></line>
+<line x1="336.4" y1="60.0" x2="169.1" y2="156.6" stroke="#3a3631" stroke-width="0.5" stroke-linecap="round"></line>
+<line x1="354.6" y1="70.5" x2="187.2" y2="167.1" stroke="#3a3631" stroke-width="0.5" stroke-linecap="round"></line>
+<line x1="372.7" y1="81.0" x2="205.4" y2="177.6" stroke="#3a3631" stroke-width="0.5" stroke-linecap="round"></line>
+<line x1="390.9" y1="91.5" x2="223.6" y2="188.1" stroke="#3a3631" stroke-width="0.5" stroke-linecap="round"></line>
+<line x1="409.1" y1="102.0" x2="241.8" y2="198.6" stroke="#3a3631" stroke-width="0.5" stroke-linecap="round"></line>
+<line x1="427.3" y1="112.5" x2="260.0" y2="209.1" stroke="#3a3631" stroke-width="0.5" stroke-linecap="round"></line>
+<line x1="445.5" y1="123.0" x2="278.2" y2="219.6" stroke="#3a3631" stroke-width="0.5" stroke-linecap="round"></line>
+<line x1="463.7" y1="133.5" x2="296.4" y2="230.1" stroke="#3a3631" stroke-width="0.5" stroke-linecap="round"></line>
+<line x1="481.9" y1="144.0" x2="314.5" y2="240.6" stroke="#3a3631" stroke-width="0.5" stroke-linecap="round"></line>
+<line x1="500.1" y1="154.5" x2="332.7" y2="251.1" stroke="#3a3631" stroke-width="0.5" stroke-linecap="round"></line>
+<line x1="518.2" y1="165.0" x2="350.9" y2="261.6" stroke="#3a3631" stroke-width="0.5" stroke-linecap="round"></line>
+<line x1="536.4" y1="175.5" x2="369.1" y2="272.1" stroke="#3a3631" stroke-width="0.5" stroke-linecap="round"></line>
+<line x1="554.6" y1="186.0" x2="387.3" y2="282.6" stroke="#3a3631" stroke-width="0.5" stroke-linecap="round"></line>
+<polygon points="300.0,59.0 529.9,191.7 398.9,267.3 169.1,134.6" fill="#3a3631" stroke="#4a4640" stroke-width="0.5" stroke-linejoin="round"></polygon>
+<polygon points="300.0,60.0 322.6,73.0 322.6,19.9 300.0,6.9" fill="{{ mCM }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round" opacity="0.7"></polygon>
+<polygon points="322.6,73.0 343.6,85.2 343.6,32.1 322.6,19.9" fill="{{ mCBM }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round" opacity="0.7"></polygon>
+<polygon points="343.6,85.2 366.2,98.2 366.2,45.1 343.6,32.1" fill="{{ mCM }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round" opacity="0.7"></polygon>
+<polygon points="366.2,98.2 387.3,110.4 387.3,57.3 366.2,45.1" fill="{{ mCBM }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round" opacity="0.7"></polygon>
+<polygon points="387.3,110.4 409.8,123.4 409.8,70.3 387.3,57.3" fill="{{ mCM }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round" opacity="0.7"></polygon>
+<polygon points="409.8,123.4 430.9,135.6 430.9,82.5 409.8,70.3" fill="{{ mCBM }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round" opacity="0.7"></polygon>
+<polygon points="430.9,135.6 453.5,148.6 453.5,95.5 430.9,82.5" fill="{{ mCM }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round" opacity="0.7"></polygon>
+<polygon points="453.5,148.6 474.6,160.8 474.6,107.7 453.5,95.5" fill="{{ mCBM }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round" opacity="0.7"></polygon>
+<polygon points="474.6,160.8 497.1,173.8 497.1,120.7 474.6,107.7" fill="{{ mCM }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round" opacity="0.7"></polygon>
+<polygon points="497.1,173.8 518.2,186.0 518.2,132.9 497.1,120.7" fill="{{ mCBM }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round" opacity="0.7"></polygon>
+<polygon points="518.2,186.0 529.9,192.7 529.9,139.6 518.2,132.9" fill="{{ mCM2 }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round" opacity="0.7"></polygon>
+<polygon points="305.5,5.8 328.0,18.8 257.1,15.7 234.5,2.7" fill="{{ mCT }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="328.0,18.8 349.1,31.0 278.2,27.9 257.1,15.7" fill="{{ mCB }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="349.1,31.0 371.7,44.0 300.7,40.9 278.2,27.9" fill="{{ mCT }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="371.7,44.0 392.8,56.2 321.8,53.1 300.7,40.9" fill="{{ mCB }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="392.8,56.2 415.3,69.2 344.4,66.1 321.8,53.1" fill="{{ mCT }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="415.3,69.2 436.4,81.4 365.5,78.3 344.4,66.1" fill="{{ mCB }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="436.4,81.4 459.0,94.4 388.0,91.3 365.5,78.3" fill="{{ mCT }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="459.0,94.4 480.0,106.6 409.1,103.5 388.0,91.3" fill="{{ mCB }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="480.0,106.6 502.6,119.6 431.7,116.5 409.1,103.5" fill="{{ mCT }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="502.6,119.6 523.7,131.8 452.8,128.7 431.7,116.5" fill="{{ mCB }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="523.7,131.8 535.3,138.5 464.4,135.4 452.8,128.7" fill="{{ mCT2 }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="169.1,135.6 191.6,148.6 191.6,95.5 169.1,82.5" fill="{{ mCM }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="191.6,148.6 212.7,160.8 212.7,107.7 191.6,95.5" fill="{{ mCBM }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="212.7,160.8 235.3,173.8 235.3,120.7 212.7,107.7" fill="{{ mCM }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="235.3,173.8 256.4,186.0 256.4,132.9 235.3,120.7" fill="{{ mVano }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="256.4,186.0 278.9,199.0 278.9,145.9 256.4,132.9" fill="{{ mCM }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="278.9,199.0 300.0,211.2 300.0,158.1 278.9,145.9" fill="{{ mCBM }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="300.0,211.2 322.6,224.2 322.6,171.1 300.0,158.1" fill="{{ mCM }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="322.6,224.2 343.6,236.4 343.6,183.3 322.6,171.1" fill="{{ mVano }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="343.6,236.4 366.2,249.4 366.2,196.3 343.6,183.3" fill="{{ mCM }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="366.2,249.4 387.3,261.6 387.3,208.5 366.2,196.3" fill="{{ mCBM }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="387.3,261.6 398.9,268.3 398.9,215.2 387.3,208.5" fill="{{ mCM2 }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="529.9,192.7 398.9,268.3 398.9,215.2 529.9,139.6" fill="{{ mTest }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<polygon points="529.9,139.6 398.9,215.2 464.4,135.4" fill="{{ mTest }}" stroke="#141210" stroke-width="0.6" stroke-linejoin="round"></polygon>
+<line x1="168.1" y1="83.0" x2="398.0" y2="215.7" stroke="{{ mCol }}" stroke-width="3" stroke-linecap="round"></line>
+<polygon points="158.1,84.6 398.9,223.6 469.9,138.5 229.1,-0.5" fill="none" stroke="#f5f3ee" stroke-width="0.8" stroke-linejoin="round" opacity="0.35" stroke-dasharray="4 4"></polygon>
+</svg>
+<div style="position: absolute; left: 16px; top: 14px; color: #f5f3ee"><p class="mono" style="margin: 0; font-size: 11px; color: #a39b90">COLONIA SUIZA · LÁMINA M-07 · DÍA 4 DE 7</p><p style="margin: 4px 0 0; font-size: 15px">Faldón norte: CT01 a CT05 montados</p></div>
+<div style="position: absolute; left: 16px; bottom: 14px; display: flex; flex-wrap: wrap; gap: 12px; font-size: 12px; color: #f5f3ee">
+<span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; border-radius: 3px; background: #6f9a72"></span>Montado</span>
+<span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; border-radius: 3px; background: #8b7fc0"></span>En izaje</span>
+<span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; border-radius: 3px; background: #5d564e"></span>Pendiente</span>
+</div>
+</div>
+<div style="flex: 1 1 320px; display: flex; flex-direction: column; gap: 14px">
+<div class="card"><h2 class="h2">Pregúntale al modelo</h2>
+<div style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px">
+<sc-for list="{{ preguntas }}" as="q" hint-placeholder-count="3"><div style="{{ q.caja }}"><span style="font-size: 11px; color: #6f6860">{{ q.de }}</span><p style="margin: 3px 0 0; font-size: 13px; line-height: 1.45">{{ q.t }}</p></div></sc-for>
+</div>
+<div style="display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap">
+<sc-for list="{{ sugPreg }}" as="s" hint-placeholder-count="2"><button onClick="{{ s.pick }}" class="btn" style="font-size: 12px; padding: 7px 10px; min-height: 32px">{{ s.t }}</button></sc-for>
+</div>
+</div>
+<div class="card"><h2 class="h2">Piezas por camión</h2>
+<div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px">
+<sc-for list="{{ llegadas }}" as="l" hint-placeholder-count="4"><div style="display: flex; justify-content: space-between; font-size: 13px"><span>{{ l.t }}</span><span style="{{ l.estilo }}">{{ l.e }}</span></div></sc-for>
+</div></div>
+<div class="card"><h2 class="h2">Láminas y anotaciones</h2>
+<div style="display: flex; flex-direction: column; gap: 6px; margin-top: 10px; font-size: 13px">
+<span>⬇ M-01 a M-12 · planos de montaje (PDF)</span><span>✎ 3 anotaciones de obra en M-07</span><span>📷 Foto unión cumbrera eje 5 · subida por jefe de obra</span>
+</div></div>
+</div>
+</div>
+</sc-if>
+
+<!-- ================= PLANIFICACIÓN ================= -->
+<sc-if value="{{ vPlan }}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center">
+<div style="display: flex; gap: 4px; background: #fff; border-radius: 12px; padding: 4px; border: 1px solid rgba(20,18,16,0.08)">
+<sc-for list="{{ planModos }}" as="m" hint-placeholder-count="2"><button onClick="{{ m.pick }}" style="{{ m.estilo }}">{{ m.t }}</button></sc-for>
+</div>
+<div style="margin-left: auto; display: flex; flex-wrap: wrap; gap: 12px; font-size: 12px">
+<sc-for list="{{ fasesLeyenda }}" as="f" hint-placeholder-count="7"><span style="display: inline-flex; align-items: center; gap: 6px"><span style="{{ f.sw }}"></span>{{ f.t }}</span></sc-for>
+</div>
+</div>
+<div class="card" style="padding: 18px 18px 22px; overflow-x: auto">
+<div style="min-width: 820px">
+<div style="display: grid; grid-template-columns: 190px 1fr; align-items: end; padding-bottom: 8px; border-bottom: 1px solid rgba(20,18,16,0.08)">
+<span class="k">{{ planCab }}</span>
+<div style="display: grid; grid-template-columns: repeat(6, 1fr)"><sc-for list="{{ meses }}" as="m" hint-placeholder-count="6"><span class="mono" style="font-size: 11px; color: #6f6860">{{ m }}</span></sc-for></div>
+</div>
+<sc-for list="{{ gantt }}" as="g" hint-placeholder-count="5"><div style="display: grid; grid-template-columns: 190px 1fr; align-items: center; min-height: 46px; border-bottom: 1px solid rgba(20,18,16,0.05)">
+<span><span style="display: block; font-size: 13px; font-weight: 500">{{ g.t }}</span><span style="display: block; font-size: 11px; color: #6f6860">{{ g.d }}</span></span>
+<div style="position: relative; height: 26px; background-image: linear-gradient(90deg, rgba(20,18,16,0.06) 1px, transparent 1px); background-size: 16.666% 100%">
+<sc-for list="{{ g.barras }}" as="b" hint-placeholder-count="4"><span title="{{ b.t }}" style="{{ b.s }}">{{ b.l }}</span></sc-for>
+<span style="{{ hoyEst }}"></span>
+</div>
+</div></sc-for>
+</div>
+</div>
+<p style="margin: 0; font-size: 12px; color: #6f6860">Plazos de proyecto a montaje con los parámetros actuales (días hábiles). En Obra completa se suman terminaciones y especialidades.</p>
+</sc-if>
+
+<!-- ================= VENTA ================= -->
+<sc-if value="{{ vVenta }}" hint-placeholder-val="{{ false }}">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px">
+<sc-for list="{{ ventaKpi }}" as="k" hint-placeholder-count="4"><div class="card"><p class="k">{{ k.t }}</p><p style="margin: 8px 0 0; font-size: 30px">{{ k.v }} <span style="font-size: 13px; color: #6f6860">UF</span></p><p style="margin: 2px 0 0; font-size: 12px; color: #6f6860">{{ k.d }}</p></div></sc-for>
+</div>
+<div class="card">
+<div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px"><h2 class="h2">Facturación estimada vs real</h2>
+<div style="display: flex; gap: 14px; font-size: 12px"><span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; border-radius: 3px; background: #d9d4f0"></span>Estimada</span><span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; border-radius: 3px; background: #3a2d5e"></span>Real</span></div></div>
+<div style="display: flex; align-items: flex-end; gap: 14px; height: 220px; margin-top: 18px; padding: 0 4px; border-bottom: 1px solid rgba(20,18,16,0.12)">
+<sc-for list="{{ ventaMeses }}" as="m" hint-placeholder-count="8"><div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 4px">
+<span class="mono" style="font-size: 10px; color: #6f6860">{{ m.lbl }}</span>
+<div style="display: flex; align-items: flex-end; gap: 3px; width: 100%; justify-content: center; height: 180px"><span title="Estimada {{ m.e }} UF" style="{{ m.be }}"></span><span title="Real {{ m.r }} UF" style="{{ m.br }}"></span></div>
+</div></sc-for>
+</div>
+<div style="display: flex; gap: 14px; padding: 6px 4px 0"><sc-for list="{{ ventaMeses }}" as="m" hint-placeholder-count="8"><span class="mono" style="flex: 1; text-align: center; font-size: 11px; color: #6f6860">{{ m.m }}</span></sc-for></div>
+</div>
+<div class="row" style="align-items: flex-start">
+<div class="card" style="flex: 1 1 460px; padding: 6px 0 0"><h2 class="h2" style="padding: 10px 18px 4px">Contribución por proyecto</h2>
+<div style="{{ tablaContrib.wrap }}"><div style="{{ tablaContrib.inner }}">
+<div style="{{ tablaContrib.cab }}"><sc-for list="{{ tablaContrib.cols }}" as="c" hint-placeholder-count="5"><span>{{ c }}</span></sc-for></div>
+<sc-for list="{{ tablaContrib.filas }}" as="f" hint-placeholder-count="5"><div onClick="{{ f.pick }}" style="{{ f.estilo }}"><sc-for list="{{ f.celdas }}" as="x" hint-placeholder-count="5"><span style="{{ x.s }}">{{ x.t }}</span></sc-for></div></sc-for>
+</div></div>
+</div>
+<div class="card" style="flex: 1 1 460px; padding: 6px 0 0"><h2 class="h2" style="padding: 10px 18px 4px">Hitos de cobro</h2>
+<div style="{{ tablaHitos.wrap }}"><div style="{{ tablaHitos.inner }}">
+<div style="{{ tablaHitos.cab }}"><sc-for list="{{ tablaHitos.cols }}" as="c" hint-placeholder-count="5"><span>{{ c }}</span></sc-for></div>
+<sc-for list="{{ tablaHitos.filas }}" as="f" hint-placeholder-count="5"><div onClick="{{ f.pick }}" style="{{ f.estilo }}"><sc-for list="{{ f.celdas }}" as="x" hint-placeholder-count="5"><span style="{{ x.s }}">{{ x.t }}</span></sc-for></div></sc-for>
+</div></div>
+<p style="margin: 0; padding: 10px 18px 16px; font-size: 12px; color: #6f6860">Hitos tipo: 30 % firma · 40 % salida de fábrica · 25 % fin de montaje · 5 % recepción. Fechas desde Planificación.</p>
+</div>
+</div>
+</sc-if>
+
+<!-- ================= ACCESOS ================= -->
+<sc-if value="{{ vAccesos }}" hint-placeholder-val="{{ false }}">
+<div class="card">
+<div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; align-items: baseline"><h2 class="h2">Permisos por nivel</h2><span class="muted" style="font-size: 12px">Haz clic en una celda para dar o quitar acceso. El Administrador siempre ve todo.</span></div>
+<div style="overflow-x: auto; margin-top: 14px"><div style="min-width: 860px; display: flex; flex-direction: column; gap: 6px">
+<div style="{{ accGrid }}"><sc-for list="{{ accCols }}" as="c" hint-placeholder-count="11"><span style="font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: #8a8278; text-align: center">{{ c }}</span></sc-for></div>
+<sc-for list="{{ accFilas }}" as="r" hint-placeholder-count="7"><div style="{{ accGrid }}">
+<span><span style="display: block; font-size: 13px; font-weight: 500">{{ r.nombre }}</span><span style="display: block; font-size: 11px; color: #6f6860">{{ r.alcance }}</span></span>
+<sc-for list="{{ r.celdas }}" as="x" hint-placeholder-count="10"><button onClick="{{ x.pick }}" style="{{ x.estilo }}">{{ x.t }}</button></sc-for>
+</div></sc-for>
+</div></div>
+</div>
+<div class="card">
+<div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; align-items: center"><h2 class="h2">Usuarios</h2><button class="btn-d">+ Invitar usuario</button></div>
+<div style="display: flex; flex-direction: column; margin-top: 10px">
+<sc-for list="{{ usuarios }}" as="u" hint-placeholder-count="7"><div style="display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(20,18,16,0.06); flex-wrap: wrap">
+<span style="width: 34px; height: 34px; border-radius: 50%; background: #ece9e2; display: inline-flex; align-items: center; justify-content: center; font-size: 12px">{{ u.ini }}</span>
+<span style="flex: 1 1 200px"><span style="display: block; font-size: 14px">{{ u.n }}</span><span style="display: block; font-size: 12px; color: #6f6860">{{ u.m }}</span></span>
+<span style="{{ u.chip }}">{{ u.r }}</span>
+</div></sc-for>
+</div>
+<p style="margin: 10px 0 0; font-size: 11px; color: #8a8278">Usuarios y correos de ejemplo. El calculista externo entra con acceso temporal solo a sus proyectos.</p>
+</div>
+</sc-if>
+
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1040}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      vista: 'portada', rol: 0, rolAbierto: false,
+      subPed: 'lista', split: false, filtro: -1, ped: 1, iter: {},
+      p3d: 0, lod: 300, fam: null,
+      subCot: 'res', alcance: 3,
+      verif: {}, calcValidado: false,
+      qc: {}, qcOk: false,
+      cam: 1, slot: null,
+      preg: 0, planModo: 0, aprob: {}, accExtra: {}
+    };
+  }
+
+  renderVals() {
+    const st = this.state;
+    const go = (v, extra) => () => this.setState(Object.assign({ vista: v, rolAbierto: false }, extra || {}));
+    const noop = () => {};
+    const chip = (bg, fg) => 'display:inline-block;justify-self:start;align-self:center;white-space:nowrap;font-size:11px;padding:3px 9px;border-radius:99px;background:' + bg + ';color:' + fg;
+    const pill = (on) => 'border:none;border-radius:9px;padding:8px 14px;font-size:13px;cursor:pointer;min-height:36px;background:' + (on ? '#141210' : 'transparent') + ';color:' + (on ? '#fff' : '#141210');
+    const fmt = (n) => Math.round(n).toLocaleString('es-CL');
+    const cel = (c) => typeof c === 'string' || typeof c === 'number'
+      ? { t: String(c), s: 'min-width:0;overflow:hidden;text-overflow:ellipsis' }
+      : { t: c.t, s: c.chip ? chip(c.chip[0], c.chip[1]) : ('min-width:0;' + (c.s || '')) };
+    const tabla = (cols, widths, filas, minw) => ({
+      wrap: 'overflow-x:auto', inner: 'min-width:' + (minw || 560) + 'px',
+      cab: 'display:grid;grid-template-columns:' + widths + ';gap:10px;padding:10px 18px;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#8a8278;border-bottom:1px solid rgba(20,18,16,0.08)',
+      cols,
+      filas: filas.map(f => ({
+        celdas: f.c.map(cel), pick: f.pick || noop,
+        estilo: 'display:grid;grid-template-columns:' + widths + ';gap:10px;padding:11px 18px;font-size:13px;align-items:center;border-bottom:1px solid rgba(20,18,16,0.05);' + (f.sel ? 'background:#f3f0fa;' : '') + (f.pick ? 'cursor:pointer;' : '') + (f.dim ? 'opacity:0.4;' : '')
+      }))
+    });
+
+    // ---------- servicios ----------
+    const SERV = [
+      { t: 'Estructuras', c: ['#efe7da', '#6e5131'] },
+      { t: 'Estructuras térmicas', c: ['#e5efe6', '#2f6f48'] },
+      { t: 'Térmicas + envolvente', c: ['#e8e4f4', '#3a2d5e'] },
+      { t: 'Obra completa', c: ['#141210', '#f5f3ee'] }
+    ];
+
+    // ---------- roles ----------
+    const ROLES = [
+      { nombre: 'Administrador', ini: 'A', alcance: 'Todo + usuarios y permisos', acc: null, admin: true },
+      { nombre: 'Gerencia', ini: 'G', alcance: 'Todas las secciones', acc: ['portada', 'pedidos', '3d', 'cotizaciones', 'calculo', 'fabricacion', 'logistica', 'montaje', 'planificacion', 'venta'] },
+      { nombre: 'Comercial', ini: 'C', alcance: 'Pedidos, cotizaciones y venta', acc: ['portada', 'pedidos', 'cotizaciones', 'planificacion', 'venta'] },
+      { nombre: 'Proyecto y dibujo', ini: 'P', alcance: 'Pedidos, 3D, cotización, cálculo', acc: ['portada', 'pedidos', '3d', 'cotizaciones', 'calculo', 'fabricacion', 'planificacion'] },
+      { nombre: 'Calculista externo', ini: 'K', alcance: 'Solo cálculo y modelo 3D', acc: ['calculo', '3d'] },
+      { nombre: 'Fábrica', ini: 'F', alcance: 'Fabricación, logística, plan', acc: ['fabricacion', 'logistica', 'planificacion'] },
+      { nombre: 'Obra y montaje', ini: 'O', alcance: 'Montaje y despachos', acc: ['montaje', 'logistica'] }
+    ];
+    ROLES.forEach((r, i) => { if (r.acc) { const ex = st.accExtra[i] || {}; r.acc = r.acc.filter(v => ex[v] !== false).concat(Object.keys(ex).filter(v => ex[v] === true && r.acc.indexOf(v) < 0)); } });
+    const rol = ROLES[st.rol];
+    const puede = (v) => !rol.acc || rol.acc.indexOf(v) >= 0;
+    const roles = ROLES.map((r, i) => ({
+      nombre: r.nombre, alcance: r.alcance,
+      pick: () => { const v = (!r.acc || r.acc.indexOf(st.vista) >= 0) ? st.vista : r.acc[0]; this.setState({ rol: i, rolAbierto: false, vista: v }); },
+      estilo: 'display:block;width:100%;text-align:left;border:none;border-radius:8px;padding:8px 10px;cursor:pointer;color:#f5f3ee;background:' + (i === st.rol ? '#3a2d5e' : 'transparent')
+    }));
+
+    // ---------- navegación ----------
+    const NAV = [
+      ['portada', 'Portada', 'M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z', ''],
+      ['pedidos', 'Pedidos', 'M3 13h5l2 3h4l2-3h5M5 5h14l2 8v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-6z', '6'],
+      ['3d', '3D FURŌ', 'M12 2l9 5v10l-9 5-9-5V7zM12 22V12M21 7l-9 5-9-5', ''],
+      ['cotizaciones', 'Cotizaciones', 'M7 3h8l4 4v14H7zM15 3v4h4M10 12h6M10 16h6', '3'],
+      ['calculo', 'Cálculo', 'M3 7h18M3 17h18M7 7l5 10 5-10', '2'],
+      ['fabricacion', 'Fabricación', 'M3 21V10l5 3V10l5 3V10l5 3V4h3v17z', ''],
+      ['logistica', 'Logística', 'M3 6h11v10H3zM14 10h4l3 3v3h-7M7 18a1.5 1.5 0 1 0 0 .01M17 18a1.5 1.5 0 1 0 0 .01', '1'],
+      ['montaje', 'Montaje', 'M6 21V3h2l12 4H8M4 21h6M16 7v6', ''],
+      ['planificacion', 'Planificación', 'M4 5h16v16H4zM4 10h16M9 3v4M15 3v4', ''],
+      ['venta', 'Venta', 'M4 20V10M10 20V4M16 20v-7M21 20H3', ''],
+      ['accesos', 'Usuarios y accesos', 'M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6zM9 12l2 2 4-4', '']
+    ];
+    const nav = NAV.map(n => {
+      const on = st.vista === n[0], ok = n[0] === 'accesos' ? !!rol.admin : puede(n[0]);
+      return {
+        nombre: n[1], icon: n[2], badge: ok ? n[3] : '🔒', actual: on ? 'page' : 'false',
+        pick: go(n[0]),
+        estilo: 'display:flex;align-items:center;gap:12px;width:100%;border:none;border-radius:10px;padding:10px 12px;font-size:14px;cursor:pointer;text-align:left;min-height:40px;color:' + (on ? '#141210' : '#d9d4ca') + ';background:' + (on ? '#f5f3ee' : 'transparent') + ';opacity:' + (ok ? 1 : 0.45),
+        badgeEst: (ok && n[3]) ? 'font-size:11px;min-width:20px;text-align:center;padding:1px 6px;border-radius:99px;background:' + (on ? '#3a2d5e' : '#3a2d5e') + ';color:#fff' : 'font-size:11px'
+      };
+    });
+    const conexiones = [['WhatsApp Business', 'activo', '#3d8b5a'], ['proyectos@furo.company', 'activo', '#3d8b5a'], ['Revit · PC FURŌ-01', 'en línea', '#3d8b5a'], ['SAP2000 / Robot', 'parcial', '#d9822b']]
+      .map(c => ({ nombre: c[0], estado: c[1], punto: 'width:7px;height:7px;border-radius:50%;background:' + c[2] }));
+
+    const TIT = { portada: ['FURŌ OS · martes 24 de noviembre', 'Centro de operaciones'], pedidos: ['Ingreso', 'Pedidos'], '3d': ['Modelo', '3D FURŌ'], cotizaciones: ['Comercial', 'Cotizaciones'], calculo: ['Ingeniería', 'Cálculo estructural'], fabricacion: ['Planta Pudahuel', 'Fabricación'], logistica: ['Despacho', 'Logística'], montaje: ['Obra', 'Montaje'], planificacion: ['Área de proyectos', 'Planificación'], venta: ['Finanzas', 'Venta'], accesos: ['Administración', 'Usuarios y accesos'] };
+    const ok = st.vista === 'accesos' ? !!rol.admin : puede(st.vista);
+    const V = (v) => ok && st.vista === v;
+
+    // ---------- PORTADA ----------
+    const PIN = [
+      [557, 81, 'PLANTA PUDAHUEL', '3 de 4 mesas activas · 61 % del plan', '#52448a', 'fabricacion'],
+      [702, 314, 'CAMIÓN 2 · EN RUTA', 'Colonia Suiza · llega mañana 09:00', '#c08a3e', 'logistica'],
+      [517, 282, 'COLONIA SUIZA · MONTAJE', 'Día 4 de 7 · 62 % montado', '#6f9a72', 'montaje'],
+      [700, 396, 'LAS PALMAS · ESTRUCTURA', 'Lista para envolvente', '#8b7fc0', 'planificacion'],
+      [883, 286, 'NOKI II · ENTREGADA', 'Recepción final 18-11', '#141210', 'venta']
+    ];
+    const pins = PIN.map(p => {
+      const w = Math.round(Math.max(p[2].length * 6.8, p[3].length * 5.7) + 38);
+      const lx = p[0] - 16, ly = p[1] - 66;
+      return { etq: 'position:absolute;cursor:pointer;text-align:left;white-space:nowrap;background:rgba(251,250,247,0.95);border:1px solid ' + p[4] + '80;border-radius:9px;padding:5px 10px;color:#141210;font:inherit;box-shadow:0 4px 14px rgba(20,18,16,0.08);left:' + ((lx + 40) / 12) + '%;top:' + ((ly - 6) / 6) + '%', dot: 'position:absolute;left:9px;top:10px;width:7px;height:7px;border-radius:50%;background:' + p[4], x: p[0], y: p[1], ly2: ly + 38, lx, ly, w, dx: lx + 14, dy: ly + 13, tx: lx + 24, ty1: ly + 16, ty2: ly + 30, t1: p[2], t2: p[3], col: p[4], pick: go(p[5]) };
+    });
+    const atencion = [
+      ['Andrea M. no ha dado su correo', 'WhatsApp · el agente lo pide de nuevo hoy', go('pedidos', { subPed: 'wa', ped: 4, split: false })],
+      ['Coyhaique: vano de 7,20 m en V2', 'Cálculo espera decisión de arquitectura', go('calculo')],
+      ['Laminada 40×185 bajo stock', 'Fábrica · 96 ml, se necesitan 176 ml', go('fabricacion')]
+    ].map(a => ({ t: a[0], d: a[1], pick: a[2], estilo: 'text-align:left;border:none;background:rgba(255,255,255,0.75);border-radius:12px;padding:10px 12px;cursor:pointer;color:#141210;border-left:3px solid #c0563e' }));
+    const leyenda = [['Pedidos y diseño', '#8b7fc0'], ['Fábrica', '#52448a'], ['Despacho', '#c08a3e'], ['Montaje', '#6f9a72']]
+      .map(l => ({ t: l[0], punto: 'width:8px;height:8px;border-radius:50%;background:' + l[1] }));
+    const seg = (arr) => arr.map(a => 'flex:' + a[0] + ';background:' + a[1]);
+    const kpis = [
+      { t: 'Pedidos activos', v: '6', u: 'nuevos', d: 'por servicio: 2 · 1 · 2 · 1', seg: seg([[2, '#d8b98d'], [1, '#9cc39f'], [2, '#8b7fc0'], [1, '#141210']]), pick: go('pedidos') },
+      { t: 'En cotización', v: '14.230', u: 'UF', d: '5 propuestas · 2 vistas esta semana', seg: seg([[5, '#52448a'], [2, '#ece9e2']]), pick: go('cotizaciones') },
+      { t: 'En fábrica', v: '412', u: 'm²', d: '3 proyectos · 61 % de avance', seg: seg([[61, '#52448a'], [39, '#ece9e2']]), pick: go('fabricacion') },
+      { t: 'Facturado 2026', v: '18.940', u: 'UF', d: '92 % de lo estimado a la fecha', seg: seg([[92, '#3a2d5e'], [8, '#ece9e2']]), pick: go('venta') }
+    ];
+    const flujo = [['01', 'Pedidos', '6', '2 sin correo', 'pedidos'], ['02', 'Análisis', '3', 'Coyhaique REV03', 'pedidos'], ['03', 'Cotización', '5', '14.230 UF', 'cotizaciones'], ['04', 'Cálculo', '2', '1 en iteración', 'calculo'], ['05', 'Fábrica', '3', '4 mesas', 'fabricacion'], ['06', 'Despacho', '4', 'camiones', 'logistica'], ['07', 'Montaje', '1', 'Colonia Suiza', 'montaje']]
+      .map(f => ({ n: f[0], t: f[1], v: f[2], d: f[3], pick: f[4] === 'pedidos' && f[0] === '02' ? go('pedidos', { subPed: 'analisis', split: false }) : go(f[4]) }));
+    const APR = [
+      ['PEDIDOS', 'Responder a Raúl Vargas con el análisis REV03', 'Agente · borrador', go('pedidos', { subPed: 'mail', ped: 1, split: false })],
+      ['COTIZACIÓN', 'Propuesta Casa Coyhaique · Obra completa 12.986 UF', 'Comercial', go('cotizaciones', { subCot: 'link' })],
+      ['FÁBRICA', 'Liberar Camión 2 a obra (QC 22/22 piezas)', 'Jefe de planta', go('logistica', { cam: 1 })]
+    ];
+    const aprobaciones = APR.map((a, i) => {
+      const hecho = !!st.aprob[i];
+      return { area: a[0], t: a[1], quien: a[2], ver: a[3], pend: !hecho, hecho,
+        ok: () => this.setState({ aprob: Object.assign({}, st.aprob, { [i]: true }) }),
+        caja: 'padding:12px;border-radius:12px;background:' + (hecho ? '#eef5ef' : '#fbf6ec') + ';border:1px solid ' + (hecho ? '#cfe3d4' : '#efdcb9') };
+    });
+
+    // ---------- PEDIDOS ----------
+    const PED = [
+      { cod: 'P-2611-014', cliente: 'Camila Rojas', perfil: 'Propietaria', serv: 2, canal: 'Formulario', lugar: 'Pucón', m2: 150, info: [1, 1, 1, 1, 1, 0, 0, 0], prob: 55, fab: 'Sem. 10 · mar 2027', email: 'camila.rojas@correo.cl', asunto: 'Casa en Pucón · térmicas con envolvente', hora: '09:12', tieneMail: true,
+        mail: [['Camila Rojas', '09:12', 'Hola, adjunto el anteproyecto de nuestra casa en Pucón (150 m²). Nos interesa dejarla cerrada con ventanas.']],
+        wa: [], borrador: 'Hola Camila, gracias por los planos. Para avanzar con el análisis de modulación nos falta saber si el terreno tiene factibilidad de agua y luz, y si ya tienen arquitecto patrocinante. ¿Agendamos 30 min esta semana?' },
+      { cod: 'P-2611-012', cliente: 'Raúl Vargas', perfil: 'Propietario', serv: 1, canal: 'WhatsApp → mail', lugar: 'Coyhaique', m2: 392, info: [1, 1, 1, 1, 1, 1, 0, 1], prob: 68, fab: 'Sem. 5 · feb 2027', email: 'raul.vargas@correo.cl', asunto: 'Casa Coyhaique · análisis de modulación REV03', hora: 'ayer', tieneMail: true,
+        mail: [['Raúl Vargas', '20-11 10:05', 'Les envío el DWG de la vivienda, cabañas y quincho. Queremos partir en marzo.'], ['Victor (FURŌ)', '21-11 16:30', 'Raúl, adjunto la REV02 del análisis. La cabaña y el quincho son directos; la vivienda requiere ajustar largos.'], ['Raúl Vargas', '23-11 19:48', '¿Se puede mantener el ventanal del living? Es lo que más nos importa.']],
+        wa: [['u', 'Hola, quiero cotizar una casa en Coyhaique'], ['b', '¡Hola! ¿Qué servicio necesitas y cuántos m² aprox.?'], ['u', 'Estructuras térmicas, como 390 m² con cabañas'], ['b', 'Para enviarte el análisis, ¿me compartes tu correo?'], ['u', 'raul.vargas@correo.cl'], ['b', 'Listo, seguimos por correo ✉️']],
+        borrador: 'Raúl, sí: el ventanal del living se puede mantener con un vano estructural de 7,20 m y una viga colectora embutida, que debe verificar el calculista. La alternativa sin riesgo son 3 vanos de 1,16 m. Te adjunto la REV03 con ambas opciones.' },
+      { cod: 'P-2611-011', cliente: 'Arquitectos Sur', perfil: 'Oficina de arquitectura', serv: 0, canal: 'Correo', lugar: 'Puerto Varas', m2: 210, info: [1, 1, 1, 1, 1, 1, 1, 0], prob: 74, fab: 'Sem. 3 · ene 2027', email: 'contacto@arquitectossur.cl', asunto: 'Estructura casa Loteo Los Alerces', hora: 'lun', tieneMail: true,
+        mail: [['Arquitectos Sur', '23-11 11:20', 'Adjuntamos planos y EETT. Solo necesitamos la estructura, el montaje lo hace la constructora.']], wa: [],
+        borrador: 'Hola, recibimos planos y EETT. El análisis preliminar indica compatibilidad directa en 3 de 4 fachadas. Les enviamos la cotización de estructuras el jueves.' },
+      { cod: 'P-2611-009', cliente: 'Inmobiliaria Andes', perfil: 'Inmobiliaria', serv: 3, canal: 'Correo', lugar: 'Chicureo', m2: 1680, info: [1, 0, 1, 1, 1, 0, 0, 0], prob: 40, fab: 'Sem. 14 · abr 2027', email: 'proyectos@inmoandes.cl', asunto: '12 casas · llave en mano', hora: 'vie', tieneMail: true,
+        mail: [['Inmobiliaria Andes', '20-11 08:40', 'Evaluamos 12 casas de 140 m² llave en mano. ¿Pueden cotizar a partir de nuestra tipología?']], wa: [],
+        borrador: 'Gracias por considerarnos. Para cotizar 12 unidades necesitamos la tipología en DWG, el loteo y la factibilidad sanitaria. Con eso entregamos un estimado de obra completa en 5 días hábiles.' },
+      { cod: 'P-2611-008', cliente: 'Andrea M.', perfil: 'Propietaria', serv: 2, canal: 'WhatsApp', lugar: 'Frutillar', m2: 120, info: [0, 1, 1, 1, 0, 0, 0, 0], prob: 30, fab: 'Sin fecha', email: 'sin correo', asunto: '—', hora: '—', tieneMail: false,
+        mail: [], wa: [['u', 'Hola! Vi la casa en Instagram, cuánto sale una de 120 m2?'], ['b', '¡Hola Andrea! Depende del servicio: ¿estructura, casa cerrada o llave en mano?'], ['u', 'Cerrada con ventanas, tengo terreno en Frutillar'], ['b', 'Perfecto. ¿Me compartes tu correo para enviarte opciones y precios?'], ['u', '[foto de un croquis]'], ['b', 'Gracias por el croquis 🙌 Para enviarte la propuesta necesito tu correo, ¿me lo compartes?']],
+        borrador: 'Sin correo no se envía propuesta. El agente vuelve a pedirlo mañana a las 10:00.' },
+      { cod: 'P-2611-006', cliente: 'Constructora Lago', perfil: 'Constructora', serv: 0, canal: 'Formulario', lugar: 'Valdivia', m2: 540, info: [1, 1, 1, 1, 1, 1, 1, 1], prob: 81, fab: 'Sem. 2 · ene 2027', email: 'ofertas@constructoralago.cl', asunto: 'Estructuras 4 casas Valdivia', hora: '18-11', tieneMail: true,
+        mail: [['Constructora Lago', '18-11 15:02', 'Confirmamos interés. Esperamos la propuesta final para firmar.']], wa: [],
+        borrador: 'Les enviamos la propuesta final firmada por Gerencia. Al aceptar, entra a cálculo y reservamos mesa en fábrica para la semana 2.' }
+    ];
+    const CHECK = ['Planos de arquitectura', 'Ubicación y terreno', 'Superficie', 'Servicio definido', 'Correo de contacto', 'EETT o materialidades', 'Normativa / permiso', 'Presupuesto objetivo'];
+    const pedVis = PED.map((p, i) => ({ p, i })).filter(o => st.filtro < 0 || o.p.serv === st.filtro);
+    const ps = PED[st.ped];
+    const infoN = (p) => p.info.reduce((a, b) => a + b, 0);
+    const canalEst = (c) => c.indexOf('WhatsApp') === 0 ? chip('#e3f3e8', '#1f7a44') : (c === 'Correo' ? chip('#e8eef5', '#2d4f73') : chip('#f1ede4', '#5d564e'));
+    const pedSel = {
+      cod: ps.cod, cliente: ps.cliente, perfil: ps.perfil, lugar: ps.lugar, m2: fmt(ps.m2), canal: ps.canal, servicio: SERV[ps.serv].t,
+      servEst: chip(SERV[ps.serv].c[0], SERV[ps.serv].c[1]), info: infoN(ps) + ' de 8',
+      check: CHECK.map((c, j) => ({ t: c, icono: ps.info[j] ? '✓' : '○', estilo: 'color:' + (ps.info[j] ? '#2f6f48' : '#a35a12') })),
+      prob: ps.prob + ' %', probBarra: 'height:100%;background:' + (ps.prob >= 60 ? '#3d8b5a' : ps.prob >= 45 ? '#d9822b' : '#c0563e') + ';width:' + ps.prob + '%',
+      fab: ps.fab, email: ps.email, mailAsunto: ps.asunto, borrador: ps.borrador,
+      mailTxt: ps.tieneMail ? '✉ correo capturado' : '⚠ sin correo', mailEst: ps.tieneMail ? chip('#e3f3e8', '#1f7a44') : chip('#fbeee0', '#a35a12')
+    };
+    const filaMini = (on) => 'display:block;width:100%;text-align:left;border:none;border-bottom:1px solid rgba(20,18,16,0.05);padding:11px 14px;cursor:pointer;color:#141210;background:' + (on ? '#f3f0fa' : 'transparent') + ';border-left:3px solid ' + (on ? '#52448a' : 'transparent');
+    const pedidosLista = pedVis.map(o => ({
+      cliente: o.p.cliente, servicio: SERV[o.p.serv].t, m2: fmt(o.p.m2), canal: o.p.canal, canalEst: canalEst(o.p.canal),
+      mailHora: o.p.hora, mailAsunto: o.p.asunto, pick: () => this.setState({ ped: o.i }), filaMini: filaMini(o.i === st.ped)
+    }));
+    const pedidosWa = PED.map((p, i) => ({ p, i })).filter(o => o.p.wa.length).map(o => ({
+      cliente: o.p.cliente, servicio: SERV[o.p.serv].t, pick: () => this.setState({ ped: o.i }), filaMini: filaMini(o.i === st.ped),
+      mailTxt: o.p.tieneMail ? '✉ correo' : '⚠ sin correo', mailEst: o.p.tieneMail ? chip('#e3f3e8', '#1f7a44') : chip('#fbeee0', '#a35a12')
+    }));
+    const mailHilo = (ps.mail.length ? ps.mail : [['—', '', 'Este pedido todavía no tiene correo: la conversación sigue en WhatsApp hasta que el cliente lo comparta.']]).map(m => ({
+      de: m[0], hora: m[1], t: m[2], caja: 'padding:12px 14px;border-radius:12px;background:' + (m[0].indexOf('FURŌ') >= 0 ? '#f3f0fa' : '#f7f5f1')
+    }));
+    const waHilo = (ps.wa.length ? ps.wa : [['b', 'Este pedido no entró por WhatsApp.']]).map(m => ({
+      t: m[1], fila: 'display:flex;justify-content:' + (m[0] === 'u' ? 'flex-start' : 'flex-end'),
+      burbuja: 'max-width:80%;padding:8px 11px;border-radius:10px;font-size:13px;line-height:1.4;box-shadow:0 1px 0 rgba(0,0,0,0.06);background:' + (m[0] === 'u' ? '#fff' : '#dcf8c6')
+    }));
+    const tablaPedidos = tabla(['Pedido', 'Cliente', 'Servicio', 'Canal', 'm²', 'Info', 'Prob.'], '92px 1.3fr 1.3fr 1fr 56px 52px 52px',
+      pedVis.map(o => ({
+        sel: o.i === st.ped, pick: () => this.setState({ ped: o.i }),
+        c: [{ t: o.p.cod.slice(2), s: "font-family:'JetBrains Mono',monospace;font-size:11px;color:#6f6860" }, { t: o.p.cliente, s: 'font-weight:500' }, { t: SERV[o.p.serv].t, chip: SERV[o.p.serv].c },
+          { t: o.p.canal, chip: o.p.canal.indexOf('WhatsApp') === 0 ? ['#e3f3e8', '#1f7a44'] : o.p.canal === 'Correo' ? ['#e8eef5', '#2d4f73'] : ['#f1ede4', '#5d564e'] },
+          fmt(o.p.m2), { t: infoN(o.p) + '/8', s: 'color:' + (infoN(o.p) >= 7 ? '#2f6f48' : '#a35a12') }, o.p.prob + ' %']
+      })), 720);
+    const subPed = [['lista', 'Listado', '6'], ['mail', 'Correo', '3'], ['wa', 'WhatsApp', '2'], ['analisis', 'Análisis de planos', '']].map(s => ({
+      t: s[1], b: s[2], pick: () => this.setState({ subPed: s[0], split: false }),
+      estilo: pill(st.subPed === s[0] && !st.split), bEst: s[2] ? 'font-size:10px;padding:1px 6px;border-radius:99px;margin-left:4px;background:' + (st.subPed === s[0] && !st.split ? '#52448a' : '#ece9e2') : 'display:none'
+    }));
+    const filtrosServ = [{ t: 'Todos', i: -1 }].concat(SERV.map((s, i) => ({ t: s.t, i }))).map(f => ({
+      t: f.t, n: f.i < 0 ? PED.length : PED.filter(p => p.serv === f.i).length, pick: () => this.setState({ filtro: f.i }),
+      estilo: 'border-radius:99px;padding:7px 12px;font-size:12px;cursor:pointer;min-height:32px;border:1px solid ' + (st.filtro === f.i ? '#52448a' : 'rgba(20,18,16,0.12)') + ';background:' + (st.filtro === f.i ? '#f3f0fa' : '#fff') + ';color:#141210'
+    }));
+
+    // análisis de planos (Casa Coyhaique REV03)
+    const anStats = [['Proyecto', '392 m²', '6 volúmenes · terreno 5.000 m²'], ['Techo', '88 / 72', 'CT / CB · 399 m²'], ['Muros', '67 CM', '231,7 m² · 72 vanos/CB'], ['Colectoras', '175,8 ml', 'laminada 40×185'], ['Laminada', '7,76 m³', 'total proyecto']].map(s => ({ t: s[0], v: s[1], d: s[2] }));
+    const COMP = [['V1', 'Vivienda · dormitorios', '14 / 52,9', '13 / 50,0', 'Con ajustes', 'CM de 3,10 m'], ['V2', 'Vivienda · estar', '12 / 41,9', '7 / 21,6', 'Directo', '—'], ['V3', 'Conector', '4 / 12,5', '2 / 5,8', 'Con ajustes', 'Limahoyas, 13°'], ['C1 ×3', 'Cabañas', '36 / 100,5', '27 / 86,7', 'Directo', 'CM de 2,59 m'], ['Q1', 'Quincho', '10 / 35,0', '6 / 22,5', 'Con ajustes', 'CM de 3,03 m'], ['B1', 'Bodega', '12 / 42,8', '12 / 45,1', 'Con ajustes', 'CM de 3,03 m']];
+    const tablaCompat = tabla(['Vol.', 'Uso', 'CT pzas/m²', 'CM pzas/m²', 'Grado', 'Observación'], '64px 1.2fr 1fr 1fr 110px 1.1fr',
+      COMP.map(c => ({ c: [{ t: c[0], s: "font-family:'JetBrains Mono',monospace;font-size:12px" }, c[1], c[2], c[3], { t: c[4], chip: c[4] === 'Directo' ? ['#e3f3e8', '#1f7a44'] : ['#fbeee0', '#a35a12'] }, { t: c[5], s: 'color:#6f6860' }] })), 640);
+    const ITER = [['V1', 'Largo entre testeros 15,10 m → 15,64 m (+54 cm). Ventanas de dormitorio bajan a 1,16 m y se corren 10 a 97 cm.', 1], ['V2', 'Ventanal living: vano estructural de 7,20 m con viga colectora embutida, o 3 vanos de 1,16 m (se pierden ≈2,5 m de vidrio).', 0], ['C1', 'Cabaña: largo 12,40 → 12,04 m (−36 cm). Fachada poniente calza con 2 ventanas corridas 26 a 29 cm.', 2], ['Q1', 'Quincho: largo 9,15 → 9,64 m (+49 cm); ventanales de 2,48 y 2,19 m se mantienen eliminando un CM.', 1], ['V3', 'Conector: acceso vidriado sin CM y ventana de baño reducida.', 2]];
+    const EST = [['Requiere decisión', '#fbeee0', '#a35a12'], ['Enviado al cliente', '#e8eef5', '#2d4f73'], ['Aceptado', '#e3f3e8', '#1f7a44']];
+    const iteraciones = ITER.map((it, i) => {
+      const e = st.iter[i] !== undefined ? st.iter[i] : it[2];
+      return { v: it[0], t: it[1], estado: EST[e][0], pick: () => this.setState({ iter: Object.assign({}, st.iter, { [i]: (e + 1) % 3 }) }),
+        estilo: 'border:none;cursor:pointer;white-space:nowrap;font-size:11px;padding:5px 10px;border-radius:99px;background:' + EST[e][1] + ';color:' + EST[e][2] };
+    });
+    const aceptadas = ITER.filter((it, i) => (st.iter[i] !== undefined ? st.iter[i] : it[2]) === 2).length;
+    const probCoyN = 58 + aceptadas * 4;
+    const factores = [['Planos DWG completos', '+12'], ['4 de 6 volúmenes directos o casi', '+10'], ['Cambios aceptados por el cliente (' + aceptadas + '/5)', '+' + aceptadas * 4], ['Terreno rural (Art. 55 LGUC)', '−8'], ['Sin EETT', '−6'], ['Distancia logística ~1.700 km', '−4']]
+      .map(f => ({ t: f[0], v: f[1], estilo: 'font-family:JetBrains Mono,monospace;color:' + (f[1][0] === '+' ? '#9cc39f' : '#e8a68c') }));
+    const tiempos = [['Iteración con cliente', (5 - aceptadas) + ' sem', (5 - aceptadas) * 12], ['Permiso DOM (en paralelo)', '8 sem', 96], ['Cálculo estructural', '3 sem', 36], ['Planos de fabricación', '2 sem', 24]]
+      .map(t => ({ t: t[0], v: t[1], barra: 'height:100%;border-radius:99px;background:#8b7fc0;width:' + t[2] + '%' }));
+    const normativa = [['Uso de suelo', 'Rural · requiere autorización Art. 55 LGUC', 'Pendiente'], ['Zona térmica', 'Zona 7 · exigencias de envolvente altas', 'A confirmar'], ['Carga de nieve', 'NCh431 · relevante en Coyhaique', 'A confirmar'], ['Zona sísmica', 'NCh433', 'A confirmar'], ['Permiso de edificación', 'DOM Coyhaique · arquitecto patrocinante', 'Pendiente'], ['Recepción final', 'Después del montaje y especialidades', '—']]
+      .map(n => ({ t: n[0], v: n[1], e: n[2], estilo: chip(n[2] === 'Pendiente' ? '#fbeee0' : '#f1ede4', n[2] === 'Pendiente' ? '#a35a12' : '#5d564e') }));
+
+    // ---------- 3D FURŌ ----------
+    const P3D = ['Casa Coyhaique', 'Colonia Suiza', 'Casa Las Palmas'];
+    const proyectos3d = P3D.map((t, i) => ({ t, pick: () => this.setState({ p3d: i }), estilo: pill(st.p3d === i) }));
+    const lods = [300, 350].map(l => ({ t: 'LOD ' + l, pick: () => this.setState({ lod: l }), estilo: pill(st.lod === l) }));
+    const FAM = [
+      ['ct', 'CT01', 'Componente techo 1,24 m', '#8b7fc0', 88], ['ct2', 'CT02', 'Medio componente 0,64 m', '#b3a9e0', 12], ['cb', 'CB', 'Bastidor techo 1,16 m', '#c9a06c', 72],
+      ['cm', 'CM01', 'Componente muro 1,24 m', '#6f9a72', 67], ['cm2', 'CM02', 'Medio componente 0,64 m', '#9cc39f', 9], ['cbm', 'CB-M', 'Bastidor de muro 1,16 m', '#d8c29b', 40],
+      ['vano', 'VANO', 'Ventana o puerta', '#3b4a55', 32], ['test', 'TST', 'Testero tabique 2×6 + OSB', '#8a8278', 14], ['col', 'COL', 'Colectora laminada 40×185', '#d9822b', 175.8]
+    ];
+    const famColor = {};
+    FAM.forEach(f => { famColor[f[0]] = (!st.fam || st.fam === f[0]) ? f[3] : '#34302b'; });
+    const familias = FAM.map(f => ({
+      cod: f[1], t: f[2], n: f[0] === 'col' ? '175,8 ml' : f[4], pick: () => this.setState({ fam: st.fam === f[0] ? null : f[0] }),
+      sw: 'width:14px;height:14px;border-radius:4px;flex:0 0 auto;background:' + f[3],
+      estilo: 'display:flex;align-items:center;gap:10px;width:100%;border:none;border-radius:10px;padding:7px 8px;cursor:pointer;color:#141210;background:' + (st.fam === f[0] ? '#f3f0fa' : 'transparent')
+    }));
+    const famSel = FAM.find(f => f[0] === st.fam);
+    const jobs = [['Agente: dibujar V1 con criterio Las Palmas', 72], ['Agente: colectoras embutidas V2', 35], ['Exportar modelo analítico a SAP2000', 100]]
+      .map(j => ({ t: j[0], p: j[1] + ' %', barra: 'display:block;height:100%;border-radius:99px;background:' + (j[1] === 100 ? '#6f9a72' : '#8b7fc0') + ';width:' + j[1] + '%' }));
+    const CUB3 = st.lod === 300
+      ? [['CT01/CT02 · techo', '100 pzas', '285,6 m²'], ['CB · bastidor techo', '72 pzas', '113,5 m²'], ['CM01/CM02 · muro', '76 pzas', '231,7 m²'], ['Colectora 40×185', '—', '175,8 ml'], ['Testeros 2×6 + OSB', '14', '96,4 m²'], ['Madera laminada', '—', '7,76 m³']]
+      : [['Viga laminada 40×185 (CT)', '200 pzas', '678 ml'], ['Pino 2×6 dimensionado', '1.940 pzas', '6.208 ml'], ['OSB 11 mm', '412 planchas', '1.226 m²'], ['Aislación lana mineral', '—', '630 m²'], ['Tornillos y herrajes', '18.400 un', '—'], ['Barrera de vapor', '—', '660 m²']];
+    const tablaCub3d = tabla(['Elemento', 'Cant.', 'Medida'], '1.6fr 0.8fr 0.8fr', CUB3.map(c => ({ c: [c[0], c[1], { t: c[2], s: "font-family:'JetBrains Mono',monospace;font-size:12px" }] })), 300);
+
+    // ---------- COTIZACIONES ----------
+    const M2 = 392;
+    const BLQ = [
+      ['01', 'Fundaciones', 'Estimado antes de cálculo · pilotes con arriostramiento', 1.6, 3],
+      ['02', 'Estructura FURŌ', 'Componentes de muro, techo y entrepiso en madera', 7, 0],
+      ['03', 'Capa térmica', 'Aislación, barreras y OSB integrados en fábrica', 4, 1],
+      ['04', 'Envolvente exterior', 'Revestimiento termotratado, cubierta, hojalatería y ventanas', 5.5, 2],
+      ['05', 'Terminaciones y especialidades', 'Interiores, eléctrica, sanitaria, gas y clima según especificación FURŌ', 15, 3]
+    ];
+    const incluido = (b) => b[4] <= st.alcance;
+    const total = BLQ.filter(incluido).reduce((a, b) => a + b[3] * M2, 0);
+    const COLB = ['#8a8278', '#c9a06c', '#6f9a72', '#52448a', '#141210'];
+    const bloquesCot = BLQ.map((b, i) => {
+      const inc = incluido(b);
+      return { n: b[0], t: b[1], d: b[2], uf: fmt(b[3] * M2), m2: String(b[3]).replace('.', ','), estado: inc ? 'Incluido' : 'No incluido',
+        chip: inc ? chip('#e3f3e8', '#1f7a44') : chip('#f1ede4', '#8a8278'),
+        caja: 'background:#fff;border-radius:18px;padding:18px;border:1px solid rgba(20,18,16,0.07);border-top:4px solid ' + COLB[i] + ';opacity:' + (inc ? 1 : 0.42),
+        mini: 'background:#fff;border-radius:12px;padding:12px;border:1px solid rgba(20,18,16,0.07);opacity:' + (inc ? 1 : 0.35) };
+    });
+    const barraCot = BLQ.map((b, i) => incluido(b) ? 'flex:' + b[3] + ';background:' + COLB[i] : 'display:none');
+    barraCot[4] = incluido(BLQ[4]) ? 'flex:15;background:#f5f3ee' : 'display:none';
+    const alcances = SERV.map((s, i) => ({ t: s.t, pick: () => this.setState({ alcance: i }),
+      estilo: 'border-radius:99px;padding:7px 12px;font-size:12px;cursor:pointer;min-height:32px;border:1px solid ' + (st.alcance === i ? '#52448a' : 'rgba(20,18,16,0.12)') + ';background:' + (st.alcance === i ? '#f3f0fa' : '#fff') + ';color:#141210' }));
+    const subCot = [['res', 'Resumen'], ['cub', 'Cubicaciones'], ['apu', 'APU'], ['link', 'Link al cliente']].map(s => ({ t: s[1], pick: () => this.setState({ subCot: s[0] }), estilo: pill(st.subCot === s[0]) }));
+    const CV = [['V1', '14 / 52,9', '12 / 24,2', '13 / 50,0', '31,3', '1,46'], ['V2', '12 / 41,9', '10 / 18,2', '7 / 21,6', '24,1', '0,98'], ['V3', '4 / 12,5', '2 / 2,3', '2 / 5,8', '4,9', '0,30'], ['C1 ×3', '36 / 100,5', '30 / 35,4', '27 / 86,7', '72,2', '2,87'], ['Q1', '10 / 35,0', '8 / 14,6', '6 / 22,5', '19,3', '0,87'], ['B1', '12 / 42,8', '10 / 18,8', '12 / 45,1', '24,1', '1,27']];
+    const tablaCubVol = tabla(['Volumen', 'CT pzas/m²', 'CB techo', 'CM pzas/m²', 'Colect. ml', 'Lam. m³'], '90px 1fr 1fr 1fr 0.8fr 0.7fr',
+      CV.map(c => ({ c: [{ t: c[0], s: 'font-weight:500' }, c[1], c[2], c[3], c[4], c[5]] })).concat([{ c: [{ t: 'Total', s: 'font-weight:500' }, { t: '88 / 285,6', s: 'font-weight:500' }, { t: '72 / 113,5', s: 'font-weight:500' }, { t: '67 / 231,7', s: 'font-weight:500' }, { t: '175,8', s: 'font-weight:500' }, { t: '7,76', s: 'font-weight:500' }] }]), 640);
+    const APU = [['CT01 · componente techo 1,24 × 3,39', 'un', '2,1 HH', '3,9', '0,6', '4,5'], ['CM01 · componente muro 1,24 × 2,53', 'un', '1,8 HH', '3,1', '0,5', '3,6'], ['CB · bastidor 1,16 m', 'un', '0,9 HH', '1,2', '0,3', '1,5'], ['Colectora laminada 40×185', 'ml', '0,2 HH', '0,35', '0,05', '0,40'], ['Aislación lana mineral 160 mm', 'm²', '0,15 HH', '0,22', '0,04', '0,26'], ['OSB 11 mm', 'm²', '0,1 HH', '0,18', '0,03', '0,21'], ['Revestimiento termotratado + Cutek', 'm²', '0,35 HH', '0,62', '0,10', '0,72'], ['Montaje en obra', 'm²', '0,6 HH', '—', '1,4', '1,40'], ['Fundación pilote + arriostre', 'un', '1,2 HH', '0,9', '0,4', '1,30']];
+    const tablaApu = tabla(['Partida', 'Un.', 'Rendimiento', 'Material', 'Mano de obra', 'P. unitario'], '2fr 50px 0.9fr 0.8fr 0.9fr 0.9fr',
+      APU.map(a => ({ c: [a[0], a[1], { t: a[2], s: 'color:#6f6860' }, a[3], a[4], { t: a[5], s: 'font-weight:500' }] })), 700);
+
+    // ---------- CÁLCULO ----------
+    const firmas = [['① Calculista', st.calcValidado], ['② Revisión FURŌ · Hernán', st.calcValidado], ['③ Validado', st.calcValidado]]
+      .map((f, i) => ({ t: f[0], estilo: chip(f[1] ? '#e3f3e8' : (i === 0 ? '#fbeee0' : '#f1ede4'), f[1] ? '#1f7a44' : (i === 0 ? '#a35a12' : '#8a8278')) }));
+    const parametros = [['Ubicación', 'Coyhaique · sector Río Polux'], ['Zona sísmica (NCh433)', 'a confirmar'], ['Nieve (NCh431)', 'carga relevante · a confirmar'], ['Viento (NCh432)', 'a confirmar'], ['Suelo', 'sin mecánica de suelos'], ['Madera', 'pino 2×6 + laminada 40×185'], ['Módulo', '2,40 m · CT/CM 1,24 + CB 1,16'], ['Alturas de muro', 'CM 2,53 · 2,59 · 3,03 · 3,10 m']]
+      .map(p => ({ t: p[0], v: p[1], estilo: 'text-align:right;color:' + (p[1].indexOf('confirmar') >= 0 || p[1].indexOf('sin ') === 0 ? '#a35a12' : '#141210') }));
+    const programas = [['Rv', 'Revit 2025', 'Modelo analítico v3 · sincronizado 10:42', 'Conectado', '#e3f3e8', '#1f7a44', '#3a2d5e'], ['SAP', 'SAP2000', 'OAPI · modelo generado desde Revit 23-11', 'Conectado', '#e3f3e8', '#1f7a44', '#2d4f73'], ['Rb', 'Robot Structural', 'API · uniones y fundaciones', 'Por conectar', '#fbeee0', '#a35a12', '#8a8278']]
+      .map(p => ({ ini: p[0], t: p[1], d: p[2], e: p[3], estEst: chip(p[4], p[5]), logo: 'width:38px;height:38px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:500;background:' + p[6] }));
+    const iterCalc = [['21-11', 'Comercial', 'Venta aprobada: estructuras térmicas · 392 m²', '#3d8b5a'], ['22-11', 'Calculista', 'Pide confirmar altura de muro en V1 (3,10 m)', '#d9822b'], ['23-11', 'Arquitectura', 'Propone vano de 7,20 m con colectora embutida en V2', '#8b7fc0'], ['24-11', 'Cliente', 'Prioriza mantener el ventanal del living', '#8b7fc0']]
+      .map(i => ({ f: i[0], quien: i[1], t: i[2], punto: 'width:10px;height:10px;border-radius:50%;margin-top:3px;background:' + i[3] }));
+    const VER = [['Componentes de muro de 3,10 m', 'V1 · más altos que Las Palmas (2,53 m)', 1], ['Componentes de muro de 3,03 m', 'Quincho y bodega', 1], ['Vano de 7,20 m · colectora embutida', 'V2 · ventanal living', 0], ['Limahoyas y pendiente 13°', 'V3 conector contra V2', 2], ['Uniones de cumbrera', 'Faldones de 2,45 a 3,33 m', 2], ['Fundaciones', 'Pilotes con arriostramiento en cruz', 0]];
+    const EV = [['Iterando', '#fbeee0', '#a35a12'], ['En revisión', '#e8eef5', '#2d4f73'], ['OK', '#e3f3e8', '#1f7a44']];
+    let verOk = 0;
+    const verificar = VER.map((v, i) => {
+      const e = st.verif[i] !== undefined ? st.verif[i] : v[2];
+      if (e === 2) verOk++;
+      return { t: v[0], d: v[1], e: EV[e][0], chip: chip(EV[e][1], EV[e][2]), pick: () => this.setState({ verif: Object.assign({}, st.verif, { [i]: (e + 1) % 3 }), calcValidado: false }),
+        caja: 'display:flex;gap:10px;align-items:center;width:100%;border:none;cursor:pointer;padding:10px 12px;border-radius:12px;color:#141210;background:#f7f5f1' };
+    });
+    const todoOk = verOk === VER.length;
+    const validarTxt = st.calcValidado ? '✓ Validado · pasa a planos de fabricación' : (todoOk ? 'Firmar memoria y validar' : 'Faltan ' + (VER.length - verOk) + ' puntos por cerrar');
+    const validarEst = 'width:100%;margin-top:14px;border:none;border-radius:10px;padding:12px;font-size:13px;min-height:44px;cursor:' + (todoOk ? 'pointer' : 'default') + ';background:' + (st.calcValidado ? '#3d8b5a' : todoOk ? '#141210' : '#ece9e2') + ';color:' + (todoOk || st.calcValidado ? '#fff' : '#8a8278');
+
+    // ---------- FABRICACIÓN ----------
+    const mesas = [['Mesa 1', 'Activa', 'Colonia Suiza · muros', 'Plantilla CM01 1,24 × 2,53', 14, 22, 'termina 26-11 15:00'], ['Mesa 2', 'Activa', 'Colonia Suiza · techo', 'Plantilla CT01 1,24 × 3,39', 8, 18, 'termina 27-11 12:00'], ['Mesa 3', 'Control de calidad', 'Las Palmas · bastidores', 'Plantilla CB 1,16', 30, 30, 'QC en curso'], ['Mesa 4', 'Por configurar', 'Coyhaique · muros 3,10 m', 'Espera validación de cálculo', 0, 76, 'inicio estimado sem. 5']]
+      .map(m => ({ t: m[0], e: m[1], proy: m[2], config: m[3], pzas: m[4] + ' de ' + m[5] + ' piezas', fin: m[6],
+        chip: chip(m[1] === 'Activa' ? '#e3f3e8' : m[1] === 'Por configurar' ? '#f1ede4' : '#e8eef5', m[1] === 'Activa' ? '#1f7a44' : m[1] === 'Por configurar' ? '#8a8278' : '#2d4f73'),
+        barra: 'height:100%;border-radius:99px;background:#52448a;width:' + Math.round(m[4] / m[5] * 100) + '%' }));
+    const PZ = [['CM01-14', 'Muro 1,24 × 2,53', 'Mesa 1', 'Armado', '1,8 h', '1,9 h'], ['CM01-15', 'Muro 1,24 × 2,53', 'Mesa 1', 'Corte', '1,8 h', '—'], ['CT01-08', 'Techo 1,24 × 3,39', 'Mesa 2', 'Armado', '2,1 h', '2,4 h'], ['CT01-09', 'Techo 1,24 × 3,39', 'Mesa 2', 'En espera', '2,1 h', '—'], ['CB-30', 'Bastidor 1,16', 'Mesa 3', 'QC', '0,9 h', '0,8 h'], ['CT02-07', 'Medio techo 0,64', 'Mesa 2', 'En espera', '1,2 h', '—']];
+    const EPZ = { 'Armado': ['#e8e4f4', '#3a2d5e'], 'Corte': ['#efe7da', '#6e5131'], 'En espera': ['#f1ede4', '#8a8278'], 'QC': ['#e8eef5', '#2d4f73'] };
+    const tablaPiezas = tabla(['Pieza', 'Tipo', 'Mesa', 'Estado', 'Estimado', 'Real'], '90px 1.4fr 70px 100px 70px 60px',
+      PZ.map(p => ({ c: [{ t: p[0], s: "font-family:'JetBrains Mono',monospace;font-size:12px" }, p[1], p[2], { t: p[3], chip: EPZ[p[3]] }, p[4], { t: p[5], s: 'color:' + (p[5] !== '—' && parseFloat(p[5].replace(',', '.')) > parseFloat(p[4].replace(',', '.')) ? '#a35a12' : '#141210') }] })), 600);
+    const QC = ['Medidas dentro de ±2 mm', 'Escuadra y diagonales', 'Humedad de la madera bajo 19 %', 'Rotulado QR y posición de montaje'];
+    const qcN = QC.filter((q, i) => st.qc[i]).length;
+    const qc = QC.map((q, i) => ({ t: q, icono: st.qc[i] ? '☑' : '☐', pick: () => this.setState({ qc: Object.assign({}, st.qc, { [i]: !st.qc[i] }), qcOk: false }),
+      estilo: 'display:flex;gap:10px;align-items:center;width:100%;border:none;cursor:pointer;padding:9px 10px;border-radius:10px;font-size:13px;color:#141210;background:' + (st.qc[i] ? '#eef5ef' : '#f7f5f1') }));
+    const qcTodo = qcN === QC.length;
+    const inventario = [['Pino 2×6 · 3,20 m', '840 un', 70, 0], ['Laminada 40×185', '96 ml · faltan 80', 35, 1], ['OSB 11 mm', '210 planchas', 60, 0], ['Lana mineral 160 mm', '64 rollos', 45, 0], ['Tornillos y herrajes', 'ok', 80, 0]]
+      .map(i => ({ t: i[0], v: i[1], estilo: 'font-size:12px;color:' + (i[3] ? '#c0563e' : '#6f6860'), barra: 'height:100%;border-radius:99px;background:' + (i[3] ? '#c0563e' : '#6f9a72') + ';width:' + i[2] + '%' }));
+
+    // ---------- LOGÍSTICA ----------
+    const IZ = [['1° izaje · muros eje A', '#52448a', '#fff'], ['2° izaje · muros eje B', '#c08a3e', '#fff'], ['3° izaje · colectoras + CT', '#6f9a72', '#fff'], ['4° izaje · CB techo', '#b3a9e0', '#141210']];
+    const CAMS = [
+      { t: 'Camión 1', d: 'entregado 22-11', peso: '11,8 t', ruta: 'Pudahuel → obra · 14 h', carga: [0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1] },
+      { t: 'Camión 2', d: 'en ruta · llega 25-11 09:00', peso: '12,4 t', ruta: 'salió 24-11 19:00', carga: [2, 2, 3, 3, 1, 1, 2, 2, 3, 3, 1, 1] },
+      { t: 'Camión 3', d: 'cargando · sale 27-11', peso: '9,6 t', ruta: 'Pudahuel → obra', carga: [3, 3, 3, 2, 2, 2, 3, 3, 3, 2, 2, -1] },
+      { t: 'Camión 4', d: 'programado 29-11', peso: '7,2 t', ruta: 'herrajes y remates', carga: [3, 3, -1, -1, -1, -1, 3, 3, -1, -1, -1, -1] }
+    ];
+    const camionesTab = CAMS.map((c, i) => ({ t: c.t, pick: () => this.setState({ cam: i, slot: null }), estilo: pill(st.cam === i) }));
+    const cs = CAMS[st.cam];
+    const CODS = { 0: 'CM01', 1: 'CM01', 2: 'COL/CT01', 3: 'CB' };
+    const slots = cs.carga.map((o, j) => {
+      const pos = String.fromCharCode(65 + Math.floor(j / 6)) + (j % 6 + 1);
+      const vacio = o < 0;
+      const on = st.slot === j;
+      return { pos, orden: vacio ? '' : (o + 1) + '°', t: vacio ? 'libre' : CODS[o] + '-' + (10 + j), peso: vacio ? '' : (380 + (j * 37) % 260) + ' kg',
+        pick: () => this.setState({ slot: j }),
+        estilo: 'text-align:left;cursor:pointer;min-height:64px;border-radius:8px;padding:8px;font:inherit;' + (vacio ? 'background:repeating-linear-gradient(45deg,#f1eee8,#f1eee8 6px,#e8e4dc 6px,#e8e4dc 12px);color:#8a8278;border:1px dashed #cfc9bd' : 'background:' + IZ[o][1] + ';color:' + IZ[o][2] + ';border:2px solid ' + (on ? '#141210' : 'transparent')) };
+    });
+    const sl = st.slot !== null ? cs.carga[st.slot] : null;
+    const slotDetalle = sl === null ? 'Selecciona una posición para ver qué pieza va, en qué orden se iza y dónde se monta.' : (sl < 0 ? 'Posición libre: el agente sugiere completar con remates del Camión 4.' : 'Posición ' + slots[st.slot].pos + ' · ' + slots[st.slot].t + ' · ' + IZ[sl][0] + '. Se descarga directo con grúa a su eje: no se acopia en obra.');
+    const ruedas = [40, 120, 560, 640, 812].map(x => 'position:absolute;bottom:4px;left:' + x + 'px;width:34px;height:34px;border-radius:50%;background:#2b2622;border:5px solid #5d564e;box-sizing:border-box');
+    const leyendaIzaje = IZ.map(l => ({ t: l[0], sw: 'width:14px;height:14px;border-radius:4px;background:' + l[1] }));
+    const tablaDespachos = tabla(['Camión', 'Sale', 'Llega', 'Contenido', 'Peso', 'Estado'], '90px 80px 90px 1.6fr 70px 110px', [
+      ['Camión 1', '21-11', '22-11 09:00', 'Muros eje A y B · anclajes', '11,8 t', ['Entregado', '#e3f3e8', '#1f7a44']],
+      ['Camión 2', '24-11', '25-11 09:00', 'Colectoras, CT01 faldón norte, CB', '12,4 t', ['En ruta', '#fbeee0', '#a35a12']],
+      ['Camión 3', '27-11', '28-11 09:00', 'CT01 faldón sur, CB, testeros', '9,6 t', ['Cargando', '#e8eef5', '#2d4f73']],
+      ['Camión 4', '29-11', '30-11 09:00', 'Herrajes, remates, hojalatería', '7,2 t', ['Programado', '#f1ede4', '#8a8278']]
+    ].map(r => ({ sel: CAMS[st.cam].t === r[0], pick: () => this.setState({ cam: parseInt(r[0].slice(-1)) - 1, slot: null }), c: [{ t: r[0], s: 'font-weight:500' }, r[1], r[2], r[3], r[4], { t: r[5][0], chip: [r[5][1], r[5][2]] }] })), 680);
+
+    // ---------- MONTAJE ----------
+    const montajeKpi = [['Avance real', '62 %', 'plan del día 4: 57 %'], ['Piezas montadas', '141 / 228', 'faldón norte completo'], ['Camiones recibidos', '1 de 4', 'Camión 2 llega mañana'], ['Horas grúa', '19 h', 'de 42 h estimadas']]
+      .map(k => ({ t: k[0], v: k[1], d: k[2] }));
+    const PREG = [
+      ['¿Cómo va la unión del CT01 con la colectora en el eje 5?', 'Tornillo 8×200 cada 30 cm, dos por viga del componente, más ángulo AG-90 en cada extremo. Ver lámina M-07, detalle 3.'],
+      ['¿En qué camión viene el CT02-07?', 'Todavía está en Mesa 2 (en espera). Sale en el Camión 3 el 27-11, posición B4, 3° izaje.']
+    ];
+    const preguntas = [];
+    PREG.slice(0, st.preg + 1).forEach(p => { preguntas.push({ de: 'Jefe de obra', t: p[0], caja: 'padding:10px 12px;border-radius:12px;background:#f7f5f1' }); preguntas.push({ de: 'FURŌ · modelo', t: p[1], caja: 'padding:10px 12px;border-radius:12px;background:#f3f0fa' }); });
+    const sugPreg = st.preg < PREG.length - 1 ? [{ t: PREG[st.preg + 1][0], pick: () => this.setState({ preg: st.preg + 1 }) }] : [{ t: '↺ Reiniciar', pick: () => this.setState({ preg: 0 }) }];
+    const llegadas = [['Camión 1 · 74 piezas', 'Recibido ✓', '#1f7a44'], ['Camión 2 · 66 piezas', 'En ruta', '#a35a12'], ['Camión 3 · 58 piezas', 'Cargando', '#2d4f73'], ['Camión 4 · 30 piezas', 'Programado', '#8a8278']]
+      .map(l => ({ t: l[0], e: l[1], estilo: 'font-size:12px;color:' + l[2] }));
+
+    // ---------- PLANIFICACIÓN ----------
+    const FASES = [['Análisis y dibujo', '#b3a9e0'], ['Cálculo', '#8b7fc0'], ['Fábrica', '#52448a'], ['Logística', '#c08a3e'], ['Montaje', '#6f9a72'], ['Terminaciones', '#8a8278'], ['Especialidades', '#3b4a55']];
+    const fasesLeyenda = FASES.map(f => ({ t: f[0], sw: 'width:12px;height:12px;border-radius:3px;background:' + f[1] }));
+    const D0 = new Date(2026, 10, 1).getTime(), DAYS = 181;
+    const pos = (a, b) => { const s = (new Date(a[0], a[1] - 1, a[2]).getTime() - D0) / 864e5, e = (new Date(b[0], b[1] - 1, b[2]).getTime() - D0) / 864e5; return [Math.max(0, s / DAYS * 100), Math.max(0.8, (Math.min(e, DAYS) - Math.max(0, s)) / DAYS * 100)]; };
+    const bar = (f, a, b, l) => { const p = pos(a, b); return { t: FASES[f][0], l: l || '', s: 'position:absolute;top:3px;height:20px;border-radius:6px;font-size:10px;line-height:20px;padding-left:6px;overflow:hidden;white-space:nowrap;box-sizing:border-box;color:' + (f === 0 ? '#141210' : '#fff') + ';background:' + FASES[f][1] + ';left:' + p[0] + '%;width:' + p[1] + '%' }; };
+    const G_TODOS = [
+      { t: 'Colonia Suiza', d: 'Obra completa · 162 m²', barras: [bar(2, [2026, 11, 1], [2026, 11, 20], 'Fábrica'), bar(3, [2026, 11, 21], [2026, 11, 30]), bar(4, [2026, 11, 22], [2026, 12, 4], 'Montaje'), bar(5, [2026, 12, 7], [2027, 2, 12], 'Terminaciones'), bar(6, [2026, 12, 14], [2027, 2, 5])] },
+      { t: 'Casa Coyhaique', d: 'Estructuras térmicas · 392 m²', barras: [bar(0, [2026, 11, 1], [2026, 12, 4], 'Análisis'), bar(1, [2026, 12, 7], [2026, 12, 30], 'Cálculo'), bar(0, [2027, 1, 4], [2027, 1, 22]), bar(2, [2027, 1, 25], [2027, 3, 5], 'Fábrica'), bar(3, [2027, 3, 8], [2027, 3, 19]), bar(4, [2027, 3, 15], [2027, 4, 9], 'Montaje')] },
+      { t: 'Casa Las Palmas', d: 'Térmicas + envolvente · 148 m²', barras: [bar(2, [2026, 11, 1], [2026, 11, 27], 'Fábrica'), bar(3, [2026, 12, 1], [2026, 12, 4]), bar(4, [2026, 12, 7], [2026, 12, 23], 'Montaje + envolvente')] },
+      { t: 'Arquitectos Sur', d: 'Estructuras · 210 m²', barras: [bar(0, [2026, 11, 23], [2026, 12, 11], 'Análisis'), bar(1, [2026, 12, 14], [2027, 1, 1]), bar(2, [2027, 1, 11], [2027, 2, 5], 'Fábrica'), bar(3, [2027, 2, 8], [2027, 2, 10])] },
+      { t: 'Constructora Lago', d: 'Estructuras · 540 m²', barras: [bar(1, [2026, 12, 1], [2026, 12, 22], 'Cálculo'), bar(2, [2027, 1, 4], [2027, 2, 26], 'Fábrica'), bar(3, [2027, 3, 1], [2027, 3, 12])] }
+    ];
+    const G_UNO = [
+      { t: 'Fábrica', d: 'Mesas 1 y 2', barras: [bar(2, [2026, 11, 1], [2026, 11, 20], 'CM01 · CT01 · CB')] },
+      { t: 'Logística', d: '4 camiones', barras: [bar(3, [2026, 11, 21], [2026, 11, 30], 'C1 → C4')] },
+      { t: 'Montaje estructura', d: 'grúa + 4 personas', barras: [bar(4, [2026, 11, 22], [2026, 12, 4], '7 días hábiles')] },
+      { t: 'Terminaciones', d: 'interiores', barras: [bar(5, [2026, 12, 7], [2027, 1, 15], 'Revestimientos'), bar(5, [2027, 1, 18], [2027, 2, 12], 'Pintura y remates')] },
+      { t: 'Especialidades', d: 'eléctrica · sanitaria · gas · clima', barras: [bar(6, [2026, 12, 14], [2027, 1, 8], 'Redes'), bar(6, [2027, 1, 25], [2027, 2, 5], 'Artefactos')] },
+      { t: 'Recepción', d: 'DOM', barras: [bar(1, [2027, 2, 15], [2027, 2, 26], 'Recepción final')] }
+    ];
+    const planModos = ['Todos los proyectos', 'Colonia Suiza'].map((t, i) => ({ t, pick: () => this.setState({ planModo: i }), estilo: pill(st.planModo === i) }));
+    const hoyP = (new Date(2026, 10, 24).getTime() - D0) / 864e5 / DAYS * 100;
+
+    // ---------- VENTA ----------
+    const VM = [['nov', 2150, 1830], ['dic', 3420, 0], ['ene', 2980, 0], ['feb', 4120, 0], ['mar', 3650, 0], ['abr', 2890, 0], ['may', 1900, 0], ['jun', 1400, 0]];
+    const vmax = 4400;
+    const ventaMeses = VM.map(m => ({ m: m[0], e: fmt(m[1]), r: fmt(m[2]), lbl: m[2] ? fmt(m[2]) : fmt(m[1]),
+      be: 'width:36%;max-width:26px;border-radius:6px 6px 0 0;background:#d9d4f0;height:' + (m[1] / vmax * 100) + '%',
+      br: 'width:36%;max-width:26px;border-radius:6px 6px 0 0;background:#3a2d5e;height:' + (m[2] / vmax * 100) + '%;' + (m[2] ? '' : 'display:none') }));
+    const ventaKpi = [['Facturado 2026', '18.940', '92 % de lo estimado'], ['Estimado próximo trimestre', '10.520', 'dic · ene · feb'], ['Por cobrar', '820', '2 hitos vencen esta semana'], ['Contribución promedio', '24 %', 'sobre venta neta']]
+      .map(k => ({ t: k[0], v: k[1], d: k[2] }));
+    const tablaContrib = tabla(['Proyecto', 'Servicio', 'Venta UF', 'Costo UF', 'Contrib.', '%'], '1.2fr 1.2fr 0.8fr 0.8fr 0.8fr 50px', [
+      ['Colonia Suiza', 3, 5346, 4130], ['Casa Coyhaique', 1, 4315, 3195], ['Casa Las Palmas', 2, 2368, 1790], ['Constructora Lago', 0, 3780, 2950], ['Noki II', 2, 2402, 1802]
+    ].map(r => ({ c: [{ t: r[0], s: 'font-weight:500' }, { t: SERV[r[1]].t, chip: SERV[r[1]].c }, fmt(r[2]), fmt(r[3]), fmt(r[2] - r[3]), Math.round((r[2] - r[3]) / r[2] * 100) + ' %'] })), 620);
+    const tablaHitos = tabla(['Proyecto', 'Hito', 'Fecha', 'UF', 'Estado'], '1.1fr 1.3fr 70px 70px 100px', [
+      ['Colonia Suiza', '40 % salida de fábrica', '20-11', '2.138', ['Pagado', '#e3f3e8', '#1f7a44']],
+      ['Colonia Suiza', '25 % fin de montaje', '04-12', '1.337', ['Por facturar', '#f1ede4', '#5d564e']],
+      ['Casa Las Palmas', '40 % salida de fábrica', '27-11', '947', ['Facturado', '#e8eef5', '#2d4f73']],
+      ['Casa Coyhaique', '30 % firma', '01-12', '1.295', ['Por facturar', '#f1ede4', '#5d564e']],
+      ['Noki II', '5 % recepción', '18-11', '120', ['Vencido', '#fbeee0', '#a35a12']]
+    ].map(r => ({ c: [{ t: r[0], s: 'font-weight:500' }, r[1], r[2], r[3], { t: r[4][0], chip: [r[4][1], r[4][2]] }] })), 560);
+
+    // ---------- ACCESOS (solo Administrador) ----------
+    const SECC = NAV.filter(n => n[0] !== 'accesos');
+    const accCols = ['Nivel'].concat(SECC.map(n => n[1].replace('Planificación', 'Planif.').replace('Cotizaciones', 'Cotiz.').replace('Fabricación', 'Fábrica')));
+    const accFilas = ROLES.map((r, i) => ({
+      nombre: r.nombre, alcance: r.alcance,
+      celdas: SECC.map(n => {
+        const tiene = !r.acc || r.acc.indexOf(n[0]) >= 0;
+        return { t: tiene ? '✓' : '—', pick: r.admin ? noop : () => { const ex = Object.assign({}, st.accExtra[i] || {}); ex[n[0]] = !tiene; this.setState({ accExtra: Object.assign({}, st.accExtra, { [i]: ex }) }); },
+          estilo: 'border:none;border-radius:8px;min-height:34px;font-size:14px;cursor:' + (r.admin ? 'default' : 'pointer') + ';background:' + (tiene ? (r.admin ? '#e8e4f4' : '#e3f3e8') : '#f4f2ee') + ';color:' + (tiene ? (r.admin ? '#3a2d5e' : '#1f7a44') : '#b8b1a6') };
+      })
+    }));
+    const usuarios = [['Victor Pellegrini', 'vpellegrini@furo.company', 'Administrador'], ['Rodrigo Urzúa', 'rurzua@furo.company', 'Gerencia'], ['Ignacio Durruty', 'idurruty@furo.company', 'Gerencia'], ['Hernán', 'hernanh@furo.company', 'Proyecto y dibujo'], ['Calculista externo', 'invitado · expira 31-03-2027', 'Calculista externo'], ['Jefe de planta', 'planta@furo.company', 'Fábrica'], ['Jefe de obra', 'obra@furo.company', 'Obra y montaje']]
+      .map(u => ({ n: u[0], m: u[1], r: u[2], ini: u[0].split(' ').map(x => x[0]).join('').slice(0, 2), chip: chip(u[2] === 'Administrador' ? '#141210' : '#f3f0fa', u[2] === 'Administrador' ? '#fff' : '#3a2d5e') }));
+    const accGrid = 'display:grid;grid-template-columns:170px repeat(' + SECC.length + ', minmax(52px, 1fr));gap:6px;align-items:center';
+
+    // colores modelo 3D y montaje
+    const mont = { ct: '#6f9a72', ct2: '#6f9a72', cb: '#8b7fc0', cm: '#6f9a72', cm2: '#6f9a72', cbm: '#6f9a72', vano: '#3b4a55', test: '#6f9a72', col: '#6f9a72' };
+
+    return {
+      toggleRol: () => this.setState({ rolAbierto: !st.rolAbierto }), rolAbierto: st.rolAbierto, rolAbiertoTxt: st.rolAbierto ? 'true' : 'false',
+      roles, rolNombre: rol.nombre, rolIni: rol.ini, nav, conexiones,
+      migas: TIT[st.vista][0], titulo: TIT[st.vista][1], bloqueado: !ok,
+      vPortada: V('portada'), vPedidos: V('pedidos'), v3d: V('3d'), vCot: V('cotizaciones'), vCalc: V('calculo'), vFab: V('fabricacion'), vLog: V('logistica'), vMon: V('montaje'), vPlan: V('planificacion'), vVenta: V('venta'),
+      // portada
+      pins, atencion, leyenda, kpis, flujo, aprobaciones, nAprob: aprobaciones.filter(a => a.pend).length,
+      briefing: 'Colonia Suiza va 5 puntos sobre el plan de montaje. El Camión 2 salió anoche. Coyhaique espera una decisión sobre el ventanal de 7,20 m y entraron 2 pedidos nuevos por WhatsApp.',
+      ventaMes: '1.830', ventaMesSub: '85 % del estimado de noviembre', gaugeDash: '85 100',
+      // pedidos
+      subPed, split: st.split, noSplit: !st.split, toggleSplit: () => this.setState({ split: !st.split }),
+      splitEst: 'border-radius:10px;padding:9px 14px;font-size:13px;cursor:pointer;min-height:40px;border:1px solid ' + (st.split ? '#52448a' : 'rgba(20,18,16,0.12)') + ';background:' + (st.split ? '#f3f0fa' : '#fff') + ';color:#141210',
+      filtrosServ, vPedLista: st.subPed === 'lista', vPedMail: st.subPed === 'mail', vPedWa: st.subPed === 'wa', vPedAnalisis: st.subPed === 'analisis',
+      tablaPedidos, pedSel, pedidosLista, pedidosWa, mailHilo, waHilo,
+      irAnalisis: () => this.setState({ subPed: 'analisis', split: false }), irMail: () => this.setState({ subPed: 'mail', split: false }),
+      anStats, tablaCompat, iteraciones, iterResumen: aceptadas + ' de 5 cambios aceptados', probCoy: probCoyN + ' %', factores, fabCoy: aceptadas >= 4 ? 'Sem. 4 · ene 2027' : 'Sem. 5 · feb 2027', tiempos, normativa,
+      // 3d
+      proyectos3d, lods, familias, jobs, tablaCub3d, p3dNombre: P3D[st.p3d], lodTxt: 'LOD ' + st.lod,
+      famSelTxt: famSel ? famSel[1] + ' · ' + famSel[2] : 'Componentes por familia · corte del faldón sur',
+      cCT: famColor.ct, cCT2: famColor.ct2, cCB: famColor.cb, cCM: famColor.cm, cCM2: famColor.cm2, cCBM: famColor.cbm, cVano: famColor.vano, cTest: famColor.test, cCol: famColor.col,
+      mCT: mont.ct, mCT2: mont.ct2, mCB: mont.cb, mCM: mont.cm, mCM2: mont.cm2, mCBM: mont.cbm, mVano: mont.vano, mTest: mont.test, mCol: mont.col,
+      irCotizar: go('cotizaciones', { subCot: 'cub' }),
+      // cotizaciones
+      subCot, alcances, bloquesCot, barraCot, alcanceNombre: SERV[st.alcance].t, totalCot: fmt(total), totalM2: (total / M2).toFixed(1).replace('.', ','),
+      vCotRes: st.subCot === 'res', vCotCub: st.subCot === 'cub', vCotApu: st.subCot === 'apu', vCotLink: st.subCot === 'link',
+      tablaCubVol, tablaApu,
+      // cálculo
+      firmas, parametros, programas, iterCalc, verificar, validarTxt, validarEst,
+      validarCalc: () => { if (todoOk) this.setState({ calcValidado: true }); },
+      // fabricación
+      mesas, tablaPiezas, qc, inventario, qcPieza: 'Pieza CB-30 · Mesa 3 · ' + qcN + ' de 4 controles',
+      aprobarQc: () => { if (qcTodo) this.setState({ qcOk: true }); },
+      qcBtnTxt: st.qcOk ? '✓ CB-30 validada · pasa a despacho' : (qcTodo ? 'Validar pieza' : 'Marca los 4 controles'),
+      qcBtnEst: 'width:100%;margin-top:12px;border:none;border-radius:10px;padding:11px;font-size:13px;min-height:42px;cursor:pointer;background:' + (st.qcOk ? '#3d8b5a' : qcTodo ? '#141210' : '#ece9e2') + ';color:' + (st.qcOk || qcTodo ? '#fff' : '#8a8278'),
+      // logística
+      camionesTab, camSel: cs, slots, slotDetalle, ruedas, leyendaIzaje, tablaDespachos,
+      // montaje
+      montajeKpi, preguntas, sugPreg, llegadas,
+      // planificación
+      planModos, fasesLeyenda, meses: ['nov 26', 'dic', 'ene 27', 'feb', 'mar', 'abr'], gantt: st.planModo === 0 ? G_TODOS : G_UNO, planCab: st.planModo === 0 ? 'Proyecto' : 'Colonia Suiza · fase',
+      hoyEst: 'position:absolute;top:-4px;bottom:-4px;width:2px;background:#c0563e;left:' + hoyP + '%',
+      // venta
+      ventaKpi, ventaMeses, tablaContrib, tablaHitos,
+      vAccesos: ok && st.vista === 'accesos', accCols, accFilas, accGrid, usuarios
+    };
+  }
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,665 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>FURŌ OS</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&amp;family=JetBrains+Mono:wght@400;500&amp;family=Cormorant+Garamond:ital,wght@0,400;1,400&amp;display=swap">
+<style>
+body{margin:0;background:#e9e6df}
+button{font-family:inherit}
+a{color:#3a2d5e}
+.card{background:#fff;border-radius:18px;border:1px solid rgba(20,18,16,0.07);padding:18px;min-width:0;box-sizing:border-box}
+.glass{background:rgba(250,249,246,0.78);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,0.7);border-radius:18px;box-shadow:0 12px 40px rgba(20,18,16,0.10)}
+.k{font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#6f6860;margin:0}
+.mono{font-family:'JetBrains Mono',monospace}
+.h2{margin:0;font-size:16px;font-weight:500}
+.row{display:flex;flex-wrap:wrap;gap:14px}
+.btn{border:1px solid rgba(20,18,16,0.16);background:#fff;border-radius:10px;padding:9px 14px;font-size:13px;cursor:pointer;color:#141210;min-height:38px}
+.btn-d{border:none;background:#141210;color:#fff;border-radius:10px;padding:10px 16px;font-size:13px;cursor:pointer;min-height:38px}
+.muted{color:#6f6860}
+.bar{height:6px;background:#ece9e2;border-radius:99px;overflow:hidden}
+</style>
+</helmet>
+<div style="min-height: 1040px; background: #e9e6df; color: #141210; font-family: 'DM Sans', sans-serif; display: flex">
+
+<!-- ============ BARRA LATERAL ============ -->
+<aside style="flex: 0 0 232px; background: #141210; color: #f5f3ee; display: flex; flex-direction: column; padding: 18px 14px; gap: 14px; box-sizing: border-box">
+<div style="display: flex; align-items: baseline; gap: 8px; padding: 4px 8px 0">
+<span style="font-size: 21px; font-weight: 500; letter-spacing: 0.1em">FURŌ</span><span class="mono" style="font-size: 11px; color: #8b7fc0">OS</span>
+</div>
+
+<div style="position: relative">
+<button onClick="{{ toggleRol }}" aria-expanded="{{ rolAbiertoTxt }}" style="width: 100%; display: flex; align-items: center; gap: 10px; background: #221f1b; border: 1px solid #34302b; border-radius: 12px; padding: 10px 12px; color: #f5f3ee; cursor: pointer; text-align: left">
+<span style="width: 30px; height: 30px; border-radius: 8px; background: #3a2d5e; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500">{{ rolIni }}</span>
+<span style="flex: 1; min-width: 0"><span style="display: block; font-size: 13px; font-weight: 500">{{ rolNombre }}</span><span style="display: block; font-size: 11px; color: #a39b90">Nivel de acceso</span></span>
+<span style="color: #a39b90">⌄</span>
+</button>
+<sc-if value="{{ rolAbierto }}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; left: 0; right: 0; top: 56px; z-index: 5; background: #221f1b; border: 1px solid #34302b; border-radius: 12px; padding: 6px; box-shadow: 0 16px 40px rgba(0,0,0,0.4)">
+<sc-for list="{{ roles }}" as="r" hint-placeholder-count="6">
+<button onClick="{{ r.pick }}" style="{{ r.estilo }}"><span style="display: block; font-size: 13px">{{ r.nombre }}</span><span style="display: block; font-size: 11px; color: #a39b90; margin-top: 2px">{{ r.alcance }}</span></button>
+</sc-for>
+</div>
+</sc-if>
+</div>
+
+<nav aria-label="Secciones" style="display: flex; flex-direction: column; gap: 2px">
+<sc-for list="{{ nav }}" as="n" hint-placeholder-count="10">
+<button onClick="{{ n.pick }}" aria-current="{{ n.actual }}" style="{{ n.estilo }}">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ n.icon }}"></path></svg>
+<span style="flex: 1">{{ n.nombre }}</span>
+<span style="{{ n.badgeEst }}">{{ n.badge }}</span>
+</button>
+</sc-for>
+</nav>
+
+<div style="margin-top: auto; background: #1c1a17; border: 1px solid #2c2925; border-radius: 12px; padding: 12px; font-size: 12px; display: flex; flex-direction: column; gap: 8px">
+<p class="k" style="color: #8a8278; font-size: 10px">Conexiones</p>
+<sc-for list="{{ conexiones }}" as="c" hint-placeholder-count="4">
+<span style="display: flex; align-items: center; gap: 8px"><span style="{{ c.punto }}"></span><span style="flex: 1">{{ c.nombre }}</span><span style="color: #8a8278">{{ c.estado }}</span></span>
+</sc-for>
+</div>
+<a href="Formulario.dc.html" style="color: #b3a9e0; font-size: 12px; padding: 0 6px">Ver formulario público →</a>
+</aside>
+
+<!-- ============ CONTENIDO ============ -->
+<main style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+
+<header style="display: flex; flex-wrap: wrap; align-items: center; gap: 14px; padding: 16px 28px 8px">
+<div style="min-width: 0">
+<p class="k">{{ migas }}</p>
+<h1 style="margin: 2px 0 0; font-size: 28px; font-weight: 400">{{ titulo }}</h1>
+</div>
+<label style="margin-left: auto; flex: 0 1 420px; display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 999px; background: #fff; border: 1px solid rgba(20,18,16,0.1)">
+<span style="color: #52448a">✦</span>
+<span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Preguntar a FURŌ</span>
+<input placeholder="Pregúntale a FURŌ: “¿qué falta para que Coyhaique entre a fábrica?”" style="flex: 1; min-width: 0; border: none; outline: none; font: inherit; font-size: 13px; background: transparent">
+<span class="mono" style="font-size: 11px; color: #8a8278">⌘K</span>
+</label>
+<span style="width: 38px; height: 38px; border-radius: 50%; background: #fff; border: 1px solid rgba(20,18,16,0.1); display: inline-flex; align-items: center; justify-content: center; position: relative">🔔<span style="position: absolute; top: 6px; right: 7px; width: 8px; height: 8px; border-radius: 50%; background: #c0563e"></span></span>
+<span style="width: 38px; height: 38px; border-radius: 50%; background: #3a2d5e; color: #fff; display: inline-flex; align-items: center; justify-content: center; font-size: 13px">VP</span>
+</header>
+
+<sc-if value="{{ bloqueado }}" hint-placeholder-val="{{ false }}">
+<div style="margin: 40px 28px; padding: 40px; text-align: center" class="card">
+<p style="font-size: 28px; margin: 0">🔒</p>
+<h2 style="margin: 10px 0 0; font-weight: 400">{{ rolNombre }} no tiene acceso a {{ titulo }}</h2>
+<p class="muted" style="margin: 8px 0 0; font-size: 14px">Cada nivel ve solo sus secciones. Cambia el nivel de acceso arriba a la izquierda para probar otra vista.</p>
+</div>
+</sc-if>
+
+<div style="padding: 8px 28px 36px; display: flex; flex-direction: column; gap: 16px">
+
+<!-- ================= PORTADA ================= -->
+<sc-if value="{{ vPortada }}" hint-placeholder-val="{{ true }}">
+<section aria-label="Resumen" style="position: relative; height: 560px; border-radius: 24px; overflow: hidden; background: radial-gradient(120% 90% at 50% 40%, #f3f1ec 0%, #e3dfd6 70%, #d9d4ca 100%); border: 1px solid rgba(255,255,255,0.7)">
+<div style="position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%); aspect-ratio: 2 / 1">
+<svg viewBox="0 0 1200 600" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Planta FURŌ, camiones en ruta y obras en curso" style="position: absolute; inset: 0; width: 100%; height: 100%">
+<g transform="translate(40 -6)">
+@@PORTADA@@
+<sc-for list="{{ pins }}" as="p" hint-placeholder-count="5">
+<g onClick="{{ p.pick }}" style="cursor: pointer">
+<line x1="{{ p.x }}" y1="{{ p.y }}" x2="{{ p.x }}" y2="{{ p.ly2 }}" stroke="#141210" stroke-width="1" stroke-opacity="0.5"></line>
+<circle cx="{{ p.x }}" cy="{{ p.y }}" r="5" fill="{{ p.col }}" stroke="#fff" stroke-width="2"></circle>
+<circle cx="{{ p.x }}" cy="{{ p.y }}" r="11" fill="{{ p.col }}" opacity="0.18"></circle>
+</g>
+</sc-for>
+</g>
+</svg>
+<sc-for list="{{ pins }}" as="p" hint-placeholder-count="5">
+<button onClick="{{ p.pick }}" style="{{ p.etq }}"><span style="{{ p.dot }}"></span><span style="display: block; padding-left: 14px"><span class="mono" style="display: block; font-size: 10px; letter-spacing: 0.06em">{{ p.t1 }}</span><span style="display: block; font-size: 11px; color: #5d564e; margin-top: 1px">{{ p.t2 }}</span></span></button>
+</sc-for>
+</div>
+
+<div class="glass" style="position: absolute; left: 18px; top: 18px; width: 300px; padding: 18px">
+<div style="display: flex; justify-content: space-between; align-items: center"><p class="k">Briefing de hoy</p><span class="mono" style="font-size: 10px; color: #2f6f48">● EN VIVO 10:42</span></div>
+<p style="margin: 10px 0 0; font-size: 14px; line-height: 1.55">{{ briefing }}</p>
+<p class="k" style="margin-top: 16px">Necesita atención</p>
+<div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px">
+<sc-for list="{{ atencion }}" as="a" hint-placeholder-count="3">
+<button onClick="{{ a.pick }}" style="{{ a.estilo }}"><span style="font-size: 13px; font-weight: 500; display: block">{{ a.t }}</span><span style="font-size: 12px; color: #6f6860; display: block; margin-top: 2px">{{ a.d }}</span></button>
+</sc-for>
+</div>
+</div>
+
+<div class="glass" style="position: absolute; right: 18px; top: 18px; width: 236px; padding: 18px">
+<p class="k">Venta noviembre</p>
+<svg viewBox="0 0 200 120" style="width: 100%; display: block; margin-top: 6px" aria-hidden="true">
+<path d="M20 105 A80 80 0 0 1 180 105" fill="none" stroke="#e2ded5" stroke-width="14" stroke-linecap="round"></path>
+<path d="M20 105 A80 80 0 0 1 180 105" fill="none" stroke="#52448a" stroke-width="14" stroke-linecap="round" pathLength="100" stroke-dasharray="{{ gaugeDash }}"></path>
+<text x="100" y="92" text-anchor="middle" font-family="DM Sans" font-size="30" fill="#141210">1.830</text>
+<text x="100" y="112" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#6f6860">UF FACTURADAS</text>
+</svg>
+<p style="margin: 6px 0 0; font-size: 12px; color: #6f6860; text-align: center">{{ ventaMesSub }}</p>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; font-size: 12px">
+<span><span class="muted">Estimado</span><br><strong class="mono" style="font-weight: 500">2.150 UF</strong></span>
+<span><span class="muted">Por cobrar</span><br><strong class="mono" style="font-weight: 500">820 UF</strong></span>
+</div>
+</div>
+
+<div style="position: absolute; left: 50%; bottom: 16px; transform: translateX(-50%); display: flex; gap: 6px; flex-wrap: wrap; justify-content: center">
+<sc-for list="{{ leyenda }}" as="l" hint-placeholder-count="4">
+<span class="glass" style="padding: 6px 12px; border-radius: 99px; font-size: 12px; display: inline-flex; align-items: center; gap: 6px"><span style="{{ l.punto }}"></span>{{ l.t }}</span>
+</sc-for>
+</div>
+</section>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px">
+<sc-for list="{{ kpis }}" as="k" hint-placeholder-count="4">
+<button onClick="{{ k.pick }}" class="card" style="text-align: left; cursor: pointer; font: inherit; color: inherit">
+<div style="display: flex; justify-content: space-between"><p class="k">{{ k.t }}</p><span class="muted">↗</span></div>
+<p style="margin: 10px 0 0; font-size: 34px; font-weight: 400">{{ k.v }} <span style="font-size: 14px; color: #6f6860">{{ k.u }}</span></p>
+<div style="display: flex; height: 6px; border-radius: 99px; overflow: hidden; margin-top: 12px; gap: 2px">
+<sc-for list="{{ k.seg }}" as="s" hint-placeholder-count="4"><span style="{{ s }}"></span></sc-for>
+</div>
+<p style="margin: 10px 0 0; font-size: 12px; color: #6f6860">{{ k.d }}</p>
+</button>
+</sc-for>
+</div>
+
+<div class="row">
+<div class="card" style="flex: 999 1 520px">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><h2 class="h2">Flujo de proyectos</h2><span class="muted" style="font-size: 12px">del pedido al montaje</span></div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; margin-top: 14px">
+<sc-for list="{{ flujo }}" as="f" hint-placeholder-count="7">
+<button onClick="{{ f.pick }}" style="text-align: left; background: #f7f5f1; border: 1px solid rgba(20,18,16,0.06); border-radius: 12px; padding: 12px; cursor: pointer; font: inherit; color: inherit">
+<span class="mono" style="font-size: 10px; color: #8a8278">{{ f.n }}</span>
+<span style="display: block; font-size: 13px; font-weight: 500; margin-top: 4px">{{ f.t }}</span>
+<span style="display: block; font-size: 28px; margin-top: 6px">{{ f.v }}</span>
+<span style="display: block; font-size: 11px; color: #6f6860; margin-top: 2px">{{ f.d }}</span>
+</button>
+</sc-for>
+</div>
+</div>
+<div class="card" style="flex: 1 1 340px">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><h2 class="h2">Esperan tu aprobación</h2><span class="mono" style="font-size: 11px; color: #a35a12">{{ nAprob }} PENDIENTES</span></div>
+<div style="display: flex; flex-direction: column; gap: 10px; margin-top: 12px">
+<sc-for list="{{ aprobaciones }}" as="a" hint-placeholder-count="3">
+<div style="{{ a.caja }}">
+<div style="display: flex; justify-content: space-between; gap: 8px"><span class="mono" style="font-size: 10px; color: #8a8278">{{ a.area }}</span><span style="font-size: 11px; color: #6f6860">{{ a.quien }}</span></div>
+<p style="margin: 4px 0 0; font-size: 13px; font-weight: 500">{{ a.t }}</p>
+<div style="display: flex; gap: 8px; margin-top: 8px; align-items: center">
+<sc-if value="{{ a.pend }}" hint-placeholder-val="{{ true }}"><button onClick="{{ a.ok }}" class="btn-d" style="padding: 7px 12px; min-height: 32px; font-size: 12px">Aprobar</button><button onClick="{{ a.ver }}" class="btn" style="padding: 7px 12px; min-height: 32px; font-size: 12px">Revisar</button></sc-if>
+<sc-if value="{{ a.hecho }}" hint-placeholder-val="{{ false }}"><span style="font-size: 12px; color: #2f6f48">✓ Aprobado por {{ rolNombre }}</span></sc-if>
+</div>
+</div>
+</sc-for>
+</div>
+<p style="margin: 12px 0 0; font-size: 11px; color: #8a8278">Los agentes preparan; nada sale sin la firma de una persona.</p>
+</div>
+</div>
+</sc-if>
+
+<!-- ================= PEDIDOS ================= -->
+<sc-if value="{{ vPedidos }}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px">
+<div role="tablist" aria-label="Vistas de pedidos" style="display: flex; gap: 4px; background: #fff; border-radius: 12px; padding: 4px; border: 1px solid rgba(20,18,16,0.08)">
+<sc-for list="{{ subPed }}" as="s" hint-placeholder-count="4"><button role="tab" onClick="{{ s.pick }}" style="{{ s.estilo }}">{{ s.t }} <span style="{{ s.bEst }}">{{ s.b }}</span></button></sc-for>
+</div>
+<button onClick="{{ toggleSplit }}" style="{{ splitEst }}">▥ Pantalla dividida</button>
+<div style="margin-left: auto; display: flex; flex-wrap: wrap; gap: 6px">
+<sc-for list="{{ filtrosServ }}" as="f" hint-placeholder-count="5"><button onClick="{{ f.pick }}" style="{{ f.estilo }}">{{ f.t }} · {{ f.n }}</button></sc-for>
+</div>
+</div>
+
+<!-- pantalla dividida -->
+<sc-if value="{{ split }}" hint-placeholder-val="{{ false }}">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px">
+<div class="card" style="padding: 0; overflow: hidden"><p class="k" style="padding: 14px 16px">Pedidos</p>
+<sc-for list="{{ pedidosLista }}" as="p" hint-placeholder-count="6"><button onClick="{{ p.pick }}" style="{{ p.filaMini }}"><span style="display: flex; justify-content: space-between"><strong style="font-weight: 500; font-size: 13px">{{ p.cliente }}</strong><span style="{{ p.canalEst }}">{{ p.canal }}</span></span><span style="display: block; font-size: 12px; color: #6f6860; margin-top: 3px">{{ p.servicio }} · {{ p.m2 }} m²</span></button></sc-for>
+</div>
+<div class="card" style="padding: 0; overflow: hidden"><p class="k" style="padding: 14px 16px">Correo · {{ pedSel.cliente }}</p>
+<div style="padding: 0 16px 16px; display: flex; flex-direction: column; gap: 10px">
+<sc-for list="{{ mailHilo }}" as="m" hint-placeholder-count="3"><div style="{{ m.caja }}"><span style="font-size: 11px; color: #6f6860">{{ m.de }} · {{ m.hora }}</span><p style="margin: 4px 0 0; font-size: 13px; line-height: 1.5">{{ m.t }}</p></div></sc-for>
+</div></div>
+<div class="card" style="padding: 0; overflow: hidden; background: #efe9e1"><p class="k" style="padding: 14px 16px">WhatsApp · {{ pedSel.cliente }}</p>
+<div style="padding: 0 12px 16px; display: flex; flex-direction: column; gap: 6px">
+<sc-for list="{{ waHilo }}" as="m" hint-placeholder-count="4"><div style="{{ m.fila }}"><span style="{{ m.burbuja }}">{{ m.t }}</span></div></sc-for>
+</div></div>
+</div>
+</sc-if>
+
+<sc-if value="{{ noSplit }}" hint-placeholder-val="{{ true }}">
+
+<sc-if value="{{ vPedLista }}" hint-placeholder-val="{{ true }}">
+<div class="row" style="align-items: flex-start">
+<div class="card" style="flex: 999 1 600px; padding: 6px 0 0">
+@@TABLA:tablaPedidos@@
+</div>
+<div class="card" style="flex: 1 1 320px">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 8px"><span class="mono" style="font-size: 11px; color: #8a8278">{{ pedSel.cod }}</span><span style="{{ pedSel.servEst }}">{{ pedSel.servicio }}</span></div>
+<h2 style="margin: 8px 0 0; font-size: 22px; font-weight: 400">{{ pedSel.cliente }}</h2>
+<p class="muted" style="margin: 4px 0 0; font-size: 13px">{{ pedSel.perfil }} · {{ pedSel.lugar }} · {{ pedSel.m2 }} m² · entró por {{ pedSel.canal }}</p>
+<p class="k" style="margin-top: 18px">Antes de dibujar · {{ pedSel.info }}</p>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px 10px; margin-top: 10px; font-size: 12px">
+<sc-for list="{{ pedSel.check }}" as="c" hint-placeholder-count="8"><span style="{{ c.estilo }}">{{ c.icono }} {{ c.t }}</span></sc-for>
+</div>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 18px">
+<div style="background: #f7f5f1; border-radius: 12px; padding: 12px"><p class="k" style="font-size: 10px">Probabilidad</p><p style="margin: 6px 0 0; font-size: 26px">{{ pedSel.prob }}</p><div class="bar" style="margin-top: 6px"><div style="{{ pedSel.probBarra }}"></div></div></div>
+<div style="background: #f7f5f1; border-radius: 12px; padding: 12px"><p class="k" style="font-size: 10px">Entrada a fábrica</p><p style="margin: 6px 0 0; font-size: 20px">{{ pedSel.fab }}</p><p style="margin: 4px 0 0; font-size: 11px; color: #6f6860">estimado por el agente</p></div>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px">
+<button onClick="{{ irAnalisis }}" class="btn-d">Ver análisis de planos</button>
+<button onClick="{{ irMail }}" class="btn">Responder por correo</button>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ vPedMail }}" hint-placeholder-val="{{ false }}">
+<div class="row" style="align-items: flex-start">
+<div class="card" style="flex: 1 1 280px; padding: 8px">
+<sc-for list="{{ pedidosLista }}" as="p" hint-placeholder-count="6"><button onClick="{{ p.pick }}" style="{{ p.filaMini }}"><span style="display: flex; justify-content: space-between"><strong style="font-weight: 500; font-size: 13px">{{ p.cliente }}</strong><span style="font-size: 11px; color: #8a8278">{{ p.mailHora }}</span></span><span style="display: block; font-size: 12px; color: #6f6860; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ p.mailAsunto }}</span></button></sc-for>
+</div>
+<div class="card" style="flex: 999 1 520px">
+<p class="mono" style="margin: 0; font-size: 11px; color: #8a8278">{{ pedSel.email }}</p>
+<h2 style="margin: 6px 0 14px; font-size: 20px; font-weight: 400">{{ pedSel.mailAsunto }}</h2>
+<div style="display: flex; flex-direction: column; gap: 10px">
+<sc-for list="{{ mailHilo }}" as="m" hint-placeholder-count="3"><div style="{{ m.caja }}"><span style="font-size: 11px; color: #6f6860">{{ m.de }} · {{ m.hora }}</span><p style="margin: 4px 0 0; font-size: 14px; line-height: 1.55">{{ m.t }}</p></div></sc-for>
+</div>
+<div style="margin-top: 14px; border: 1.5px solid #52448a; border-radius: 14px; padding: 14px; background: #f6f4fb">
+<p class="k" style="color: #52448a">Borrador del agente · requiere revisión</p>
+<p style="margin: 8px 0 0; font-size: 14px; line-height: 1.55">{{ pedSel.borrador }}</p>
+<div style="display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap"><button class="btn-d">Revisar y enviar</button><button class="btn">Editar</button><button onClick="{{ irAnalisis }}" class="btn">Adjuntar análisis</button></div>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ vPedWa }}" hint-placeholder-val="{{ false }}">
+<div class="row" style="align-items: flex-start">
+<div class="card" style="flex: 1 1 280px; padding: 8px">
+<sc-for list="{{ pedidosWa }}" as="p" hint-placeholder-count="3"><button onClick="{{ p.pick }}" style="{{ p.filaMini }}"><span style="display: flex; justify-content: space-between"><strong style="font-weight: 500; font-size: 13px">{{ p.cliente }}</strong><span style="{{ p.mailEst }}">{{ p.mailTxt }}</span></span><span style="display: block; font-size: 12px; color: #6f6860; margin-top: 3px">{{ p.servicio }}</span></button></sc-for>
+</div>
+<div class="card" style="flex: 999 1 520px; background: #efe9e1">
+<div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px"><strong style="font-weight: 500">{{ pedSel.cliente }}</strong><span style="{{ pedSel.mailEst }}">{{ pedSel.mailTxt }}</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px; margin-top: 14px">
+<sc-for list="{{ waHilo }}" as="m" hint-placeholder-count="5"><div style="{{ m.fila }}"><span style="{{ m.burbuja }}">{{ m.t }}</span></div></sc-for>
+</div>
+<p style="margin: 14px 0 0; font-size: 12px; color: #5d564e">Regla: el agente pide el correo antes del tercer mensaje. Con correo, el hilo sigue por mail y aquí solo se avisa.</p>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ vPedAnalisis }}" hint-placeholder-val="{{ false }}">
+<div class="card" style="display: flex; flex-wrap: wrap; gap: 16px; align-items: center">
+<div style="flex: 1 1 420px; min-width: 0">
+<p class="mono" style="margin: 0; font-size: 11px; color: #8a8278">P-2611-012 · ANÁLISIS DE PROYECTO · REV03 · 12-11-2026</p>
+<h2 style="margin: 6px 0 0; font-size: 24px; font-weight: 400">Casa Coyhaique – Vivienda Vargas Mansilla</h2>
+<p class="muted" style="margin: 4px 0 0; font-size: 13px">Fuente: VIVIENDA VARGAS MANSILLA.dwg · Criterio Casa Las Palmas · módulo 2,40 m (CT/CM 1,24 + CB 1,16)</p>
+</div>
+<div style="display: flex; gap: 8px; flex-wrap: wrap"><button class="btn">Descargar informe PDF</button><button onClick="{{ irMail }}" class="btn-d">Enviar al cliente</button></div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px">
+<sc-for list="{{ anStats }}" as="s" hint-placeholder-count="5"><div class="card" style="padding: 14px"><p class="k" style="font-size: 10px">{{ s.t }}</p><p style="margin: 6px 0 0; font-size: 24px">{{ s.v }}</p><p style="margin: 2px 0 0; font-size: 11px; color: #6f6860">{{ s.d }}</p></div></sc-for>
+</div>
+<div class="row" style="align-items: flex-start">
+<div style="flex: 999 1 560px; display: flex; flex-direction: column; gap: 14px; min-width: 0">
+<div class="card" style="padding: 6px 0 0"><h2 class="h2" style="padding: 10px 18px 4px">Compatibilidad por volumen</h2>
+@@TABLA:tablaCompat@@
+</div>
+<div class="card"><div style="display: flex; justify-content: space-between; align-items: baseline"><h2 class="h2">Iteración con el cliente</h2><span class="muted" style="font-size: 12px">{{ iterResumen }}</span></div>
+<div style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px">
+<sc-for list="{{ iteraciones }}" as="i" hint-placeholder-count="5"><div style="display: flex; gap: 12px; align-items: flex-start; padding: 10px 12px; background: #f7f5f1; border-radius: 12px"><span class="mono" style="font-size: 11px; color: #8a8278; min-width: 28px">{{ i.v }}</span><span style="flex: 1; font-size: 13px; line-height: 1.45">{{ i.t }}</span><button onClick="{{ i.pick }}" style="{{ i.estilo }}">{{ i.estado }}</button></div></sc-for>
+</div>
+<p style="margin: 10px 0 0; font-size: 11px; color: #8a8278">Haz clic en el estado para simular la respuesta del cliente. Meta: que el agente proponga estos cambios solo, desde el DWG.</p>
+</div>
+</div>
+<div style="flex: 1 1 320px; display: flex; flex-direction: column; gap: 14px; min-width: 0">
+<div class="card" style="background: #141210; color: #f5f3ee; border: none">
+<p class="k" style="color: #a39b90">Probabilidad de éxito</p>
+<p style="margin: 6px 0 0; font-size: 44px; font-weight: 300">{{ probCoy }}</p>
+<div style="display: flex; flex-direction: column; gap: 6px; margin-top: 10px; font-size: 12px">
+<sc-for list="{{ factores }}" as="f" hint-placeholder-count="6"><span style="display: flex; justify-content: space-between; gap: 8px"><span>{{ f.t }}</span><span style="{{ f.estilo }}">{{ f.v }}</span></span></sc-for>
+</div>
+<p class="k" style="color: #a39b90; margin-top: 18px">Entrada a fábrica</p>
+<p style="margin: 6px 0 0; font-size: 22px">{{ fabCoy }}</p>
+<div style="display: flex; flex-direction: column; gap: 6px; margin-top: 10px">
+<sc-for list="{{ tiempos }}" as="t" hint-placeholder-count="4"><div style="font-size: 11px"><span style="display: flex; justify-content: space-between; color: #cfc8bd"><span>{{ t.t }}</span><span>{{ t.v }}</span></span><div style="height: 5px; background: #2b2723; border-radius: 99px; margin-top: 4px"><div style="{{ t.barra }}"></div></div></div></sc-for>
+</div>
+<p style="margin: 12px 0 0; font-size: 11px; color: #8a8278">Hoy se estima al ojo. El puntaje usa completitud, compatibilidad, normativa e histórico de proyectos.</p>
+</div>
+<div class="card">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><h2 class="h2">Normativa y permisos</h2><button class="btn" style="padding: 5px 10px; min-height: 30px; font-size: 12px">+ Documento</button></div>
+<div style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px">
+<sc-for list="{{ normativa }}" as="n" hint-placeholder-count="6"><div style="display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; padding-bottom: 8px; border-bottom: 1px solid rgba(20,18,16,0.06)"><span style="font-size: 12px; color: #6f6860">{{ n.t }}</span><span style="{{ n.estilo }}">{{ n.e }}</span><span style="font-size: 13px; grid-column: 1 / -1">{{ n.v }}</span></div></sc-for>
+</div>
+<p style="margin: 8px 0 0; font-size: 11px; color: #8a8278">Valores de ejemplo, a confirmar con DOM y calculista.</p>
+</div>
+</div>
+</div>
+</sc-if>
+</sc-if>
+</sc-if>
+
+<!-- ================= 3D FURŌ ================= -->
+<sc-if value="{{ v3d }}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center">
+<div style="display: flex; gap: 4px; background: #fff; border-radius: 12px; padding: 4px; border: 1px solid rgba(20,18,16,0.08)">
+<sc-for list="{{ proyectos3d }}" as="p" hint-placeholder-count="3"><button onClick="{{ p.pick }}" style="{{ p.estilo }}">{{ p.t }}</button></sc-for>
+</div>
+<div style="display: flex; gap: 4px; background: #fff; border-radius: 12px; padding: 4px; border: 1px solid rgba(20,18,16,0.08)">
+<sc-for list="{{ lods }}" as="l" hint-placeholder-count="2"><button onClick="{{ l.pick }}" style="{{ l.estilo }}">{{ l.t }}</button></sc-for>
+</div>
+<span style="margin-left: auto; display: inline-flex; align-items: center; gap: 8px; font-size: 13px; background: #fff; border-radius: 99px; padding: 8px 14px; border: 1px solid rgba(20,18,16,0.08)"><span style="width: 8px; height: 8px; border-radius: 50%; background: #3d8b5a"></span>Revit 2025 · PC FURŌ-01 · conector en línea</span>
+</div>
+<div class="row" style="align-items: stretch">
+<div class="card" style="flex: 1 1 230px; max-width: 280px; padding: 14px">
+<p class="k">Familias FURŌ</p>
+<div style="display: flex; flex-direction: column; gap: 4px; margin-top: 10px">
+<sc-for list="{{ familias }}" as="f" hint-placeholder-count="9"><button onClick="{{ f.pick }}" style="{{ f.estilo }}"><span style="{{ f.sw }}"></span><span style="flex: 1; text-align: left"><span style="display: block; font-size: 13px">{{ f.cod }}</span><span style="display: block; font-size: 11px; color: #6f6860">{{ f.t }}</span></span><span class="mono" style="font-size: 11px; color: #6f6860">{{ f.n }}</span></button></sc-for>
+</div>
+<p style="margin: 10px 0 0; font-size: 11px; color: #8a8278">Clic para aislar una familia en el modelo.</p>
+</div>
+<div style="flex: 999 1 460px; min-width: 0; background: #1b1916; border-radius: 18px; position: relative; overflow: hidden; min-height: 470px">
+<svg viewBox="0 0 660 400" role="img" aria-label="Modelo Revit con componentes por familia" style="width: 100%; height: 100%; display: block">
+@@MODELO@@
+</svg>
+<div style="position: absolute; left: 16px; top: 14px; color: #f5f3ee"><p class="mono" style="margin: 0; font-size: 11px; color: #a39b90">{{ p3dNombre }} · {{ lodTxt }}</p><p style="margin: 4px 0 0; font-size: 15px">{{ famSelTxt }}</p></div>
+<div style="position: absolute; left: 16px; right: 16px; bottom: 14px; display: flex; flex-wrap: wrap; gap: 8px">
+<sc-for list="{{ jobs }}" as="j" hint-placeholder-count="3"><span style="background: rgba(245,243,238,0.08); border: 1px solid rgba(245,243,238,0.14); color: #f5f3ee; border-radius: 10px; padding: 8px 10px; font-size: 12px; flex: 1 1 180px"><span style="display: flex; justify-content: space-between"><span>{{ j.t }}</span><span class="mono">{{ j.p }}</span></span><span style="display: block; height: 3px; background: rgba(255,255,255,0.1); border-radius: 99px; margin-top: 6px"><span style="{{ j.barra }}"></span></span></span></sc-for>
+</div>
+</div>
+<div class="card" style="flex: 1 1 300px; padding: 6px 0 0">
+<div style="padding: 10px 18px 2px; display: flex; justify-content: space-between"><h2 class="h2">Cubicación del modelo</h2><span class="mono muted" style="font-size: 11px">{{ lodTxt }}</span></div>
+@@TABLA:tablaCub3d@@
+<div style="padding: 12px 18px 16px; display: flex; gap: 8px; flex-wrap: wrap"><button onClick="{{ irCotizar }}" class="btn-d">Pasar a cotización</button><button class="btn">Exportar IFC</button></div>
+</div>
+</div>
+</sc-if>
+
+<!-- ================= COTIZACIONES ================= -->
+<sc-if value="{{ vCot }}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center">
+<div role="tablist" style="display: flex; gap: 4px; background: #fff; border-radius: 12px; padding: 4px; border: 1px solid rgba(20,18,16,0.08)">
+<sc-for list="{{ subCot }}" as="s" hint-placeholder-count="4"><button role="tab" onClick="{{ s.pick }}" style="{{ s.estilo }}">{{ s.t }}</button></sc-for>
+</div>
+<span class="muted" style="font-size: 13px; margin-left: 6px">Casa Coyhaique · 392 m²</span>
+<div style="margin-left: auto; display: flex; flex-wrap: wrap; gap: 6px">
+<sc-for list="{{ alcances }}" as="a" hint-placeholder-count="4"><button onClick="{{ a.pick }}" style="{{ a.estilo }}">{{ a.t }}</button></sc-for>
+</div>
+</div>
+
+<sc-if value="{{ vCotRes }}" hint-placeholder-val="{{ true }}">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px">
+<sc-for list="{{ bloquesCot }}" as="b" hint-placeholder-count="5"><div style="{{ b.caja }}">
+<div style="display: flex; justify-content: space-between; gap: 6px"><span class="mono" style="font-size: 10px; color: #8a8278">{{ b.n }}</span><span style="{{ b.chip }}">{{ b.estado }}</span></div>
+<p style="margin: 10px 0 0; font-size: 15px; font-weight: 500">{{ b.t }}</p>
+<p style="margin: 4px 0 0; font-size: 12px; color: #6f6860; line-height: 1.45; min-height: 34px">{{ b.d }}</p>
+<p style="margin: 12px 0 0; font-size: 30px; font-weight: 400">{{ b.uf }} <span style="font-size: 13px; color: #6f6860">UF</span></p>
+<p class="mono" style="margin: 2px 0 0; font-size: 11px; color: #6f6860">{{ b.m2 }} UF/m²</p>
+</div></sc-for>
+</div>
+<div class="card" style="display: flex; flex-wrap: wrap; gap: 18px; align-items: center; background: #141210; color: #f5f3ee; border: none">
+<div style="flex: 1 1 260px"><p class="k" style="color: #a39b90">Total {{ alcanceNombre }}</p><p style="margin: 6px 0 0; font-size: 42px; font-weight: 300">{{ totalCot }} UF <span style="font-size: 16px; color: #a39b90">+ IVA</span></p><p class="mono" style="margin: 2px 0 0; font-size: 12px; color: #a39b90">{{ totalM2 }} UF/m² · valores de ejemplo</p></div>
+<div style="flex: 2 1 360px; display: flex; height: 14px; border-radius: 99px; overflow: hidden; gap: 2px">
+<sc-for list="{{ barraCot }}" as="s" hint-placeholder-count="5"><span style="{{ s }}"></span></sc-for>
+</div>
+<p style="flex: 1 1 100%; margin: 0; font-size: 12px; color: #a39b90">La misma cotización crece de Estructuras a Obra completa sin rehacerla: se suman bloques, no se recalcula todo.</p>
+</div>
+</sc-if>
+
+<sc-if value="{{ vCotCub }}" hint-placeholder-val="{{ false }}">
+<div class="card" style="padding: 6px 0 0"><h2 class="h2" style="padding: 10px 18px 4px">Cubicación por volumen · criterio Las Palmas</h2>
+@@TABLA:tablaCubVol@@
+<p style="margin: 0; padding: 10px 18px 16px; font-size: 12px; color: #6f6860">Fuente: informe REV03. CT = componente de techo · CB = bastidor · CM = componente de muro.</p>
+</div>
+</sc-if>
+
+<sc-if value="{{ vCotApu }}" hint-placeholder-val="{{ false }}">
+<div class="card" style="padding: 6px 0 0"><div style="padding: 10px 18px 4px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px"><h2 class="h2">Análisis de precios unitarios</h2><span class="muted" style="font-size: 12px">UF · rendimientos de fábrica actuales · ejemplo</span></div>
+@@TABLA:tablaApu@@
+</div>
+</sc-if>
+
+<sc-if value="{{ vCotLink }}" hint-placeholder-val="{{ false }}">
+<div class="row" style="align-items: flex-start">
+<div class="card" style="flex: 999 1 520px; padding: 0; overflow: hidden">
+<div style="background: #f0eee9; padding: 10px 14px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid rgba(20,18,16,0.06)"><span style="width: 10px; height: 10px; border-radius: 50%; background: #d9d4ca"></span><span style="width: 10px; height: 10px; border-radius: 50%; background: #d9d4ca"></span><span class="mono" style="flex: 1; background: #fff; border-radius: 8px; padding: 6px 10px; font-size: 12px; color: #5d564e">furo.company/propuestas/casa-coyhaique-4f2a1c</span></div>
+<div style="padding: 28px; background: #f5f3ee">
+<p class="k">Propuesta FURŌ · Casa Coyhaique</p>
+<h2 style="margin: 8px 0 0; font-size: 32px; font-weight: 400">Tu casa en <em style="font-family: 'Cormorant Garamond', serif">madera industrializada</em></h2>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 18px">
+<sc-for list="{{ bloquesCot }}" as="b" hint-placeholder-count="5"><div style="{{ b.mini }}"><span style="font-size: 12px; color: #6f6860">{{ b.t }}</span><span style="display: block; font-size: 20px; margin-top: 4px">{{ b.uf }} UF</span></div></sc-for>
+</div>
+<p style="margin: 16px 0 0; font-size: 13px; color: #5d564e">Alcance mostrado: <strong style="font-weight: 500">{{ alcanceNombre }}</strong> · {{ totalCot }} UF + IVA</p>
+</div>
+</div>
+<div style="flex: 1 1 300px; display: flex; flex-direction: column; gap: 14px">
+<div class="card"><p class="k">Actividad del cliente</p>
+<div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px; font-size: 13px">
+<span>📨 Enviada 20-11 · 18:20</span><span>👁 Vista 3 veces · última 23-11 21:40</span><span>⏱ 6 min en "Obra completa"</span><span style="color: #52448a">✦ El agente sugiere ofrecer Obra completa</span>
+</div></div>
+<div class="card"><p class="k">Ejemplo real</p><p style="margin: 8px 0 0; font-size: 13px; line-height: 1.5">El link sigue el formato de <a href="https://www.furo.company/propuestas/colonia-suiza-c9feec.html">colonia-suiza-c9feec</a>, pero se arma solo desde la cotización y puede evolucionar a proyecto completo.</p><a href="Cliente.dc.html" class="btn" style="display: inline-block; margin-top: 12px; text-decoration: none">Ver portal del cliente</a></div>
+</div>
+</div>
+</sc-if>
+</sc-if>
+
+<!-- ================= CÁLCULO ================= -->
+<sc-if value="{{ vCalc }}" hint-placeholder-val="{{ false }}">
+<div class="card" style="display: flex; flex-wrap: wrap; gap: 14px; align-items: center">
+<div style="flex: 1 1 360px"><p class="mono" style="margin: 0; font-size: 11px; color: #8a8278">MESA DEL CALCULISTA · VENTA APROBADA 21-11</p><h2 style="margin: 4px 0 0; font-size: 22px; font-weight: 400">Casa Coyhaique · 6 volúmenes · 392 m²</h2></div>
+<div style="display: flex; gap: 6px; flex-wrap: wrap">
+<sc-for list="{{ firmas }}" as="f" hint-placeholder-count="4"><span style="{{ f.estilo }}">{{ f.t }}</span></sc-for>
+</div>
+</div>
+<div class="row" style="align-items: flex-start">
+<div class="card" style="flex: 1 1 300px">
+<h2 class="h2">Parámetros entregados</h2><p class="muted" style="margin: 4px 0 10px; font-size: 12px">Se cargan solos desde el pedido y la normativa</p>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<sc-for list="{{ parametros }}" as="p" hint-placeholder-count="8"><div style="display: flex; justify-content: space-between; gap: 10px; font-size: 13px; padding-bottom: 8px; border-bottom: 1px solid rgba(20,18,16,0.06)"><span class="muted">{{ p.t }}</span><span style="{{ p.estilo }}">{{ p.v }}</span></div></sc-for>
+</div>
+</div>
+<div style="flex: 1 1 300px; display: flex; flex-direction: column; gap: 14px">
+<div class="card"><h2 class="h2">Programas conectados</h2>
+<div style="display: flex; flex-direction: column; gap: 10px; margin-top: 12px">
+<sc-for list="{{ programas }}" as="p" hint-placeholder-count="3"><div style="display: flex; gap: 12px; align-items: center; padding: 12px; background: #f7f5f1; border-radius: 12px"><span style="{{ p.logo }}">{{ p.ini }}</span><span style="flex: 1"><span style="display: block; font-size: 14px; font-weight: 500">{{ p.t }}</span><span style="display: block; font-size: 12px; color: #6f6860">{{ p.d }}</span></span><span style="{{ p.estEst }}">{{ p.e }}</span></div></sc-for>
+</div></div>
+<div class="card"><h2 class="h2">Iteraciones</h2>
+<div style="display: flex; flex-direction: column; gap: 0; margin-top: 12px">
+<sc-for list="{{ iterCalc }}" as="i" hint-placeholder-count="4"><div style="display: flex; gap: 10px"><span style="display: flex; flex-direction: column; align-items: center"><span style="{{ i.punto }}"></span><span style="flex: 1; width: 1px; background: rgba(20,18,16,0.12); min-height: 18px"></span></span><span style="padding-bottom: 12px"><span class="mono" style="font-size: 10px; color: #8a8278">{{ i.f }} · {{ i.quien }}</span><span style="display: block; font-size: 13px; margin-top: 2px">{{ i.t }}</span></span></div></sc-for>
+</div></div>
+</div>
+<div class="card" style="flex: 1 1 320px">
+<h2 class="h2">Puntos a verificar</h2><p class="muted" style="margin: 4px 0 10px; font-size: 12px">Vienen del análisis de planos</p>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<sc-for list="{{ verificar }}" as="v" hint-placeholder-count="6"><button onClick="{{ v.pick }}" style="{{ v.caja }}"><span style="flex: 1; text-align: left"><span style="display: block; font-size: 13px; font-weight: 500">{{ v.t }}</span><span style="display: block; font-size: 12px; color: #6f6860; margin-top: 2px">{{ v.d }}</span></span><span style="{{ v.chip }}">{{ v.e }}</span></button></sc-for>
+</div>
+<button onClick="{{ validarCalc }}" style="{{ validarEst }}">{{ validarTxt }}</button>
+</div>
+</div>
+</sc-if>
+
+<!-- ================= FABRICACIÓN ================= -->
+<sc-if value="{{ vFab }}" hint-placeholder-val="{{ false }}">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px">
+<sc-for list="{{ mesas }}" as="m" hint-placeholder-count="4"><div class="card">
+<div style="display: flex; justify-content: space-between; align-items: center"><strong style="font-weight: 500">{{ m.t }}</strong><span style="{{ m.chip }}">{{ m.e }}</span></div>
+<p style="margin: 8px 0 0; font-size: 13px">{{ m.proy }}</p>
+<p class="mono" style="margin: 2px 0 0; font-size: 11px; color: #6f6860">{{ m.config }}</p>
+<div class="bar" style="margin-top: 12px; height: 8px"><div style="{{ m.barra }}"></div></div>
+<div style="display: flex; justify-content: space-between; margin-top: 8px; font-size: 12px; color: #6f6860"><span>{{ m.pzas }}</span><span>{{ m.fin }}</span></div>
+</div></sc-for>
+</div>
+<div class="row" style="align-items: flex-start">
+<div class="card" style="flex: 999 1 560px; padding: 6px 0 0"><div style="padding: 10px 18px 4px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px"><h2 class="h2">Piezas · Colonia Suiza</h2><span class="muted" style="font-size: 12px">tiempo estimado según rendimientos actuales</span></div>
+@@TABLA:tablaPiezas@@
+</div>
+<div style="flex: 1 1 300px; display: flex; flex-direction: column; gap: 14px">
+<div class="card"><h2 class="h2">Validación de piezas</h2><p class="muted" style="margin: 4px 0 10px; font-size: 12px">{{ qcPieza }}</p>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<sc-for list="{{ qc }}" as="q" hint-placeholder-count="4"><button onClick="{{ q.pick }}" style="{{ q.estilo }}"><span>{{ q.icono }}</span><span style="flex: 1; text-align: left">{{ q.t }}</span></button></sc-for>
+</div>
+<button onClick="{{ aprobarQc }}" style="{{ qcBtnEst }}">{{ qcBtnTxt }}</button>
+</div>
+<div class="card"><h2 class="h2">Inventario de planta</h2>
+<div style="display: flex; flex-direction: column; gap: 10px; margin-top: 12px">
+<sc-for list="{{ inventario }}" as="i" hint-placeholder-count="5"><div><div style="display: flex; justify-content: space-between; font-size: 13px"><span>{{ i.t }}</span><span style="{{ i.estilo }}">{{ i.v }}</span></div><div class="bar" style="margin-top: 5px"><div style="{{ i.barra }}"></div></div></div></sc-for>
+</div></div>
+</div>
+</div>
+</sc-if>
+
+<!-- ================= LOGÍSTICA ================= -->
+<sc-if value="{{ vLog }}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center">
+<div style="display: flex; gap: 4px; background: #fff; border-radius: 12px; padding: 4px; border: 1px solid rgba(20,18,16,0.08)">
+<sc-for list="{{ camionesTab }}" as="c" hint-placeholder-count="4"><button onClick="{{ c.pick }}" style="{{ c.estilo }}">{{ c.t }}</button></sc-for>
+</div>
+<span class="muted" style="font-size: 13px">Colonia Suiza · lo último que se carga es lo primero que se iza</span>
+<span style="margin-left: auto; font-size: 13px; background: #fff; border-radius: 99px; padding: 8px 14px; border: 1px solid rgba(20,18,16,0.08)">Plano de montaje vs piezas: <strong style="font-weight: 500">226 / 228</strong> · faltan CT02-07 y CB-14</span>
+</div>
+<div class="card" style="padding: 22px">
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; align-items: baseline"><h2 class="h2">{{ camSel.t }} · {{ camSel.d }}</h2><span class="mono muted" style="font-size: 12px">{{ camSel.peso }} · {{ camSel.ruta }}</span></div>
+<div style="overflow-x: auto; margin-top: 18px">
+<div style="min-width: 760px; display: flex; align-items: flex-end; gap: 6px; position: relative; padding-bottom: 34px">
+<div style="flex: 1; border: 2px solid #3b3631; border-radius: 10px 4px 4px 10px; padding: 8px; background: #f7f5f1; display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px">
+<sc-for list="{{ slots }}" as="s" hint-placeholder-count="12"><button onClick="{{ s.pick }}" style="{{ s.estilo }}"><span style="display: flex; justify-content: space-between; font-size: 11px"><span class="mono">{{ s.pos }}</span><span>{{ s.orden }}</span></span><span style="display: block; font-size: 12px; font-weight: 500; margin-top: 6px">{{ s.t }}</span><span style="display: block; font-size: 11px; opacity: 0.8; margin-top: 2px">{{ s.peso }}</span></button></sc-for>
+</div>
+<div style="width: 120px; height: 150px; background: #f5f3ee; border: 2px solid #3b3631; border-radius: 6px 34px 6px 6px; position: relative; flex: 0 0 auto"><span style="position: absolute; right: 12px; top: 16px; width: 54px; height: 44px; background: #4d5a63; border-radius: 4px 22px 4px 4px"></span><span class="mono" style="position: absolute; left: 10px; bottom: 10px; font-size: 10px; color: #6f6860">FURŌ</span></div>
+<sc-for list="{{ ruedas }}" as="r" hint-placeholder-count="5"><span style="{{ r }}"></span></sc-for>
+</div>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 14px; margin-top: 6px; font-size: 12px">
+<sc-for list="{{ leyendaIzaje }}" as="l" hint-placeholder-count="4"><span style="display: inline-flex; align-items: center; gap: 6px"><span style="{{ l.sw }}"></span>{{ l.t }}</span></sc-for>
+</div>
+<p style="margin: 14px 0 0; font-size: 13px; padding: 12px 14px; border-radius: 12px; background: #f6f4fb">{{ slotDetalle }}</p>
+</div>
+<div class="card" style="padding: 6px 0 0"><h2 class="h2" style="padding: 10px 18px 4px">Despachos</h2>
+@@TABLA:tablaDespachos@@
+</div>
+</sc-if>
+
+<!-- ================= MONTAJE ================= -->
+<sc-if value="{{ vMon }}" hint-placeholder-val="{{ false }}">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px">
+<sc-for list="{{ montajeKpi }}" as="k" hint-placeholder-count="4"><div class="card"><p class="k">{{ k.t }}</p><p style="margin: 8px 0 0; font-size: 28px">{{ k.v }}</p><p style="margin: 2px 0 0; font-size: 12px; color: #6f6860">{{ k.d }}</p></div></sc-for>
+</div>
+<div class="row" style="align-items: flex-start">
+<div style="flex: 999 1 520px; min-width: 0; background: #1b1916; border-radius: 18px; position: relative; overflow: hidden; min-height: 430px">
+<svg viewBox="0 0 660 400" role="img" aria-label="Plano de montaje con piezas montadas y pendientes" style="width: 100%; display: block">
+@@MONTAJE@@
+</svg>
+<div style="position: absolute; left: 16px; top: 14px; color: #f5f3ee"><p class="mono" style="margin: 0; font-size: 11px; color: #a39b90">COLONIA SUIZA · LÁMINA M-07 · DÍA 4 DE 7</p><p style="margin: 4px 0 0; font-size: 15px">Faldón norte: CT01 a CT05 montados</p></div>
+<div style="position: absolute; left: 16px; bottom: 14px; display: flex; flex-wrap: wrap; gap: 12px; font-size: 12px; color: #f5f3ee">
+<span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; border-radius: 3px; background: #6f9a72"></span>Montado</span>
+<span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; border-radius: 3px; background: #8b7fc0"></span>En izaje</span>
+<span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; border-radius: 3px; background: #5d564e"></span>Pendiente</span>
+</div>
+</div>
+<div style="flex: 1 1 320px; display: flex; flex-direction: column; gap: 14px">
+<div class="card"><h2 class="h2">Pregúntale al modelo</h2>
+<div style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px">
+<sc-for list="{{ preguntas }}" as="q" hint-placeholder-count="3"><div style="{{ q.caja }}"><span style="font-size: 11px; color: #6f6860">{{ q.de }}</span><p style="margin: 3px 0 0; font-size: 13px; line-height: 1.45">{{ q.t }}</p></div></sc-for>
+</div>
+<div style="display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap">
+<sc-for list="{{ sugPreg }}" as="s" hint-placeholder-count="2"><button onClick="{{ s.pick }}" class="btn" style="font-size: 12px; padding: 7px 10px; min-height: 32px">{{ s.t }}</button></sc-for>
+</div>
+</div>
+<div class="card"><h2 class="h2">Piezas por camión</h2>
+<div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px">
+<sc-for list="{{ llegadas }}" as="l" hint-placeholder-count="4"><div style="display: flex; justify-content: space-between; font-size: 13px"><span>{{ l.t }}</span><span style="{{ l.estilo }}">{{ l.e }}</span></div></sc-for>
+</div></div>
+<div class="card"><h2 class="h2">Láminas y anotaciones</h2>
+<div style="display: flex; flex-direction: column; gap: 6px; margin-top: 10px; font-size: 13px">
+<span>⬇ M-01 a M-12 · planos de montaje (PDF)</span><span>✎ 3 anotaciones de obra en M-07</span><span>📷 Foto unión cumbrera eje 5 · subida por jefe de obra</span>
+</div></div>
+</div>
+</div>
+</sc-if>
+
+<!-- ================= PLANIFICACIÓN ================= -->
+<sc-if value="{{ vPlan }}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center">
+<div style="display: flex; gap: 4px; background: #fff; border-radius: 12px; padding: 4px; border: 1px solid rgba(20,18,16,0.08)">
+<sc-for list="{{ planModos }}" as="m" hint-placeholder-count="2"><button onClick="{{ m.pick }}" style="{{ m.estilo }}">{{ m.t }}</button></sc-for>
+</div>
+<div style="margin-left: auto; display: flex; flex-wrap: wrap; gap: 12px; font-size: 12px">
+<sc-for list="{{ fasesLeyenda }}" as="f" hint-placeholder-count="7"><span style="display: inline-flex; align-items: center; gap: 6px"><span style="{{ f.sw }}"></span>{{ f.t }}</span></sc-for>
+</div>
+</div>
+<div class="card" style="padding: 18px 18px 22px; overflow-x: auto">
+<div style="min-width: 820px">
+<div style="display: grid; grid-template-columns: 190px 1fr; align-items: end; padding-bottom: 8px; border-bottom: 1px solid rgba(20,18,16,0.08)">
+<span class="k">{{ planCab }}</span>
+<div style="display: grid; grid-template-columns: repeat(6, 1fr)"><sc-for list="{{ meses }}" as="m" hint-placeholder-count="6"><span class="mono" style="font-size: 11px; color: #6f6860">{{ m }}</span></sc-for></div>
+</div>
+<sc-for list="{{ gantt }}" as="g" hint-placeholder-count="5"><div style="display: grid; grid-template-columns: 190px 1fr; align-items: center; min-height: 46px; border-bottom: 1px solid rgba(20,18,16,0.05)">
+<span><span style="display: block; font-size: 13px; font-weight: 500">{{ g.t }}</span><span style="display: block; font-size: 11px; color: #6f6860">{{ g.d }}</span></span>
+<div style="position: relative; height: 26px; background-image: linear-gradient(90deg, rgba(20,18,16,0.06) 1px, transparent 1px); background-size: 16.666% 100%">
+<sc-for list="{{ g.barras }}" as="b" hint-placeholder-count="4"><span title="{{ b.t }}" style="{{ b.s }}">{{ b.l }}</span></sc-for>
+<span style="{{ hoyEst }}"></span>
+</div>
+</div></sc-for>
+</div>
+</div>
+<p style="margin: 0; font-size: 12px; color: #6f6860">Plazos de proyecto a montaje con los parámetros actuales (días hábiles). En Obra completa se suman terminaciones y especialidades.</p>
+</sc-if>
+
+<!-- ================= VENTA ================= -->
+<sc-if value="{{ vVenta }}" hint-placeholder-val="{{ false }}">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px">
+<sc-for list="{{ ventaKpi }}" as="k" hint-placeholder-count="4"><div class="card"><p class="k">{{ k.t }}</p><p style="margin: 8px 0 0; font-size: 30px">{{ k.v }} <span style="font-size: 13px; color: #6f6860">UF</span></p><p style="margin: 2px 0 0; font-size: 12px; color: #6f6860">{{ k.d }}</p></div></sc-for>
+</div>
+<div class="card">
+<div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px"><h2 class="h2">Facturación estimada vs real</h2>
+<div style="display: flex; gap: 14px; font-size: 12px"><span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; border-radius: 3px; background: #d9d4f0"></span>Estimada</span><span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; border-radius: 3px; background: #3a2d5e"></span>Real</span></div></div>
+<div style="display: flex; align-items: flex-end; gap: 14px; height: 220px; margin-top: 18px; padding: 0 4px; border-bottom: 1px solid rgba(20,18,16,0.12)">
+<sc-for list="{{ ventaMeses }}" as="m" hint-placeholder-count="8"><div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 4px">
+<span class="mono" style="font-size: 10px; color: #6f6860">{{ m.lbl }}</span>
+<div style="display: flex; align-items: flex-end; gap: 3px; width: 100%; justify-content: center; height: 180px"><span title="Estimada {{ m.e }} UF" style="{{ m.be }}"></span><span title="Real {{ m.r }} UF" style="{{ m.br }}"></span></div>
+</div></sc-for>
+</div>
+<div style="display: flex; gap: 14px; padding: 6px 4px 0"><sc-for list="{{ ventaMeses }}" as="m" hint-placeholder-count="8"><span class="mono" style="flex: 1; text-align: center; font-size: 11px; color: #6f6860">{{ m.m }}</span></sc-for></div>
+</div>
+<div class="row" style="align-items: flex-start">
+<div class="card" style="flex: 1 1 460px; padding: 6px 0 0"><h2 class="h2" style="padding: 10px 18px 4px">Contribución por proyecto</h2>
+@@TABLA:tablaContrib@@
+</div>
+<div class="card" style="flex: 1 1 460px; padding: 6px 0 0"><h2 class="h2" style="padding: 10px 18px 4px">Hitos de cobro</h2>
+@@TABLA:tablaHitos@@
+<p style="margin: 0; padding: 10px 18px 16px; font-size: 12px; color: #6f6860">Hitos tipo: 30 % firma · 40 % salida de fábrica · 25 % fin de montaje · 5 % recepción. Fechas desde Planificación.</p>
+</div>
+</div>
+</sc-if>
+
+<!-- ================= ACCESOS ================= -->
+<sc-if value="{{ vAccesos }}" hint-placeholder-val="{{ false }}">
+<div class="card">
+<div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; align-items: baseline"><h2 class="h2">Permisos por nivel</h2><span class="muted" style="font-size: 12px">Haz clic en una celda para dar o quitar acceso. El Administrador siempre ve todo.</span></div>
+<div style="overflow-x: auto; margin-top: 14px"><div style="min-width: 860px; display: flex; flex-direction: column; gap: 6px">
+<div style="{{ accGrid }}"><sc-for list="{{ accCols }}" as="c" hint-placeholder-count="11"><span style="font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: #8a8278; text-align: center">{{ c }}</span></sc-for></div>
+<sc-for list="{{ accFilas }}" as="r" hint-placeholder-count="7"><div style="{{ accGrid }}">
+<span><span style="display: block; font-size: 13px; font-weight: 500">{{ r.nombre }}</span><span style="display: block; font-size: 11px; color: #6f6860">{{ r.alcance }}</span></span>
+<sc-for list="{{ r.celdas }}" as="x" hint-placeholder-count="10"><button onClick="{{ x.pick }}" style="{{ x.estilo }}">{{ x.t }}</button></sc-for>
+</div></sc-for>
+</div></div>
+</div>
+<div class="card">
+<div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; align-items: center"><h2 class="h2">Usuarios</h2><button class="btn-d">+ Invitar usuario</button></div>
+<div style="display: flex; flex-direction: column; margin-top: 10px">
+<sc-for list="{{ usuarios }}" as="u" hint-placeholder-count="7"><div style="display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(20,18,16,0.06); flex-wrap: wrap">
+<span style="width: 34px; height: 34px; border-radius: 50%; background: #ece9e2; display: inline-flex; align-items: center; justify-content: center; font-size: 12px">{{ u.ini }}</span>
+<span style="flex: 1 1 200px"><span style="display: block; font-size: 14px">{{ u.n }}</span><span style="display: block; font-size: 12px; color: #6f6860">{{ u.m }}</span></span>
+<span style="{{ u.chip }}">{{ u.r }}</span>
+</div></sc-for>
+</div>
+<p style="margin: 10px 0 0; font-size: 11px; color: #8a8278">Usuarios y correos de ejemplo. El calculista externo entra con acceso temporal solo a sus proyectos.</p>
+</div>
+</sc-if>
+
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1040}}'>
+@@SCRIPT@@
+</script>
+</body>
+</html>

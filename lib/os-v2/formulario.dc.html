@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Formulario FURŌ por servicio</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&amp;family=JetBrains+Mono:wght@400;500&amp;family=Cormorant+Garamond:ital,wght@0,400;1,400&amp;display=swap">
+<style>
+body{margin:0;background:#e9e6df}
+a{color:#3a2d5e}
+button{font-family:inherit}
+input,select,textarea{font-family:inherit}
+.f-in{width:100%;box-sizing:border-box;border:1px solid rgba(20,18,16,0.16);border-radius:10px;padding:12px 14px;font-size:14px;background:#fff;color:#141210}
+.f-lb{display:block;font-size:10px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:#6f6860;margin-bottom:7px}
+</style>
+</helmet>
+<div style="min-height: 940px; background: #e9e6df; color: #141210; font-family: 'DM Sans', sans-serif">
+
+<header style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 32px">
+<span style="font-size: 20px; font-weight: 500; letter-spacing: 0.08em">FURŌ</span>
+<div role="tablist" aria-label="Canal de ingreso" style="display: flex; gap: 4px; background: #fff; border-radius: 999px; padding: 4px; border: 1px solid rgba(20,18,16,0.1)">
+<sc-for list="{{ canales }}" as="c" hint-placeholder-count="2">
+<button role="tab" onClick="{{ c.pick }}" style="{{ c.estilo }}">{{ c.nombre }}</button>
+</sc-for>
+</div>
+<a href="OS.dc.html" style="font-size: 13px">Ver cómo llega a FURŌ OS → Pedidos</a>
+</header>
+
+<!-- ===================== FORMULARIO ===================== -->
+<sc-if value="{{ vForm }}" hint-placeholder-val="{{ true }}">
+<div style="max-width: 1180px; margin: 0 auto; padding: 8px 24px 48px; display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start">
+
+<section style="flex: 999 1 640px; min-width: 0; background: #fff; border-radius: 20px; box-shadow: 0 20px 60px rgba(20,18,16,0.08); overflow: hidden">
+<div style="padding: 26px 30px 20px; border-bottom: 1px solid rgba(20,18,16,0.08)">
+<p style="margin: 0; font-size: 11px; font-weight: 500; letter-spacing: 0.2em; color: #52448a">HABLEMOS DE TU PROYECTO</p>
+<h1 style="margin: 6px 0 0; font-size: 34px; font-weight: 400">Cotiza con FURŌ</h1>
+</div>
+
+<sc-if value="{{ noEnviado }}" hint-placeholder-val="{{ true }}">
+<div style="padding: 24px 30px 28px; display: flex; flex-direction: column; gap: 22px">
+
+<fieldset style="border: none; margin: 0; padding: 0">
+<legend class="f-lb" style="padding: 0">01 · ¿Qué necesitas? *</legend>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px">
+<sc-for list="{{ servicios }}" as="s" hint-placeholder-count="4">
+<button onClick="{{ s.pick }}" aria-pressed="{{ s.activo }}" style="{{ s.estilo }}">
+<span style="display: flex; justify-content: space-between; align-items: center"><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #8a8278">{{ s.num }}</span><span style="{{ s.check }}">✓</span></span>
+<span style="display: block; font-size: 16px; font-weight: 500; margin-top: 8px">{{ s.nombre }}</span>
+<span style="display: block; font-size: 12px; color: #6f6860; margin-top: 6px; line-height: 1.45">{{ s.desc }}</span>
+<span style="{{ s.capas }}">{{ s.incluye }}</span>
+</button>
+</sc-for>
+</div>
+</fieldset>
+
+<div>
+<p class="f-lb" style="margin-bottom: 12px">02 · Tus datos</p>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px">
+<label><span class="f-lb">Nombre *</span><input class="f-in" placeholder="Camila Rojas"></label>
+<label><span class="f-lb">Empresa</span><input class="f-in" placeholder="Opcional"></label>
+<label><span class="f-lb">Correo *</span><input class="f-in" type="email" placeholder="nombre@correo.cl"></label>
+<label><span class="f-lb">Celular *</span><input class="f-in" placeholder="+56 9 1234 5678"></label>
+<label><span class="f-lb">Soy *</span><select class="f-in"><option>Propietario</option><option>Oficina de arquitectura</option><option>Constructora</option><option>Inmobiliaria</option></select></label>
+<label><span class="f-lb">¿Cuándo quieres comenzar? *</span><select class="f-in"><option>Próximos 3 meses</option><option>3 a 6 meses</option><option>6 a 12 meses</option><option>1 año o más</option></select></label>
+</div>
+</div>
+
+<div>
+<p class="f-lb" style="margin-bottom: 12px">03 · El proyecto</p>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px">
+<label><span class="f-lb">Comuna o ubicación *</span><input class="f-in" placeholder="Ej.: Coyhaique, sector Río Polux"></label>
+<label><span class="f-lb">Superficie aproximada</span><input class="f-in" placeholder="m²"></label>
+<label><span class="f-lb">¿Qué tienes hoy?</span><select class="f-in"><option>Planos de arquitectura</option><option>Anteproyecto o croquis</option><option>Solo la idea</option><option>Permiso aprobado</option></select></label>
+<label><span class="f-lb">¿Tienes terreno?</span><select class="f-in"><option>Sí, urbano</option><option>Sí, rural</option><option>En búsqueda</option></select></label>
+</div>
+<div style="margin-top: 14px; border: 1.5px dashed rgba(82,68,138,0.4); border-radius: 12px; padding: 18px; display: flex; flex-wrap: wrap; align-items: center; gap: 14px; background: #faf9f6">
+<span style="width: 40px; height: 40px; border-radius: 10px; background: #efecf7; display: inline-flex; align-items: center; justify-content: center; color: #52448a; font-size: 20px">↑</span>
+<span style="flex: 1 1 260px; font-size: 13px; color: #4a443d"><strong style="font-weight: 500; color: #141210">Adjunta planos, croquis o fotos</strong><br>PDF, DWG, JPG. Con planos, FURŌ te devuelve un análisis de modulación.</span>
+</div>
+<label style="display: block; margin-top: 14px"><span class="f-lb">Cuéntanos qué necesitas</span><textarea class="f-in" rows="3" placeholder="{{ placeholderMsg }}"></textarea></label>
+</div>
+
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 16px">
+<button onClick="{{ enviar }}" style="background: #3a2d5e; color: #fff; border: none; border-radius: 10px; padding: 15px 26px; font-size: 13px; font-weight: 500; letter-spacing: 0.14em; cursor: pointer; min-height: 48px">ENVIAR SOLICITUD →</button>
+<button onClick="{{ irWa }}" style="background: none; border: none; color: #1f8a4c; font-size: 14px; cursor: pointer; padding: 10px 0; min-height: 44px">💬 ¿Prefieres conversar? Escríbenos por WhatsApp</button>
+</div>
+<p style="margin: -8px 0 0; font-size: 12px; color: #8a8278">Al enviar aceptas nuestra <a href="#">política de privacidad</a>.</p>
+</div>
+</sc-if>
+
+<sc-if value="{{ enviado }}" hint-placeholder-val="{{ false }}">
+<div style="padding: 40px 30px 44px">
+<p style="margin: 0; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #52448a">PEDIDO P-2611-014 · {{ servicioNombre }}</p>
+<h2 style="margin: 10px 0 0; font-size: 30px; font-weight: 400">Recibido, Camila.</h2>
+<p style="margin: 12px 0 0; font-size: 15px; color: #4a443d; line-height: 1.6; max-width: 560px">Revisaremos tus planos con nuestra modulación y te escribiremos a tu correo en menos de 24 horas hábiles con los próximos pasos.</p>
+<div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 22px">
+<a href="https://calendly.com/vpellegrini-furo/30min" style="background: #141210; color: #fff; text-decoration: none; border-radius: 10px; padding: 13px 20px; font-size: 14px">Agenda tu reunión ahora</a>
+<button onClick="{{ reiniciar }}" style="background: #fff; border: 1px solid rgba(20,18,16,0.18); border-radius: 10px; padding: 13px 20px; font-size: 14px; cursor: pointer">Volver al formulario</button>
+</div>
+</div>
+</sc-if>
+</section>
+
+<aside style="flex: 1 1 300px; min-width: 0; display: flex; flex-direction: column; gap: 14px">
+<div style="background: #141210; color: #f5f3ee; border-radius: 20px; padding: 22px">
+<p style="margin: 0; font-size: 11px; letter-spacing: 0.16em; color: #b3a9e0">LO QUE RECIBES</p>
+<h3 style="margin: 8px 0 0; font-size: 22px; font-weight: 400">{{ servicioNombre }}</h3>
+<ul style="margin: 14px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 9px; font-size: 13px">
+<sc-for list="{{ recibes }}" as="r" hint-placeholder-count="4">
+<li style="display: flex; gap: 10px"><span style="color: #8b7fc0">●</span><span>{{ r }}</span></li>
+</sc-for>
+</ul>
+<p style="margin: 16px 0 0; font-size: 12px; color: #a39b90; line-height: 1.5">Textos de servicio en borrador: hay que validarlos con el equipo.</p>
+</div>
+<div style="background: #fff; border-radius: 20px; padding: 20px; border: 1px solid rgba(20,18,16,0.08)">
+<p style="margin: 0; font-size: 11px; letter-spacing: 0.16em; color: #6f6860">QUÉ PASA DESPUÉS</p>
+<ol style="margin: 12px 0 0; padding-left: 18px; font-size: 13px; color: #4a443d; line-height: 1.7">
+<li>El pedido entra a <strong style="font-weight: 500">FURŌ OS → Pedidos</strong>, separado por servicio.</li>
+<li>El agente lee los planos y arma el análisis de modulación.</li>
+<li>Una persona lo valida y te responde por correo.</li>
+</ol>
+</div>
+</aside>
+</div>
+</sc-if>
+
+<!-- ===================== WHATSAPP ===================== -->
+<sc-if value="{{ vWa }}" hint-placeholder-val="{{ false }}">
+<div style="max-width: 1180px; margin: 0 auto; padding: 8px 24px 48px; display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start; justify-content: center">
+
+<div style="flex: 0 1 380px; min-width: 0; background: #141210; border-radius: 44px; padding: 12px; box-shadow: 0 30px 70px rgba(20,18,16,0.25)">
+<div style="background: #ece5dd; border-radius: 34px; overflow: hidden; height: 720px; display: flex; flex-direction: column">
+<div style="background: #075e54; color: #fff; padding: 18px 18px 14px; display: flex; align-items: center; gap: 12px">
+<span style="width: 38px; height: 38px; border-radius: 50%; background: #f5f3ee; color: #141210; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; letter-spacing: 0.06em">FURŌ</span>
+<span><strong style="display: block; font-size: 15px; font-weight: 500">FURŌ</strong><span style="font-size: 12px; opacity: 0.8">Cuenta de empresa · responde al instante</span></span>
+</div>
+<div style="flex: 1; overflow: auto; padding: 14px 12px; display: flex; flex-direction: column; gap: 8px">
+<sc-for list="{{ chat }}" as="m" hint-placeholder-count="6">
+<div style="{{ m.fila }}"><div style="{{ m.burbuja }}">{{ m.texto }}<span style="display: block; text-align: right; font-size: 10px; color: #8a8278; margin-top: 3px">{{ m.hora }}</span></div></div>
+</sc-for>
+</div>
+<div style="padding: 10px 10px 14px; display: flex; flex-wrap: wrap; gap: 6px; background: #f0ebe4; min-height: 54px">
+<sc-for list="{{ respuestas }}" as="q" hint-placeholder-count="4">
+<button onClick="{{ q.pick }}" style="background: #fff; border: 1px solid #c9dccf; color: #075e54; border-radius: 999px; padding: 9px 14px; font-size: 13px; cursor: pointer; min-height: 40px">{{ q.texto }}</button>
+</sc-for>
+<sc-if value="{{ waFin }}" hint-placeholder-val="{{ false }}">
+<button onClick="{{ waReiniciar }}" style="background: none; border: none; color: #6f6860; font-size: 12px; cursor: pointer; padding: 10px">↺ Reiniciar conversación</button>
+</sc-if>
+</div>
+</div>
+</div>
+
+<div style="flex: 1 1 380px; min-width: 0; max-width: 520px; display: flex; flex-direction: column; gap: 14px">
+<div style="background: #fff; border-radius: 20px; padding: 22px; border: 1px solid rgba(20,18,16,0.08)">
+<p style="margin: 0; font-size: 11px; letter-spacing: 0.16em; color: #6f6860">LA REGLA DEL AGENTE</p>
+<h2 style="margin: 8px 0 0; font-size: 24px; font-weight: 400">Siempre pide el correo para seguir por mail</h2>
+<p style="margin: 10px 0 0; font-size: 14px; color: #4a443d; line-height: 1.6">WhatsApp sirve para partir rápido. Los planos, el análisis y la propuesta van por correo, donde queda el registro del proyecto. Si el cliente no da su correo, el pedido queda como <strong style="font-weight: 500">Incompleto</strong> y el agente lo vuelve a pedir al día siguiente.</p>
+</div>
+<div style="background: #fff; border-radius: 20px; padding: 22px; border: 1px solid rgba(20,18,16,0.08)">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><p style="margin: 0; font-size: 11px; letter-spacing: 0.16em; color: #6f6860">FICHA QUE SE VA LLENANDO</p><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #52448a">{{ fichaPct }}</span></div>
+<div style="height: 6px; background: #efecf7; border-radius: 99px; margin-top: 10px; overflow: hidden"><div style="{{ fichaBarra }}"></div></div>
+<div style="display: grid; grid-template-columns: auto 1fr; gap: 10px 16px; margin-top: 16px; font-size: 13px">
+<sc-for list="{{ ficha }}" as="f" hint-placeholder-count="5">
+<span style="color: #6f6860">{{ f.campo }}</span><span style="{{ f.estilo }}">{{ f.valor }}</span>
+</sc-for>
+</div>
+</div>
+</div>
+</div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":940}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { canal: 0, servicio: 1, enviado: false, wa: 0 };
+  }
+  renderVals() {
+    const st = this.state;
+    const canales = ['Formulario web', 'WhatsApp'].map((n, i) => ({
+      nombre: n, pick: () => this.setState({ canal: i }),
+      estilo: 'border:none;border-radius:999px;padding:9px 18px;font-size:13px;cursor:pointer;min-height:40px;background:' + (i === st.canal ? '#141210' : 'transparent') + ';color:' + (i === st.canal ? '#fff' : '#141210')
+    }));
+    const S = [
+      { nombre: 'Estructuras', desc: 'Muros, techo y entrepiso en madera fabricados en planta FURŌ, listos para montar.', capas: 1,
+        incluye: 'Estructura', recibes: ['Análisis de modulación de tus planos', 'Componentes estructurales de muro, techo y entrepiso', 'Planos de montaje y despacho a obra', 'Opción de montaje FURŌ'] },
+      { nombre: 'Estructuras térmicas', desc: 'Los mismos componentes con aislación, barreras y placas integradas en fábrica.', capas: 2,
+        incluye: 'Estructura + aislación', recibes: ['Todo lo de Estructuras', 'Aislación, barrera de vapor y placas OSB incorporadas', 'Cumplimiento térmico según la zona del proyecto', 'Montaje FURŌ'] },
+      { nombre: 'Térmicas con envolvente', desc: 'Casa cerrada: estructura térmica más revestimiento exterior, cubierta y ventanas.', capas: 3,
+        incluye: 'Estructura + aislación + envolvente', recibes: ['Todo lo de Estructuras térmicas', 'Revestimiento exterior (termotratado o el que definas)', 'Cubierta, hojalatería y ventanas', 'Casa cerrada, lista para terminaciones'] },
+      { nombre: 'Obra completa', desc: 'Llave en mano: fundaciones, estructura, envolvente, terminaciones y especialidades.', capas: 4,
+        incluye: 'Llave en mano', recibes: ['Todo lo de Térmicas con envolvente', 'Fundaciones según cálculo', 'Terminaciones interiores y especialidades', 'Recepción final y entrega'] }
+    ];
+    const servicios = S.map((s, i) => {
+      const on = i === st.servicio;
+      return {
+        num: '0' + (i + 1), nombre: s.nombre, desc: s.desc, incluye: s.incluye, activo: on ? 'true' : 'false',
+        pick: () => this.setState({ servicio: i }),
+        estilo: 'text-align:left;cursor:pointer;border-radius:14px;padding:16px;min-height:150px;color:#141210;border:1.5px solid ' + (on ? '#52448a' : 'rgba(20,18,16,0.12)') + ';background:' + (on ? '#f3f0fa' : '#fff'),
+        check: 'width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;color:#fff;background:' + (on ? '#52448a' : 'transparent') + ';border:1px solid ' + (on ? '#52448a' : 'rgba(20,18,16,0.2)'),
+        capas: 'display:inline-block;margin-top:12px;font-size:11px;padding:4px 9px;border-radius:99px;background:' + ['#efe7da', '#e5efe6', '#e8e4f4', '#141210'][i] + ';color:' + (i === 3 ? '#fff' : '#4a443d')
+      };
+    });
+    const sv = S[st.servicio];
+
+    // WhatsApp guion
+    const B = (t, h) => ({ de: 'b', texto: t, hora: h });
+    const U = (t, h) => ({ de: 'u', texto: t, hora: h });
+    const pasos = [
+      { msgs: [U('Hola, quiero cotizar una casa', '10:02'), B('¡Hola! Soy el asistente de FURŌ. ¿Qué necesitas?', '10:02')], resp: S.map(s => s.nombre) },
+      { msgs: [B('Perfecto. ¿En qué comuna está el proyecto y cuántos m² aprox.?', '10:03')], resp: ['Coyhaique, ~390 m²', 'Pucón, ~150 m²'] },
+      { msgs: [B('¿Tienes planos o un croquis? Puedes mandarlos por aquí.', '10:04')], resp: ['📎 Envío PDF de planos', 'Solo tengo la idea'] },
+      { msgs: [B('Gracias, los recibí. Para enviarte el análisis de modulación y la propuesta, ¿me compartes tu correo?', '10:05')], resp: ['raul.vargas@correo.cl'] },
+      { msgs: [B('Listo, Raúl. Te escribí a raul.vargas@correo.cl: seguimos por correo con planos y propuesta. Por aquí te aviso cuando llegue.', '10:05'), B('¿Quieres agendar una llamada de 30 min con Victor?', '10:05')], resp: ['Sí, agendar', 'Más adelante'] },
+      { msgs: [B('Aquí tienes el link: calendly.com/vpellegrini-furo/30min', '10:06')], resp: [] }
+    ];
+    const elec = st.waElec || [];
+    let chat = [];
+    for (let i = 0; i <= st.wa && i < pasos.length; i++) {
+      if (i > 0 && elec[i - 1]) chat.push(U(elec[i - 1], pasos[i].msgs[0].hora));
+      chat = chat.concat(pasos[i].msgs);
+    }
+    const chatV = chat.map(m => ({
+      texto: m.texto, hora: m.hora,
+      fila: 'display:flex;justify-content:' + (m.de === 'u' ? 'flex-end' : 'flex-start'),
+      burbuja: 'max-width:78%;padding:8px 10px 5px;border-radius:10px;font-size:14px;line-height:1.4;color:#141210;box-shadow:0 1px 0 rgba(0,0,0,0.08);background:' + (m.de === 'u' ? '#dcf8c6' : '#fff')
+    }));
+    const actual = pasos[Math.min(st.wa, pasos.length - 1)];
+    const respuestas = actual.resp.map(t => ({ texto: t, pick: () => this.setState({ wa: st.wa + 1, waElec: elec.concat([t]) }) }));
+    const val = (i, def) => elec[i] || def;
+    const fichaD = [
+      ['Canal', 'WhatsApp +56 9 …', true],
+      ['Servicio', val(0, '—'), !!elec[0]],
+      ['Ubicación / m²', val(1, '—'), !!elec[1]],
+      ['Planos', elec[2] ? (elec[2].indexOf('PDF') >= 0 ? 'PDF recibido' : 'Sin planos') : '—', !!elec[2]],
+      ['Correo', val(3, 'pendiente'), !!elec[3]],
+      ['Estado', elec[3] ? 'Continúa por mail' : 'Incompleto (sin correo)', !!elec[3]]
+    ];
+    const llenos = fichaD.filter(f => f[2]).length;
+    const ficha = fichaD.map(f => ({ campo: f[0], valor: f[1], estilo: 'font-weight:' + (f[2] ? '500' : '400') + ';color:' + (f[0] === 'Estado' ? (f[2] ? '#2f6f48' : '#a35a12') : (f[2] ? '#141210' : '#a39b90')) }));
+
+    return {
+      canales, servicios, vForm: st.canal === 0, vWa: st.canal === 1,
+      servicioNombre: sv.nombre, recibes: sv.recibes,
+      placeholderMsg: 'Ej.: casa de ' + (st.servicio === 3 ? '150 m² llave en mano' : '150 m², ya tengo arquitecto y permiso en trámite'),
+      enviado: st.enviado, noEnviado: !st.enviado,
+      enviar: () => this.setState({ enviado: true }), reiniciar: () => this.setState({ enviado: false }),
+      irWa: () => this.setState({ canal: 1 }),
+      chat: chatV, respuestas, waFin: st.wa >= pasos.length - 1,
+      waReiniciar: () => this.setState({ wa: 0, waElec: [] }),
+      ficha, fichaPct: Math.round(llenos / fichaD.length * 100) + '%',
+      fichaBarra: 'height:100%;background:#52448a;border-radius:99px;width:' + Math.round(llenos / fichaD.length * 100) + '%'
+    };
+  }
+}
+</script>
+</body>
+</html>

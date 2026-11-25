@@ -16,6 +16,8 @@ type Acceso = { href: string; titulo: string; detalle: string; color: string; ht
 const PRINCIPALES: Acceso[] = [
   { href: '/interno/nuevo-lead', titulo: 'Formulario de proyecto', detalle: 'Primera reunión o nuevo lead: datos del cliente, notas, próximos pasos y antecedentes a Drive.', color: '#f2b597' },
   { href: '/interno/comercial', titulo: 'Planificación comercial', detalle: 'Board de proyectos en etapa comercial: mes de montaje e hitos de noviembre a junio.', color: '#c9c3e0' },
+  // FURŌ OS v2 es HTML servido por un route handler: va con <a>, no con <Link>.
+  { href: '/interno/os-v2', titulo: 'FURŌ OS v2', detalle: 'Mockup del nuevo panel: portada, pedidos, 3D, cotizaciones, cálculo, fabricación, logística, montaje, planificación, venta y accesos.', color: '#8b7fc0', html: true },
 ]
 
 const OTROS: Acceso[] = [

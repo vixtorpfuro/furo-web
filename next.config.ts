@@ -11,6 +11,9 @@ const nextConfig: NextConfig = {
   // El cotizador se lee desde disco en su route handler; hay que incluirlo en el bundle del servidor.
   outputFileTracingIncludes: {
     "/interno/cotizador": ["./lib/cotizador/cotizador.html"],
+    // FURŌ OS v2 (mockup): componentes .dc.html y su renderizador.
+    "/interno/os-v2": ["./lib/os-v2/*.dc.html", "./lib/os-v2/runtime.js"],
+    "/interno/os-v2/formulario": ["./lib/os-v2/*.dc.html", "./lib/os-v2/runtime.js"],
   },
   // Modelos Noki renombrados con los planos de noviembre 2026.
   async redirects() {
