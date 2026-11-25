@@ -2,6 +2,7 @@ import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 import { NextResponse } from 'next/server'
 import { obtenerSesionInterno } from '@/lib/interno/sesion'
+import { CAMPOS } from '@/lib/pedidos/campos'
 
 // FURŌ OS v2 es un mockup navegable hecho como componentes .dc.html (diseño en claude.ai).
 // Se entrega desde lib/ (no desde public/) para que solo lo vean usuarios con sesión interna,
@@ -55,6 +56,7 @@ ${helmet}
 <body>
 <div id="raiz"></div>
 <template id="plantilla">${plantilla}</template>
+<script>window.__CAMPOS = ${JSON.stringify(CAMPOS)};</script>
 <script>${runtime}</script>
 <script>
 ${script}

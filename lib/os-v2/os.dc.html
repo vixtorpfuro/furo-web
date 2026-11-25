@@ -536,19 +536,45 @@ a{color:#3a2d5e}
 <sc-if value="{{ vPedMail }}" hint-placeholder-val="{{ false }}">
 <div class="row" style="align-items: flex-start">
 <div class="card" style="flex: 1 1 280px; padding: 8px">
-<sc-for list="{{ pedidosLista }}" as="p" hint-placeholder-count="6"><button onClick="{{ p.pick }}" style="{{ p.filaMini }}"><span style="display: flex; justify-content: space-between"><strong style="font-weight: 500; font-size: 13px">{{ p.cliente }}</strong><span style="font-size: 11px; color: #8a8278">{{ p.mailHora }}</span></span><span style="display: block; font-size: 12px; color: #6f6860; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ p.mailAsunto }}</span></button></sc-for>
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 10px"><p class="k">Leads Noki · Gmail</p><button onClick="{{ coRecargar }}" class="btn" style="min-height: 30px; padding: 4px 10px; font-size: 12px">↻ Actualizar</button></div>
+<p style="margin: 0; padding: 0 10px 8px; font-size: 11px; color: #8a8278">{{ coCasilla }}</p>
+<sc-if value="{{ coAviso }}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 8px 10px; font-size: 13px; line-height: 1.5; color: #a35a12">{{ coAvisoTxt }}</p></sc-if>
+<sc-for list="{{ coLeads }}" as="p" hint-placeholder-count="6"><button onClick="{{ p.pick }}" style="{{ p.fila }}"><span style="display: flex; justify-content: space-between; gap: 8px"><strong style="font-weight: 500; font-size: 13px">{{ p.nombre }}</strong><span style="font-size: 11px; color: #8a8278; white-space: nowrap">{{ p.fecha }}</span></span><span style="display: block; font-size: 12px; color: #6f6860; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ p.sub }}</span></button></sc-for>
 </div>
 <div class="card" style="flex: 999 1 520px">
-<p class="mono" style="margin: 0; font-size: 11px; color: #8a8278">{{ pedSel.email }}</p>
-<h2 style="margin: 6px 0 14px; font-size: 20px; font-weight: 400">{{ pedSel.mailAsunto }}</h2>
-<div style="display: flex; flex-direction: column; gap: 10px">
-<sc-for list="{{ mailHilo }}" as="m" hint-placeholder-count="3"><div style="{{ m.caja }}"><span style="font-size: 11px; color: #6f6860">{{ m.de }} · {{ m.hora }}</span><p style="margin: 4px 0 0; font-size: 14px; line-height: 1.55">{{ m.t }}</p></div></sc-for>
+<sc-if value="{{ coSinSel }}" hint-placeholder-val="{{ false }}"><p class="muted" style="margin: 0; font-size: 14px">Elige un lead para ver la conversación. El agente revisa qué falta para cotizar y deja el siguiente correo como borrador: nada se envía sin que lo apruebes.</p></sc-if>
+<sc-if value="{{ coHaySel }}" hint-placeholder-val="{{ true }}">
+<p class="mono" style="margin: 0; font-size: 11px; color: #8a8278">{{ coSel.email }} · {{ coSel.celular }}</p>
+<h2 style="margin: 6px 0 4px; font-size: 22px; font-weight: 400">{{ coSel.nombre }}</h2>
+<p class="muted" style="margin: 0 0 14px; font-size: 13px">{{ coSel.linea }}</p>
+<p class="k">Correos con el cliente</p>
+<div style="display: flex; flex-direction: column; gap: 10px; margin-top: 8px">
+<sc-for list="{{ coHilo }}" as="m" hint-placeholder-count="3"><div style="{{ m.caja }}"><span style="font-size: 11px; color: #6f6860">{{ m.de }} · {{ m.fecha }}</span><p style="margin: 4px 0 0; font-size: 14px; line-height: 1.55; white-space: pre-wrap">{{ m.texto }}</p></div></sc-for>
 </div>
+<sc-if value="{{ coHayAnalisis }}" hint-placeholder-val="{{ false }}">
+<div style="margin-top: 16px; background: #f7f5f1; border-radius: 14px; padding: 14px">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap"><p class="k">Datos del pedido · {{ coAn.n }}</p><span style="{{ coAn.listoEst }}">{{ coAn.listo }}</span></div>
+<p style="margin: 8px 0 0; font-size: 13px; line-height: 1.5">{{ coAn.resumen }}</p>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 6px 14px; margin-top: 10px; font-size: 12px">
+<sc-for list="{{ coAn.campos }}" as="c" hint-placeholder-count="10"><span style="{{ c.estilo }}">{{ c.icono }} <strong style="font-weight: 500">{{ c.t }}</strong> {{ c.valor }}</span></sc-for>
+</div>
+<p style="margin: 10px 0 0; font-size: 12px; color: #6f6860">Probabilidad estimada por el agente: {{ coAn.prob }}</p>
+</div>
+</sc-if>
 <div style="margin-top: 14px; border: 1.5px solid #52448a; border-radius: 14px; padding: 14px; background: #f6f4fb">
-<p class="k" style="color: #52448a">Borrador del agente · requiere revisión</p>
-<p style="margin: 8px 0 0; font-size: 14px; line-height: 1.55">{{ pedSel.borrador }}</p>
-<div style="display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap"><button class="btn-d">Revisar y enviar</button><button class="btn">Editar</button><button onClick="{{ irAnalisis }}" class="btn">Adjuntar análisis</button></div>
+<p class="k" style="color: #52448a">Borrador del agente · requiere tu aprobación</p>
+<sc-if value="{{ coHayBorrador }}" hint-placeholder-val="{{ false }}">
+<p style="margin: 8px 0 6px; font-size: 13px"><strong style="font-weight: 500">{{ coBorrador.asunto }}</strong> → {{ coBorrador.para }}</p>
+<textarea onInput="{{ coEditar }}" rows="12" style="width: 100%; box-sizing: border-box; border: 1px solid rgba(20,18,16,0.15); border-radius: 10px; padding: 10px; font: inherit; font-size: 14px; line-height: 1.5; background: #fff">{{ coBorrador.cuerpo }}</textarea>
+</sc-if>
+<sc-if value="{{ coNoBorrador }}" hint-placeholder-val="{{ true }}"><p style="margin: 8px 0 0; font-size: 13px; color: #6f6860">Aún no hay borrador para este cliente.</p></sc-if>
+<div style="display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; align-items: center">
+<sc-if value="{{ coHayBorrador }}" hint-placeholder-val="{{ false }}"><button onClick="{{ coEnviar }}" class="btn-d">{{ coEnviarTxt }}</button></sc-if>
+<button onClick="{{ coAgente }}" class="btn">{{ coAgenteTxt }}</button>
+<span style="font-size: 12px; color: #6f6860">{{ coMsg }}</span>
 </div>
+</div>
+</sc-if>
 </div>
 </div>
 </sc-if>
@@ -1082,8 +1108,44 @@ class Component extends DCLogic {
       verif: {}, calcValidado: false,
       qc: {}, qcOk: false,
       cam: 1, slot: null,
-      preg: 0, planModo: 0, aprob: {}, accExtra: {}
+      preg: 0, planModo: 0, aprob: {}, accExtra: {},
+      co: { estado: 'inicial', casilla: '', leads: [], sel: null, hilo: [], borrador: null, analisis: null, ocupado: '', msg: '' }
     };
+  }
+
+  // ---------- Pedidos → Correo: datos reales desde Gmail ----------
+  alMontar() { this.coCargarLeads(); }
+  coSet(p) { this.setState({ co: Object.assign({}, this.state.co, p) }); }
+  async coApi(url, body) {
+    const r = await fetch(url, body ? { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) } : {});
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(j.error || ('Error ' + r.status));
+    return j;
+  }
+  async coCargarLeads() {
+    this.coSet({ estado: 'cargando', msg: '' });
+    try { const j = await this.coApi('/api/interno/pedidos/correo'); this.coSet({ estado: 'ok', casilla: j.casilla, leads: j.leads }); }
+    catch (e) { this.coSet({ estado: 'error', msg: e.message }); }
+  }
+  async coAbrir(email) {
+    this.__coEdit = null;
+    this.coSet({ sel: email, hilo: [], borrador: null, analisis: null, ocupado: 'cargando', msg: 'Cargando correos…' });
+    try { const j = await this.coApi('/api/interno/pedidos/correo?email=' + encodeURIComponent(email)); if (this.state.co.sel === email) this.coSet({ hilo: j.hilo, borrador: j.borrador, ocupado: '', msg: '' }); }
+    catch (e) { this.coSet({ ocupado: '', msg: e.message }); }
+  }
+  async coCorrerAgente() {
+    const email = this.state.co.sel; if (!email || this.state.co.ocupado) return;
+    this.__coEdit = null;
+    this.coSet({ ocupado: 'agente', msg: 'El agente está leyendo la conversación…' });
+    try { const j = await this.coApi('/api/interno/pedidos/correo/agente', { email }); this.coSet({ analisis: j.analisis, borrador: j.borrador, ocupado: '', msg: j.analisis.debe_escribir ? 'Borrador guardado en Gmail.' : 'El agente sugiere esperar la respuesta del cliente.' }); }
+    catch (e) { this.coSet({ ocupado: '', msg: e.message }); }
+  }
+  async coEnviarBorrador() {
+    const co = this.state.co; if (!co.borrador || co.ocupado) return;
+    if (!window.confirm('¿Enviar este correo a ' + co.borrador.para + '?')) return;
+    this.coSet({ ocupado: 'enviando', msg: 'Enviando…' });
+    try { await this.coApi('/api/interno/pedidos/correo/enviar', { draftId: co.borrador.id, cuerpo: this.__coEdit ?? undefined }); this.__coEdit = null; await this.coAbrir(co.sel); this.coSet({ msg: '✓ Correo enviado.' }); }
+    catch (e) { this.coSet({ ocupado: '', msg: e.message }); }
   }
 
   renderVals() {
@@ -1262,7 +1324,7 @@ class Component extends DCLogic {
           { t: o.p.canal, chip: o.p.canal.indexOf('WhatsApp') === 0 ? ['#e3f3e8', '#1f7a44'] : o.p.canal === 'Correo' ? ['#e8eef5', '#2d4f73'] : ['#f1ede4', '#5d564e'] },
           fmt(o.p.m2), { t: infoN(o.p) + '/8', s: 'color:' + (infoN(o.p) >= 7 ? '#2f6f48' : '#a35a12') }, o.p.prob + ' %']
       })), 720);
-    const subPed = [['lista', 'Listado', '6'], ['mail', 'Correo', '3'], ['wa', 'WhatsApp', '2'], ['analisis', 'Análisis de planos', '']].map(s => ({
+    const subPed = [['lista', 'Listado', '6'], ['mail', 'Correo', String(st.co.leads.length || '')], ['wa', 'WhatsApp', '2'], ['analisis', 'Análisis de planos', '']].map(s => ({
       t: s[1], b: s[2], pick: () => this.setState({ subPed: s[0], split: false }),
       estilo: pill(st.subPed === s[0] && !st.split), bEst: s[2] ? 'font-size:10px;padding:1px 6px;border-radius:99px;margin-left:4px;background:' + (st.subPed === s[0] && !st.split ? '#52448a' : '#ece9e2') : 'display:none'
     }));
@@ -1490,6 +1552,39 @@ class Component extends DCLogic {
     // colores modelo 3D y montaje
     const mont = { ct: '#6f9a72', ct2: '#6f9a72', cb: '#8b7fc0', cm: '#6f9a72', cm2: '#6f9a72', cbm: '#6f9a72', vano: '#3b4a55', test: '#6f9a72', col: '#6f9a72' };
 
+    // ---------- Pedidos → Correo (real) ----------
+    const co = st.co;
+    const fCorta = (iso) => { try { return new Date(iso).toLocaleDateString('es-CL', { day: '2-digit', month: 'short' }); } catch (e) { return ''; } };
+    const fLarga = (iso) => { try { return new Date(iso).toLocaleString('es-CL', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }); } catch (e) { return ''; } };
+    const coLeadSel = co.leads.find(l => l.email === co.sel) || null;
+    const coCampoT = {}; (window.__CAMPOS || []).forEach(c => { coCampoT[c.clave] = c.t; });
+    const coAnBase = co.analisis;
+    const coVals = {
+      coCasilla: co.casilla ? 'Casilla ' + co.casilla : '',
+      coAviso: co.estado !== 'ok' || !co.leads.length,
+      coAvisoTxt: co.estado === 'cargando' || co.estado === 'inicial' ? 'Cargando leads desde Gmail…' : co.estado === 'error' ? 'No se pudo leer Gmail: ' + co.msg : 'No hay leads de Noki en los últimos 120 días.',
+      coLeads: co.leads.map(l => ({ nombre: l.nombre || l.email, fecha: fCorta(l.fecha), sub: [l.modelo, l.ubicacion].filter(Boolean).join(' · ') || l.email, pick: () => this.coAbrir(l.email), fila: filaMini(l.email === co.sel) })),
+      coRecargar: () => this.coCargarLeads(),
+      coSinSel: !coLeadSel, coHaySel: !!coLeadSel,
+      coSel: coLeadSel ? { email: coLeadSel.email, celular: coLeadSel.celular || 'sin celular', nombre: coLeadSel.nombre || coLeadSel.email,
+        linea: ['Modelo: ' + (coLeadSel.modelo || '—'), 'Dónde: ' + (coLeadSel.ubicacion || '—'), 'Terreno: ' + (coLeadSel.terreno || '—'), 'Plazo: ' + (coLeadSel.plazo || '—'), 'Lead del ' + fCorta(coLeadSel.fecha)].join(' · ') } : {},
+      coHilo: co.hilo.length ? co.hilo.map(m => ({ de: m.deFuro ? 'FURŌ' : (m.de.replace(/<[^>]+>/, '').replace(/"/g, '').trim() || 'Cliente'), fecha: fLarga(m.fecha), texto: m.texto, caja: 'padding:12px 14px;border-radius:12px;background:' + (m.deFuro ? '#f3f0fa' : '#f7f5f1') }))
+        : [{ de: '—', fecha: '', texto: co.ocupado === 'cargando' ? 'Cargando…' : 'Aún no hay correos con este cliente. El agente puede preparar el primero.', caja: 'padding:12px 14px;border-radius:12px;background:#f7f5f1' }],
+      coHayAnalisis: !!coAnBase,
+      coAn: coAnBase ? {
+        resumen: coAnBase.resumen, prob: Math.round(coAnBase.probabilidad) + ' %',
+        n: coAnBase.campos.filter(c => c.estado === 'ok').length + ' de ' + coAnBase.campos.length + ' listos',
+        listo: coAnBase.listo_para_cotizar ? 'Listo para cotizar' : 'Falta información', listoEst: coAnBase.listo_para_cotizar ? chip('#e3f3e8', '#1f7a44') : chip('#fbeee0', '#a35a12'),
+        campos: coAnBase.campos.map(c => ({ t: coCampoT[c.clave] || c.clave, valor: c.valor ? '· ' + c.valor : '', icono: c.estado === 'ok' ? '✓' : c.estado === 'confirmar' ? '◐' : '○', estilo: 'line-height:1.4;color:' + (c.estado === 'ok' ? '#2f6f48' : c.estado === 'confirmar' ? '#7a5a12' : '#a35a12') }))
+      } : {},
+      coHayBorrador: !!co.borrador, coNoBorrador: !co.borrador,
+      coBorrador: co.borrador ? { asunto: co.borrador.asunto, para: co.borrador.para, cuerpo: this.__coEdit ?? co.borrador.cuerpo } : {},
+      coEditar: (ev) => { this.__coEdit = ev.target.value; },
+      coEnviar: () => this.coEnviarBorrador(), coEnviarTxt: co.ocupado === 'enviando' ? 'Enviando…' : 'Aprobar y enviar',
+      coAgente: () => this.coCorrerAgente(), coAgenteTxt: co.ocupado === 'agente' ? 'El agente está trabajando…' : (co.borrador || coAnBase ? '✦ Volver a preparar con el agente' : '✦ Preparar con el agente'),
+      coMsg: co.msg
+    };
+
     return {
       toggleRol: () => this.setState({ rolAbierto: !st.rolAbierto }), rolAbierto: st.rolAbierto, rolAbiertoTxt: st.rolAbierto ? 'true' : 'false',
       roles, rolNombre: rol.nombre, rolIni: rol.ini, nav, conexiones,
@@ -1533,7 +1628,8 @@ class Component extends DCLogic {
       hoyEst: 'position:absolute;top:-4px;bottom:-4px;width:2px;background:#c0563e;left:' + hoyP + '%',
       // venta
       ventaKpi, ventaMeses, tablaContrib, tablaHitos,
-      vAccesos: ok && st.vista === 'accesos', accCols, accFilas, accGrid, usuarios
+      vAccesos: ok && st.vista === 'accesos', accCols, accFilas, accGrid, usuarios,
+      ...coVals
     };
   }
 }
