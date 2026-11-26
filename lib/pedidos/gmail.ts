@@ -6,7 +6,10 @@ import { google, type gmail_v1 } from 'googleapis'
 // Permisos mínimos: leer correos y crear/enviar borradores. No borra ni mueve correos.
 const SCOPES = ['https://www.googleapis.com/auth/gmail.readonly', 'https://www.googleapis.com/auth/gmail.compose']
 
-export const ASUNTO_LEAD = 'Nuevo lead Noki'
+// Avisos que envía Make: "Nuevo lead Noki — …" (campaña Noki) y "Nuevo lead FURŌ — …" (formulario /contacto).
+export const ASUNTOS_LEAD = ['Nuevo lead Noki', 'Nuevo lead FURŌ']
+const Q_LEADS = '(' + ASUNTOS_LEAD.map((a) => `subject:"${a}"`).join(' OR ') + ')'
+const Q_SIN_LEADS = ASUNTOS_LEAD.map((a) => `-subject:"${a}"`).join(' ')
 
 export function casilla() {
   const c = process.env.GMAIL_CASILLA
@@ -97,9 +100,11 @@ const ETIQUETAS: [keyof Lead, string][] = [
   ['celular', 'Celular'],
   ['modelo', 'Modelo de interés'],
   ['perfil', 'Perfil'],
+  ['perfil', 'Soy'], // formulario /contacto (avisos antiguos)
   ['ubicacion', '¿Dónde quiere construir?'],
   ['terreno', '¿Tiene terreno?'],
   ['plazo', '¿En cuánto tiempo piensa construir?'],
+  ['plazo', 'Cuándo quiere comenzar'], // formulario /contacto (avisos antiguos)
   ['contacto', 'Cómo contactar'],
   ['origen', 'Cómo conoció FURŌ'],
 ]
@@ -111,14 +116,15 @@ export function parsearLead(texto: string): Partial<Lead> {
   const posiciones = ETIQUETAS.map(([k, e]) => ({ k, e, i: plano.indexOf(e) })).filter((p) => p.i >= 0).sort((a, b) => a.i - b.i)
   posiciones.forEach((p, n) => {
     const fin = n + 1 < posiciones.length ? posiciones[n + 1].i : plano.length
-    out[p.k] = plano.slice(p.i + p.e.length, fin).trim()
+    const v = plano.slice(p.i + p.e.length, fin).trim()
+    if (v || !out[p.k]) out[p.k] = v
   })
   return out
 }
 
 export async function listarLeads(max = 30): Promise<Lead[]> {
   const gmail = getGmail()
-  const res = await gmail.users.messages.list({ userId: 'me', q: `subject:"${ASUNTO_LEAD}" newer_than:120d`, maxResults: max })
+  const res = await gmail.users.messages.list({ userId: 'me', q: `${Q_LEADS} newer_than:120d`, maxResults: max })
   const ids = res.data.messages?.map((m) => m.id!).filter(Boolean) ?? []
   const mensajes = await Promise.all(ids.map((id) => gmail.users.messages.get({ userId: 'me', id, format: 'full' })))
   const leads: Lead[] = []
@@ -141,13 +147,16 @@ export async function listarLeads(max = 30): Promise<Lead[]> {
 export async function conversacion(email: string): Promise<MensajeHilo[]> {
   const gmail = getGmail()
   const yo = casilla().toLowerCase()
-  const res = await gmail.users.threads.list({ userId: 'me', q: `(from:${email} OR to:${email}) -subject:"${ASUNTO_LEAD}"`, maxResults: 5 })
+  const res = await gmail.users.threads.list({ userId: 'me', q: `(from:${email} OR to:${email} OR cc:${email}) ${Q_SIN_LEADS}`, maxResults: 5 })
   const hilos = await Promise.all((res.data.threads ?? []).map((t) => gmail.users.threads.get({ userId: 'me', id: t.id!, format: 'full' })))
   const msgs: MensajeHilo[] = []
   for (const { data: h } of hilos) {
     for (const m of h.messages ?? []) {
       if (m.labelIds?.includes('DRAFT')) continue
       const de = cabecera(m, 'From')
+      // Solo mensajes que el cliente escribió o recibió: deja fuera respuestas internas del equipo en el mismo hilo.
+      const destinatarios = (cabecera(m, 'To') + ',' + cabecera(m, 'Cc')).toLowerCase()
+      if (emailDe(de) !== email && !destinatarios.includes(email)) continue
       msgs.push({
         id: m.id!, threadId: m.threadId!, de, deFuro: emailDe(de) === yo || emailDe(de).endsWith('@furo.company'),
         fecha: new Date(Number(m.internalDate)).toISOString(), asunto: cabecera(m, 'Subject'), texto: sinCitas(textoDe(m)),
