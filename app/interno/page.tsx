@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { obtenerSesionInterno } from '@/lib/interno/sesion'
 import InternoHeader from './InternoHeader'
+import { puedeVerOsV2 } from '@/lib/os-v2/acceso'
 
 export const metadata: Metadata = {
   title: 'Interno FURŌ',
@@ -49,6 +50,7 @@ function Tarjeta({ a, grande }: { a: Acceso; grande?: boolean }) {
 export default async function InternoHome() {
   const sesion = await obtenerSesionInterno()
   if (!sesion) redirect('/interno/login?next=/interno')
+  const principales = PRINCIPALES.filter((a) => a.href !== '/interno/os-v2' || puedeVerOsV2(sesion.email))
 
   return (
     <main style={{ backgroundColor: '#efece5', color: C.dark, fontFamily: 'DM Sans, sans-serif', minHeight: '100vh', padding: '48px 20px' }}>
@@ -59,7 +61,7 @@ export default async function InternoHome() {
         <h1 style={{ fontSize: 34, fontWeight: 400, margin: '0 0 28px' }}>Hola, {sesion.nombre.split(' ')[0]}</h1>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16 }}>
-          {PRINCIPALES.map(a => <Tarjeta key={a.href} a={a} grande />)}
+          {principales.map(a => <Tarjeta key={a.href} a={a} grande />)}
         </div>
 
         <h2 style={{ fontSize: 12, letterSpacing: '0.12em', textTransform: 'uppercase', color: C.muted, fontWeight: 500, margin: '34px 0 12px' }}>Otras herramientas</h2>

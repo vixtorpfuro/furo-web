@@ -3,6 +3,7 @@ import path from 'node:path'
 import { NextResponse } from 'next/server'
 import { obtenerSesionInterno } from '@/lib/interno/sesion'
 import { CAMPOS } from '@/lib/pedidos/campos'
+import { puedeVerOsV2 } from './acceso'
 
 // FURŌ OS v2 es un mockup navegable hecho como componentes .dc.html (diseño en claude.ai).
 // Se entrega desde lib/ (no desde public/) para que solo lo vean usuarios con sesión interna,
@@ -69,6 +70,7 @@ montarDC(document.getElementById('plantilla'), document.getElementById('raiz'), 
 export async function servirOsV2(req: Request, archivo: string, titulo: string, ruta: string) {
   const sesion = await obtenerSesionInterno()
   if (!sesion) return NextResponse.redirect(new URL(`/interno/login?next=${ruta}`, req.url))
+  if (!puedeVerOsV2(sesion.email)) return NextResponse.redirect(new URL('/interno', req.url))
 
   let html = cache.get(archivo)
   if (!html || process.env.NODE_ENV !== 'production') {
